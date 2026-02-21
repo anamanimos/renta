@@ -351,6 +351,118 @@
     font-size: 14px;
 }
 
+/* Single Post Specific Styles */
+.blog-single-post {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.blog-featured-image {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.blog-featured-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.blog-single-header .blog-meta {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.blog-single-title {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+}
+
+.blog-single-content p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+.blog-single-content h2, .blog-single-content h3, .blog-single-content h4 {
+    color: var(--text-dark);
+    margin-top: 35px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.blog-single-content blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding: 15px 20px;
+    background: #f8f9fa;
+    margin: 30px 0;
+    font-style: italic;
+    color: #555;
+}
+
+.blog-single-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 25px 0;
+}
+
+.blog-single-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.blog-tags a {
+    background: #f0f0f0;
+    color: #555;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    text-decoration: none;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+.blog-tags a:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.blog-share a {
+    font-size: 20px;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.blog-share a:hover {
+    transform: translateY(-3px);
+}
+
+.blog-share a.fb { color: #3b5998; }
+.blog-share a.tw { color: #1da1f2; }
+.blog-share a.wa { color: #25d366; }
+
+/* Static Page Setup */
+.page-full-width {
+    padding: 60px 0;
+    background-color: #f8f9fa;
+}
+
 /* Responsive Blog */
 @media (max-width: 991px) {
     .blog-layout {

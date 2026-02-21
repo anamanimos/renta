@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sewa Peralatan Event & Multimedia | Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span><i class="fas fa-map-marker-alt"></i> Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang, Jawa Timur 65122</span>
+            </div>
+            <div class="top-bar-right">
+                <!-- Social links if any, left blank for now as in screenshot -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header Area -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="#">
+                    <img src="assets/images/logo-renta.png" alt="Renta Enterprise">
+                </a>
+            </div>
+            <div class="search-box">
+                <form action="#">
+                    <input type="text" placeholder="Search for products">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            <div class="header-actions">
+                <a href="#" class="auth-link">LOGIN / REGISTER</a>
+                <a href="#" class="action-icon wishlist-icon">
+                    <i class="far fa-heart"></i>
+                    <span class="badge">0</span>
+                </a>
+                <a href="#" class="action-icon cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">0</span>
+                    <span class="cart-total">RP0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Area -->
+    <nav class="main-nav">
+        <div class="container nav-container">
+            <div class="categories-btn">
+                <i class="fas fa-bars"></i>
+                <span>BROWSE CATEGORIES</span>
+                <i class="fas fa-chevron-down"></i>
+                
+                <!-- Dropdown menu -->
+                <ul class="categories-dropdown active">
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-volume-up"></i> Sound System <i class="fas fa-angle-right"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><i class="fas fa-cubes"></i> Ala Carte</a></li>
+                            <li><a href="#"><i class="fas fa-box-open"></i> Package</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-lightbulb"></i> Lighting / Effect System <i class="fas fa-angle-right"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><i class="fas fa-cubes"></i> Ala Carte</a></li>
+                            <li><a href="#"><i class="fas fa-box-open"></i> Package</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-layer-group"></i> Stage+Rigging <i class="fas fa-angle-right"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><i class="fas fa-cubes"></i> Ala Carte</a></li>
+                            <li><a href="#"><i class="fas fa-box-open"></i> Package</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-desktop"></i> Multimedia <i class="fas fa-angle-right"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><i class="fas fa-cubes"></i> Ala Carte</a></li>
+                            <li><a href="#"><i class="fas fa-box-open"></i> Package</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fas fa-video"></i> Live Cam + Photo/Video Package</a></li>
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-wifi"></i> Live Streaming <i class="fas fa-angle-right"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#"><i class="fas fa-cubes"></i> Ala Carte</a></li>
+                            <li><a href="#"><i class="fas fa-box-open"></i> Package</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fas fa-camera"></i> Photobooth</a></li>
+                    <li><a href="#"><i class="fas fa-campground"></i> Tenda & Dekorasi Kain</a></li>
+                    <li><a href="#"><i class="fas fa-chair"></i> Kursi</a></li>
+                    <li><a href="#"><i class="fas fa-table"></i> Meja</a></li>
+                    <li><a href="#"><i class="fas fa-couch"></i> Beanbag</a></li>
+                    <li><a href="#"><i class="fas fa-store"></i> Booth Partai</a></li>
+                    <li><a href="#"><i class="fas fa-charging-station"></i> Generator</a></li>
+                    <li><a href="#"><i class="fas fa-snowflake"></i> Cooling System</a></li>
+                    <li><a href="#"><i class="fas fa-cloud"></i> Balon</a></li>
+                    <li><a href="#"><i class="fas fa-sign"></i> Papan Bunga</a></li>
+                    <li><a href="#"><i class="fas fa-ellipsis-h"></i> Others</a></li>
+                </ul>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="#" class="active">HOME</a></li>
+                <li><a href="#">PRODUK</a></li>
+                <li><a href="#">TENTANG KAMI</a></li>
+                <li><a href="#">KONTAK</a></li>
+                <li><a href="#">CARA SEWA</a></li>
+                <li><a href="#" class="highlight">KONFIRMASI PEMBAYARAN</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container hero-container">
+                <div class="hero-spacer"></div> <!-- Spacer for absolute categories -->
+                <div class="hero-content">
+                    <div class="hero-banner slider-container">
+                    <div class="slider-wrapper">
+                        <!-- Slide 1 -->
+                        <div class="slide active">
+                            <a href="#">
+                                <img src="assets/images/MainSlider1.jpeg" alt="Live Streaming Promo">
+                            </a>
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="slide">
+                            <a href="#">
+                                <img src="assets/images/MainSlider2.jpeg" alt="Live Streaming Promo">
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Slider Controls -->
+                    <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+                    
+                    <!-- Slider Dots -->
+                    <div class="slider-dots">
+                        <span class="dot active" data-slide="0"></span>
+                    </div>
+                    </div>
+                    
+                    <!-- Why Choose Us -->
+                    <div class="why-us">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <h3>Peralatan Berkualitas</h3>
+                        <p>Kami menyediakan berbagai peralatan event terkini dan terawat dengan baik dari brand terpercaya.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3>Layanan Profesional</h3>
+                        <p>Didukung oleh tim teknisi yang handal dan berpengalaman menangani berbagai event skala besar.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-truck-fast"></i>
+                        </div>
+                        <h3>Pengiriman Cepat</h3>
+                        <p>Armada logistik kami siap mengantarkan kebutuhan event Anda tepat waktu dan aman.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <h3>Harga Kompetitif</h3>
+                        <p>Solusi penyewaan terbaik dengan paket harga yang transparan dan dapat disesuaikan budget.</p>
+                    </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Today Hot Deals -->
+        <section class="hot-deals section-padding bg-gray">
+            <div class="container">
+                <h2 class="section-title">TODAY HOT DEALS</h2>
+                
+                <div class="products-grid">
+                    <!-- Product 1 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="assets/images/product-1.png" alt="Stage">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo-small.png" alt="Renta">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Stage (t: 40-60cm) + Karpet</h3>
+                            <div class="price">
+                                <span class="current-price">Rp45.000 Unit Price</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="assets/images/product-2.png" alt="AC 3 PK">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo-small.png" alt="Renta">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>AC 3 PK</h3>
+                            <div class="price">
+                                <span class="current-price">Rp450.000 Unit Price</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="assets/images/product-3.png" alt="AC 5 PK">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo-small.png" alt="Renta">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>AC 5 PK</h3>
+                            <div class="price">
+                                <span class="current-price">Rp750.000 Unit Price</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="assets/images/product-4.png" alt="Camera">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo-small.png" alt="Renta">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Additional Camera - HD - Sony 755 + Operator</h3>
+                            <div class="price">
+                                <span class="current-price">Rp2.500.000 Unit Price</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Langkah Sewa or Promo -->
+        <section class="langkah-sewa section-padding">
+            <div class="container">
+                <div class="langkah-banner slider-container" style="border-radius: 8px; overflow: hidden; position: relative;">
+                    <div class="slider-wrapper">
+                        <!-- Slide 1 -->
+                        <div class="slide active">
+                            <img src="assets/images/Langkah-Order-1.jpg" alt="Langkah Order 1" style="width: 100%; display: block;">
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="slide">
+                            <img src="assets/images/Langkah-Order-2.jpg" alt="Langkah Order 2" style="width: 100%; display: block;">
+                        </div>
+                        <!-- Slide 3 -->
+                        <div class="slide">
+                            <img src="assets/images/Langkah-Order-3.jpg" alt="Langkah Order 3" style="width: 100%; display: block;">
+                        </div>
+                        <!-- Slide 4 -->
+                        <div class="slide">
+                            <img src="assets/images/Langkah-Order-4.jpg" alt="Langkah Order 4" style="width: 100%; display: block;">
+                        </div>
+                    </div>
+                    
+                    <!-- Slider Controls -->
+                    <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+                    
+                    <!-- Slider Dots -->
+                    <div class="slider-dots">
+                        <span class="dot active" data-slide="0"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Latest Project -->
+        <section class="latest-project section-padding">
+            <div class="container">
+                <h2 class="section-title left-align border-bottom">LATEST PROJECT</h2>
+                <div class="project-grid">
+                    <div class="project-item"><img src="assets/images/project-1.png" alt="Project 1"></div>
+                    <div class="project-item"><img src="assets/images/project-2.png" alt="Project 2"></div>
+                    <div class="project-item"><img src="assets/images/project-3.png" alt="Project 3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Clients -->
+        <section class="our-clients section-padding">
+            <div class="container">
+                <h2 class="section-title border-bottom">OUR CLIENTS</h2>
+                <div class="clients-grid">
+                    <!-- Baris 1 -->
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 1"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 2"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 3"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 4"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 5"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 6"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 7"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 8"></div>
+                    <!-- Baris 2 -->
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 9"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 10"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 11"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 12"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 13"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 14"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 15"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 16"></div>
+                    <!-- Baris 3 -->
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 17"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 18"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 19"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 20"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 21"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 22"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 23"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 24"></div>
+                    <!-- Baris 4 -->
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 25"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 26"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 27"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 28"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 29"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 30"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 31"></div>
+                    <div class="client-item"><img src="assets/images/logo-small.png" alt="Client 32"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="footer-widget brand-info">
+                <img src="assets/images/Logo-putih.png" alt="Renta" class="footer-logo">
+                <p>Spesialis sewa peralatan event dan multimedia lengkap di Malang dan sekitarnya. Solusi profesional untuk mensukseskan berbagai acara Anda.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-widget link-helper">
+                <h3>Link Helper</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Cara Sewa</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Konfirmasi Pembayaran</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Kebijakan Privasi</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Syarat & Ketentuan</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sitemap</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-widget services-list">
+                <h3>Layanan Kami</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sound System</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Lighting & Effect</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Stage & Rigging</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Multimedia LED</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Vendor Event</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-widget">
+                <h3>Hubungi Kami</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Alamat Kantor</strong>
+                            Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang 65122
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <strong>Telepon / WA</strong>
+                            0812-3456-7890
+                        </div>
+                    </li>
+                </ul>
+                <div class="payment-methods">
+                    <h3>Metode Pembayaran</h3>
+                    <div class="payment-icons">
+                        <img src="assets/images/bca.png" alt="BCA">
+                        <img src="assets/images/bni.png" alt="BNI">
+                        <!-- Add generic placeholder for extra rich effect if wanted, or leave as is -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © <span>Renta Enterprise</span> 2026. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="#" class="float-wa">
+        <div class="wa-tooltip">Butuh bantuan? Hubungi kami sekarang</div>
+        <div class="wa-icon-wrapper">
+            <i class="fab fa-whatsapp"></i>
+        </div>
+    </a>
+
+    <a href="#" class="scroll-top">
+        <i class="fas fa-chevron-up"></i>
+    </a>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="product.html">
+            <i class="fas fa-box"></i>
+            <span>Produk</span>
+        </a>
+        <a href="#" class="pesanan-btn" style="position: relative;">
+            <div class="icon-circle">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <span>Pesanan Saya</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-th-large"></i>
+            <span>Kategori</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-user"></i>
+            <span>Akun</span>
+        </a>
+    </nav>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

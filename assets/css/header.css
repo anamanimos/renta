@@ -1,0 +1,256 @@
+/* ==== Top Bar ==== */
+.top-bar {
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-size: 11px;
+    padding: 8px 0;
+}
+
+.top-bar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar-left i {
+    margin-right: 5px;
+}
+
+/* ==== Main Header ==== */
+.main-header {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.logo img {
+    max-height: 100px;
+}
+
+.search-box {
+    flex-grow: 1;
+    max-width: 600px;
+}
+
+.search-box form {
+    display: flex;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.search-box input {
+    flex-grow: 1;
+    border: none;
+    padding: 12px 20px;
+    outline: none;
+    font-size: 13px;
+    font-family: inherit;
+}
+
+.search-box button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 0 25px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.search-box button:hover {
+    background-color: var(--primary-dark);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.auth-link:hover {
+    color: var(--primary-color);
+}
+
+.action-icon {
+    position: relative;
+    font-size: 18px;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.action-icon .badge {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-size: 10px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.cart-total {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ==== Navigation Area ==== */
+.main-nav {
+    border-bottom: 2px solid var(--bg-gray);
+    position: relative;
+    z-index: 50; /* Above hero section */
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+}
+
+.categories-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+    font-size: 14px;
+    width: 250px;
+    cursor: pointer;
+    position: relative;
+    border-radius: 8px 8px 0 0; /* Align with dropdown */
+}
+
+.categories-btn .fa-chevron-down {
+    margin-left: auto;
+}
+
+.categories-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border-radius: 0 0 8px 8px;
+}
+
+.categories-btn:hover .categories-dropdown {
+    display: block;
+}
+
+.categories-dropdown.active {
+    display: block;
+}
+
+.categories-dropdown li {
+    position: relative;
+}
+
+.categories-dropdown li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--text-dark);
+    font-size: 13px;
+    border-bottom: 1px solid var(--bg-gray);
+}
+
+.categories-dropdown > li:last-child > a {
+    border-bottom: none;
+}
+
+.categories-dropdown li a:hover {
+    color: var(--primary-color);
+    padding-left: 25px;
+}
+
+.categories-dropdown li a i:first-child {
+    width: 20px;
+    margin-right: 15px;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.categories-dropdown li a .fa-angle-right {
+    margin-left: auto;
+    font-size: 12px;
+}
+
+/* Submenu Styles */
+.submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 250px;
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    display: none;
+    z-index: 101;
+    min-height: 100%; /* At least as tall as the parent item to look connected */
+    border-radius: 0 8px 8px 8px;
+}
+
+.categories-dropdown li.has-submenu:hover > .submenu {
+    display: block;
+}
+
+.submenu li a {
+    padding: 12px 20px;
+}
+
+.submenu li:last-child a {
+    border-bottom: none;
+}
+
+.nav-links {
+    display: flex;
+    flex-grow: 1;
+    padding-left: 30px;
+}
+
+.nav-links li {
+    margin-right: 30px;
+}
+
+.nav-links li a {
+    color: var(--text-dark);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: block;
+    padding: 20px 0;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active {
+    color: var(--primary-color);
+}
+
+.nav-links li a.highlight {
+    color: var(--primary-color);
+}
+
+/* Mobile Bottom Nav - Hidden on Desktop */
+.mobile-bottom-nav {
+    display: none;
+}

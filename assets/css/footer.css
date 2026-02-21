@@ -1,0 +1,201 @@
+/* ==== Main Footer ==== */
+.main-footer {
+    background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+    color: var(--white);
+    padding-top: 70px;
+    border-top: 5px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Optional subtle background pattern/glow */
+.main-footer::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 50%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(211,47,47,0.05) 0%, rgba(211,47,47,0) 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 40px;
+    padding-bottom: 50px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.footer-logo {
+    max-width: 220px;
+    margin-bottom: 25px;
+    transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+    transform: scale(1.05);
+}
+
+.brand-info p {
+    color: #b3b3b3;
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 25px;
+}
+
+.social-links {
+    display: flex;
+    gap: 12px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--white);
+    border-radius: 50%;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.social-links a:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
+}
+
+.footer-widget h3 {
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.footer-widget h3::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+}
+
+.link-helper ul li, .services-list ul li {
+    margin-bottom: 15px;
+}
+
+.link-helper ul li a, .services-list ul li a {
+    color: #b3b3b3;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.link-helper ul li a i, .services-list ul li a i {
+    font-size: 10px;
+    margin-right: 8px;
+    color: var(--primary-color);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+}
+
+.link-helper ul li a:hover, .services-list ul li a:hover {
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.link-helper ul li a:hover i, .services-list ul li a:hover i {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.contact-info {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-info li {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+    color: #b3b3b3;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.contact-info li i {
+    color: var(--primary-color);
+    font-size: 18px;
+    margin-top: 3px;
+}
+
+.contact-info li strong {
+    display: block;
+    color: var(--white);
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.payment-methods {
+    margin-top: 30px;
+}
+
+.payment-methods h3 {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.payment-icons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.payment-icons img {
+    height: 32px;
+    background-color: var(--white);
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.payment-icons img:hover {
+    transform: scale(1.1) translateY(-2px);
+}
+
+.footer-bottom {
+    background-color: #0b0b0d;
+    padding: 20px 0;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-bottom p {
+    font-size: 14px;
+    color: #888888;
+}
+
+.footer-bottom p span {
+    color: var(--primary-color);
+    font-weight: 600;
+}

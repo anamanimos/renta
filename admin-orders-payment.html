@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bukti Pembayaran | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <!-- DataTables CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .product-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      .product-list-card {
+        background-color: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+      }
+
+      /* DataTables Overrides */
+      .dataTables_wrapper .dataTables_length,
+      .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 15px;
+      }
+      .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 6px 12px;
+        outline: none;
+        margin-left: 8px;
+        transition: 0.2s;
+        font-family: inherit;
+      }
+      .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+      }
+      table.dataTable {
+        border-collapse: collapse !important;
+        width: 100% !important;
+      }
+      table.dataTable thead th {
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 16px;
+      }
+      table.dataTable tbody td {
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px;
+        vertical-align: middle;
+        font-size: 0.95rem;
+      }
+
+      .payment-proof-img {
+        width: 60px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      .payment-proof-img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-orders.html"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span
+            ><span class="badge">12</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"><i class="ti ti-users"></i> <span>Pengguna</span></a>
+        </li>
+        <li>
+          <a href="admin-reports.html"><i class="ti ti-chart-bar"></i> <span>Laporan</span></a>
+        </li>
+        <li>
+          <a href="admin-coupons.html"><i class="ti ti-ticket"></i> <span>Kupon</span></a>
+        </li>
+        <li>
+          <a href="admin-pages.html"><i class="ti ti-notebook"></i> <span>Halaman</span></a>
+        </li>
+        <li>
+          <a href="admin-articles.html"><i class="ti ti-article"></i> <span>Artikel</span></a>
+        </li>
+        <li>
+          <a href="admin-settings-general.html"><i class="ti ti-settings"></i> <span>Pengaturan</span></a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Navbar -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <a
+            href="admin-orders.html"
+            class="icon-btn"
+            style="
+              margin-right: 15px;
+              color: var(--text-color);
+              font-size: 1rem;
+              gap: 5px;
+            "
+          >
+            <i class="ti ti-arrow-left"></i> Kembali ke Pesanan
+          </a>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="dashboard-content">
+        <div
+          class="page-header"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+          "
+        >
+          <div>
+            <h1>Verifikasi Pembayaran</h1>
+            <p>Daftar bukti transfer yang diunggah oleh pelanggan.</p>
+          </div>
+        </div>
+
+        <div class="product-list-card">
+          <div class="table-responsive">
+            <table class="table table-hover" id="paymentTable">
+              <thead>
+                <tr>
+                  <th>Waktu Upload</th>
+                  <th>ID Pesanan</th>
+                  <th>Pelanggan</th>
+                  <th>Jumlah Tagihan</th>
+                  <th>Bukti Transfer</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>24 Okt 2026 14:30</td>
+                  <td>
+                    <a
+                      href="admin-orders-detail.html?id=ORD-001"
+                      style="font-weight: 600; text-decoration: none"
+                      >#ORD-001</a
+                    >
+                  </td>
+                  <td>
+                    Budi Santoso<br /><small class="text-muted"
+                      >BCA - 012xxx</small
+                    >
+                  </td>
+                  <td style="font-weight: 600">Rp 2.100.000</td>
+                  <td>
+                    <img
+                      src="https://placehold.co/300x400"
+                      alt="Bukti 1"
+                      class="payment-proof-img"
+                      onclick="viewProofLarge('https://placehold.co/600x800')"
+                    />
+                  </td>
+                  <td>
+                    <button
+                      class="action-btn approve"
+                      onclick="verifyPayment('ORD-001')"
+                      title="Verifikasi Lunas"
+                    >
+                      <i class="ti ti-check"></i>
+                    </button>
+                    <button
+                      class="action-btn reject"
+                      onclick="rejectPayment('ORD-001')"
+                      title="Tolak"
+                    >
+                      <i class="ti ti-x"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>24 Okt 2026 09:15</td>
+                  <td>
+                    <a
+                      href="admin-orders-detail.html?id=ORD-004"
+                      style="font-weight: 600; text-decoration: none"
+                      >#ORD-004</a
+                    >
+                  </td>
+                  <td>
+                    Siti Aminah<br /><small class="text-muted"
+                      >Mandiri - 998xxx</small
+                    >
+                  </td>
+                  <td style="font-weight: 600">Rp 850.000</td>
+                  <td>
+                    <img
+                      src="https://placehold.co/300x400?text=Bukti2"
+                      alt="Bukti 2"
+                      class="payment-proof-img"
+                      onclick="
+                        viewProofLarge(
+                          'https://placehold.co/600x800?text=Bukti2',
+                        )
+                      "
+                    />
+                  </td>
+                  <td>
+                    <button
+                      class="action-btn approve"
+                      onclick="verifyPayment('ORD-004')"
+                      title="Verifikasi Lunas"
+                    >
+                      <i class="ti ti-check"></i>
+                    </button>
+                    <button
+                      class="action-btn reject"
+                      onclick="rejectPayment('ORD-004')"
+                      title="Tolak"
+                    >
+                      <i class="ti ti-x"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#paymentTable").DataTable({
+          language: {
+            search: "Cari:",
+            lengthMenu: "Tampil _MENU_ baris",
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+          },
+          order: [[0, "desc"]],
+          columnDefs: [{ orderable: false, targets: [4, 5] }],
+        });
+      });
+
+      function viewProofLarge(url) {
+        Swal.fire({
+          imageUrl: url,
+          imageAlt: "Bukti Transfer Detail",
+          width: 500,
+          showConfirmButton: false,
+          showCloseButton: true,
+        });
+      }
+
+      function verifyPayment(id) {
+        Swal.fire({
+          title: "Konfirmasi Lunas?",
+          text: "Status " + id + " akan berubah, pelanggan akan terverifikasi.",
+          icon: "success",
+          showCancelButton: true,
+          confirmButtonText: "Ya, Lunas!",
+          cancelButtonText: "Batal",
+        }).then((res) => {
+          if (res.isConfirmed) {
+            Swal.fire("Terverifikasi!", "Pembayaran diterima.", "success");
+          }
+        });
+      }
+
+      function rejectPayment(id) {
+        Swal.fire({
+          title: "Tolak Pembayaran",
+          input: "text",
+          inputPlaceholder: "Alasan (Msl: Jumlah tidak sesuai)",
+          icon: "error",
+          showCancelButton: true,
+          confirmButtonText: "Tolak",
+          cancelButtonText: "Batal",
+        }).then((res) => {
+          if (res.isConfirmed) {
+            Swal.fire("Ditolak!", "Bukti pembayaran ditolak.", "info");
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

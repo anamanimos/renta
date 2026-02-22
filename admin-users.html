@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Pengguna | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <!-- DataTables CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .product-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      .filter-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .product-list-card {
+        background-color: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+      }
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: background-color 0.2s;
+      }
+      .btn-primary:hover {
+        background-color: #b71c1c;
+      }
+      .active-filter-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--white);
+      }
+      .active-filter-tag.bg-blue {
+        background-color: #3b82f6;
+      }
+      .active-filter-tag.bg-purple {
+        background-color: #a855f7;
+      }
+      .active-filter-tag.bg-green {
+        background-color: #10b981;
+      }
+      .active-filter-tag .remove-tag {
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.8;
+      }
+      .active-filter-tag .remove-tag:hover {
+        opacity: 1;
+      }
+      .filter-pill-new:hover {
+        opacity: 0.8;
+      }
+
+      /* Popover Styles */
+      .popover-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .popover-header h4 {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+      .clear-filter {
+        background: none;
+        border: none;
+        color: var(--text-light);
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: color 0.2s;
+      }
+      .clear-filter:hover {
+        color: var(--danger);
+      }
+      .filter-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background-color: var(--bg-color);
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: var(--text-color);
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        margin-bottom: 8px;
+      }
+      .filter-pill:hover {
+        background-color: var(--border-color);
+      }
+      .filter-pill.selected {
+        background-color: #eff6ff;
+        color: #3b82f6;
+        border-color: #bfdbfe;
+      }
+      .filter-pill .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #94a3b8;
+      }
+      .filter-pill .dot.bg-purple {
+        background-color: #a855f7;
+      }
+      .filter-pill .dot.bg-blue {
+        background-color: #3b82f6;
+      }
+      .filter-pill .dot.bg-green {
+        background-color: #10b981;
+      }
+
+      .table-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .table-user img {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .role-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .role-badge.superadmin {
+        background-color: #f3e8ff;
+        color: #a855f7;
+      }
+      .role-badge.staff {
+        background-color: #dbeafe;
+        color: #2563eb;
+      }
+      .role-badge.customer {
+        background-color: #d1fae5;
+        color: #059669;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-orders.html"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span
+            ><span class="badge">12</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-users.html"
+            ><i class="ti ti-users"></i> <span>Pengguna</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-reports.html"
+            ><i class="ti ti-chart-bar"></i> <span>Laporan</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-coupons.html"
+            ><i class="ti ti-ticket"></i> <span>Kupon</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-pages.html"
+            ><i class="ti ti-notebook"></i> <span>Halaman</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-articles.html"
+            ><i class="ti ti-article"></i> <span>Artikel</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-settings-general.html"
+            ><i class="ti ti-settings"></i> <span>Pengaturan</span></a
+          >
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn" id="logoutBtn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="search-bar">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Cari pesanan, produk..." />
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="page-header">
+          <h1>Kelola Pengguna</h1>
+          <p>Daftar seluruh pengguna, staf, dan pelanggan Renta.</p>
+        </div>
+
+        <div
+          class="product-actions-top"
+          style="
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+          "
+        >
+          <a href="admin-users-create.html" class="btn-primary">
+            <i class="ti ti-plus"></i> Tambah Pengguna
+          </a>
+        </div>
+
+        <div class="product-list-card">
+          <!-- Active Filters Area -->
+          <div
+            class="active-filters-area"
+            id="activeFiltersArea"
+            style="
+              display: none;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 20px;
+              flex-wrap: wrap;
+              padding-bottom: 16px;
+              border-bottom: 1px dashed var(--border-color);
+            "
+          >
+            <span
+              style="
+                font-size: 0.95rem;
+                color: var(--text-light);
+                font-weight: 500;
+                white-space: nowrap;
+              "
+              >Filter aktif:</span
+            >
+            <div
+              id="activeFiltersList"
+              style="
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                align-items: center;
+              "
+            ></div>
+          </div>
+
+          <div
+            class="table-header-actions"
+            style="
+              margin-bottom: 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 15px;
+            "
+          >
+            <div
+              class="filter-toolbar"
+              style="display: flex; gap: 10px; position: relative"
+            >
+              <button
+                class="btn btn-primary"
+                id="btnTambahFilter"
+                style="
+                  background-color: #2563eb;
+                  color: #fff;
+                  border: none;
+                  padding: 8px 16px;
+                  border-radius: 6px;
+                  font-weight: 500;
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 8px;
+                "
+              >
+                <i class="ti ti-plus"></i> Tambah Filter
+              </button>
+              <button
+                class="btn"
+                id="btnResetFilter"
+                style="
+                  background-color: #f8fafc;
+                  border: 1px solid #e2e8f0;
+                  color: #475569;
+                  padding: 8px 16px;
+                  border-radius: 6px;
+                  font-weight: 500;
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 8px;
+                  cursor: pointer;
+                "
+              >
+                <i class="ti ti-refresh"></i> Reset
+              </button>
+
+              <!-- Popover -->
+              <div
+                class="filter-popover"
+                id="filterPopover"
+                style="
+                  position: absolute;
+                  top: 100%;
+                  left: 0;
+                  margin-top: 10px;
+                  background: #fff;
+                  border: 1px solid #e2e8f0;
+                  border-radius: 8px;
+                  padding: 16px;
+                  width: 340px;
+                  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                  z-index: 100;
+                "
+              >
+                <div
+                  style="
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    color: #94a3b8;
+                    margin-bottom: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                  "
+                >
+                  PERAN PENGGUNA
+                </div>
+                <div
+                  class="filter-section"
+                  style="display: flex; flex-wrap: wrap; gap: 8px"
+                >
+                  <div
+                    class="filter-pill-new"
+                    data-value="Super Admin"
+                    data-color="purple"
+                    style="
+                      background: #f3e8ff;
+                      color: #7e22ce;
+                      padding: 4px 10px;
+                      border-radius: 6px;
+                      font-size: 0.85rem;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      transition: 0.2s;
+                    "
+                  >
+                    <span
+                      style="
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: #a855f7;
+                      "
+                    ></span
+                    >Super Admin
+                  </div>
+                  <div
+                    class="filter-pill-new"
+                    data-value="Staf"
+                    data-color="blue"
+                    style="
+                      background: #bfdbfe;
+                      color: #1e3a8a;
+                      padding: 4px 10px;
+                      border-radius: 6px;
+                      font-size: 0.85rem;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      transition: 0.2s;
+                    "
+                  >
+                    <span
+                      style="
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: #2563eb;
+                      "
+                    ></span
+                    >Staf
+                  </div>
+                  <div
+                    class="filter-pill-new"
+                    data-value="Pelanggan"
+                    data-color="green"
+                    style="
+                      background: #bbf7d0;
+                      color: #14532d;
+                      padding: 4px 10px;
+                      border-radius: 6px;
+                      font-size: 0.85rem;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      transition: 0.2s;
+                    "
+                  >
+                    <span
+                      style="
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: #16a34a;
+                      "
+                    ></span
+                    >Pelanggan
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="search-control">
+              <input
+                type="text"
+                id="customSearch"
+                class="form-control"
+                placeholder="Cari pengguna..."
+              />
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="admin-table" id="usersTable" style="width: 100%">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Pengguna</th>
+                  <th>Telepon / WA</th>
+                  <th>Peran</th>
+                  <th>Terdaftar</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Mock Data
+        const usersData = [
+          {
+            no: 1,
+            user: "<div class='table-user'><img src='https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff' /><div><div style='font-weight:600;'>Admin Utama</div><div style='font-size:0.8rem; color:var(--text-light);'>admin@renta.com</div></div></div>",
+            phone: "0811-2233-4455",
+            roleHTML: "<span class='role-badge superadmin'>Super Admin</span>",
+            roleText: "Super Admin",
+            registered: "01 Jan 2025",
+            action:
+              "<button class='action-btn view' onclick=\"window.location.href='admin-users-detail.html?id=1'\" title='Detail'><i class='ti ti-user-edit'></i></button>",
+          },
+          {
+            no: 2,
+            user: "<div class='table-user'><img src='https://ui-avatars.com/api/?name=Budi+Santoso&background=f0e68c' /><div><div style='font-weight:600;'>Budi Santoso</div><div style='font-size:0.8rem; color:var(--text-light);'>budi.s@example.com</div></div></div>",
+            phone: "0812-3456-7890",
+            roleHTML: "<span class='role-badge customer'>Pelanggan</span>",
+            roleText: "Pelanggan",
+            registered: "15 Feb 2026",
+            action:
+              "<button class='action-btn view' onclick=\"window.location.href='admin-users-detail.html?id=2'\" title='Detail'><i class='ti ti-user-edit'></i></button> <button class='action-btn reject delete-user' title='Hapus'><i class='ti ti-trash'></i></button>",
+          },
+          {
+            no: 3,
+            user: "<div class='table-user'><img src='https://ui-avatars.com/api/?name=Anita+Wijaya&background=ffb6c1' /><div><div style='font-weight:600;'>Anita Wijaya</div><div style='font-size:0.8rem; color:var(--text-light);'>anita.staff@renta.com</div></div></div>",
+            phone: "0813-8877-6655",
+            roleHTML: "<span class='role-badge staff'>Staf</span>",
+            roleText: "Staf",
+            registered: "10 Mar 2026",
+            action:
+              "<button class='action-btn view' onclick=\"window.location.href='admin-users-detail.html?id=3'\" title='Detail'><i class='ti ti-user-edit'></i></button> <button class='action-btn reject delete-user' title='Hapus'><i class='ti ti-trash'></i></button>",
+          },
+        ];
+
+        const table = $("#usersTable").DataTable({
+          dom: '<"table-scroll"rt><"bottom-controls"lp>',
+          data: usersData,
+          lengthChange: false,
+          pageLength: 10,
+          columns: [
+            { data: "no" },
+            { data: "user" },
+            { data: "phone" },
+            { data: "roleHTML" },
+            { data: "registered" },
+            { data: "action", orderable: false },
+          ],
+          language: {
+            search: "Cari Pengguna:",
+            lengthMenu: "Tampil _MENU_ data",
+            info: "Menampilkan _START_ s/d _END_ dari _TOTAL_ pengguna",
+            paginate: {
+              previous: '<i class="ti ti-chevron-left"></i>',
+              next: '<i class="ti ti-chevron-right"></i>',
+            },
+          },
+          drawCallback: function () {
+            $(".delete-user")
+              .off("click")
+              .on("click", function (e) {
+                Swal.fire({
+                  title: "Hapus Pengguna?",
+                  text: "Data yang dihapus tidak dapat dikembalikan!",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#ef4444",
+                  cancelButtonColor: "#64748b",
+                  confirmButtonText: "Ya, Hapus!",
+                  cancelButtonText: "Batal",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    Swal.fire(
+                      "Terhapus!",
+                      "Pengguna berhasil dihapus.",
+                      "success",
+                    );
+                  }
+                });
+              });
+          },
+        });
+
+        $("#customSearch").on("keyup", function () {
+          table.search(this.value).draw();
+        });
+
+        // Filter Logic
+        const btnTambahFilter = document.getElementById("btnTambahFilter");
+        const filterPopover = document.getElementById("filterPopover");
+        const btnResetFilter = document.getElementById("btnResetFilter");
+        const activeFiltersArea = document.getElementById("activeFiltersArea");
+        const activeFiltersList = document.getElementById("activeFiltersList");
+
+        btnTambahFilter.addEventListener("click", (e) => {
+          e.stopPropagation();
+          filterPopover.classList.toggle("show");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (
+            !filterPopover.contains(e.target) &&
+            !btnTambahFilter.contains(e.target)
+          ) {
+            filterPopover.classList.remove("show");
+          }
+        });
+
+        let selectedFilters = new Set();
+        const filterPillsNew = document.querySelectorAll(".filter-pill-new");
+        filterPillsNew.forEach((pill) => {
+          pill.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const val = this.getAttribute("data-value");
+            if (selectedFilters.has(val)) {
+              selectedFilters.delete(val);
+              this.style.opacity = "1";
+            } else {
+              selectedFilters.add(val);
+              this.style.opacity = "0.5";
+            }
+            updateActiveFilters();
+          });
+        });
+
+        function updateActiveFilters() {
+          activeFiltersList.innerHTML = "";
+          if (selectedFilters.size === 0) {
+            activeFiltersArea.style.display = "none";
+            table.column(3).search("").draw();
+            return;
+          }
+          activeFiltersArea.style.display = "flex";
+          selectedFilters.forEach((val) => {
+            const pillEl = document.querySelector(
+              `.filter-pill-new[data-value="${val}"]`,
+            );
+            let bgColorClass = "bg-blue";
+            if (pillEl) {
+              const color = pillEl.getAttribute("data-color");
+              if (color) bgColorClass = "bg-" + color;
+            }
+            const tag = document.createElement("div");
+            tag.className = `active-filter-tag ${bgColorClass}`;
+            tag.innerHTML = `Peran: ${val} <span class="remove-tag" data-value="${val}"><i class="ti ti-x"></i></span>`;
+            activeFiltersList.appendChild(tag);
+          });
+
+          document.querySelectorAll(".remove-tag").forEach((btn) => {
+            btn.addEventListener("click", function () {
+              const v = this.getAttribute("data-value");
+              selectedFilters.delete(v);
+              const pillEl = document.querySelector(
+                `.filter-pill-new[data-value="${v}"]`,
+              );
+              if (pillEl) pillEl.style.opacity = "1";
+              updateActiveFilters();
+            });
+          });
+
+          const regex = Array.from(selectedFilters).join("|");
+          table.column(3).search(regex, true, false).draw();
+        }
+
+        btnResetFilter.addEventListener("click", () => {
+          selectedFilters.clear();
+          filterPillsNew.forEach((p) => (p.style.opacity = "1"));
+          updateActiveFilters();
+        });
+      });
+    </script>
+  </body>
+</html>

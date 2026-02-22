@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tambah Produk Baru | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .form-card {
+        background-color: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        max-width: 900px;
+      }
+
+      .form-section-title {
+        font-size: 1.1rem;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .form-section-title i {
+        color: var(--primary-color);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.95rem;
+        color: var(--text-color);
+      }
+
+      .form-control,
+      .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: var(--text-color);
+        background-color: var(--bg-color);
+        transition: border-color 0.2s;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+      }
+
+      textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .input-group {
+        display: flex;
+        align-items: stretch;
+      }
+
+      .input-group-text {
+        background-color: var(--border-color);
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px 0 0 8px;
+        color: var(--text-light);
+        display: flex;
+        align-items: center;
+      }
+
+      .input-group .form-control {
+        border-radius: 0 8px 8px 0;
+      }
+
+      .image-upload-wrapper {
+        border: 2px dashed var(--border-color);
+        border-radius: 12px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background-color: var(--bg-color);
+      }
+
+      .image-upload-wrapper:hover {
+        border-color: var(--primary-color);
+        background-color: var(--primary-light);
+      }
+
+      .image-upload-wrapper i {
+        font-size: 2.5rem;
+        color: var(--text-light);
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .image-upload-wrapper p {
+        color: var(--text-light);
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background-color: #b71c1c; /* Darker red */
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+      }
+
+      .btn-outline:hover {
+        background-color: var(--bg-color);
+      }
+
+      .preview-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+      .preview-item {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        border: 1px solid var(--border-color);
+        background-color: var(--white);
+        cursor: grab;
+      }
+      .preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .preview-item.sortable-ghost {
+        opacity: 0.4;
+      }
+      .preview-item:active {
+        cursor: grabbing;
+      }
+      .main-badge {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        background-color: var(--primary-color);
+        color: white;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+        display: none;
+        z-index: 2;
+      }
+      .preview-item:first-child .main-badge {
+        display: block;
+      }
+      .remove-img-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: var(--danger);
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+        transition: all 0.2s;
+      }
+      .remove-img-btn:hover {
+        background-color: var(--danger);
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .form-actions {
+          flex-direction: column;
+        }
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li>
+          <a href="#"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span>
+            <span class="badge">12</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"><i class="ti ti-users"></i> <span>Pengguna</span></a>
+        </li>
+        <li>
+          <a href="admin-reports.html"><i class="ti ti-chart-bar"></i> <span>Laporan</span></a>
+        </li>
+        <li>
+          <a href="admin-coupons.html"><i class="ti ti-ticket"></i> <span>Kupon</span></a>
+        </li>
+        <li>
+          <a href="admin-settings-general.html"><i class="ti ti-settings"></i> <span>Pengaturan</span></a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn" id="logoutBtn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Navbar -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <!-- Back button for subpages -->
+          <a
+            href="admin-products.html"
+            class="icon-btn"
+            style="margin-right: 15px; color: var(--text-color)"
+          >
+            <i class="ti ti-arrow-left"></i> Kembali
+          </a>
+        </div>
+        <div class="header-right">
+          <!-- Store Mode Switcher -->
+          <div class="mode-switcher-container">
+            <span class="mode-label mode-rental active">Rental</span>
+            <div class="switch mode-toggle-btn">
+              <div class="slider-knob"></div>
+            </div>
+            <span class="mode-label mode-katalog">Katalog</span>
+          </div>
+
+          <button class="icon-btn" id="notificationBtn">
+            <i class="ti ti-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="dashboard-content">
+        <div class="page-header">
+          <h1>Tambah Produk Baru</h1>
+          <p>Masukkan informasi peralatan sewa secara detail</p>
+        </div>
+
+        <div class="form-card">
+          <form id="createProductForm">
+            <!-- Informasi Dasar -->
+            <h3 class="form-section-title">
+              <i class="ti ti-info-circle"></i> Informasi Dasar
+            </h3>
+
+            <div class="form-group">
+              <label class="form-label">Nama Produk</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Contoh: Stage (t: 40-60cm) + Karpet"
+                required
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Kategori</label>
+                <select class="form-select" required>
+                  <option value="">Pilih Kategori</option>
+                  <option value="sound">Sound System</option>
+                  <option value="lighting">Lighting & Effect</option>
+                  <option value="stage">Stage & Rigging</option>
+                  <option value="multimedia">Multimedia</option>
+                  <option value="livecam">Live Cam</option>
+                  <option value="cooling">Cooling System</option>
+                  <option value="other">Lainnya</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">SKU / Kode Barang</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Contoh: STG-040-KPT"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Harga & Stok -->
+            <h3 class="form-section-title" style="margin-top: 20px">
+              <i class="ti ti-currency-dollar"></i> Harga & Ketersediaan
+            </h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Tipe Harga</label>
+                <select
+                  class="form-select"
+                  id="priceType"
+                  onchange="togglePriceFields()"
+                  required
+                >
+                  <option value="rental_flat">Sewa Flat (Per Hari)</option>
+                  <option value="rental_tiered">
+                    Sewa Tiered (Lebih dari 1 Hari lebih murah)
+                  </option>
+                  <option value="sell_once">Jual Putus (Sekali Beli)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Satuan Sewa/Beli</label>
+                <select class="form-select" required>
+                  <option value="unit">Per Unit</option>
+                  <option value="meter">Per Meter Persegi</option>
+                  <option value="paket">Per Paket</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row" id="basePriceRow">
+              <div class="form-group">
+                <label class="form-label" id="basePriceLabel"
+                  >Harga (Sewa/Beli)</label
+                >
+                <div class="input-group">
+                  <span class="input-group-text">Rp</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="basePrice"
+                    placeholder="0"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Harga Promo (Opsional)</label>
+                <div class="input-group">
+                  <span class="input-group-text">Rp</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="promoPrice"
+                    placeholder="Bila kosong berarti no-promo"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row" id="tierPriceGroup" style="display: none">
+              <div class="form-group">
+                <label class="form-label">Harga Hari ke-2 dan Seterusnya</label>
+                <div class="input-group">
+                  <span class="input-group-text">Rp</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="tierPrice"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label"
+                  >Harga Promo Hari Ke-2 (Opsional)</label
+                >
+                <div class="input-group">
+                  <span class="input-group-text">Rp</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="tierPromoPrice"
+                    placeholder="Bila kosong berarti no-promo"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Pricing Explanation Box -->
+            <div
+              id="priceExplanation"
+              style="
+                background-color: var(--bg-color);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 20px;
+                font-size: 0.9rem;
+                color: var(--text-light);
+              "
+            >
+              <strong
+                ><i class="ti ti-info-circle"></i> Penjelasan Sistem
+                Harga:</strong
+              >
+              <p style="margin-top: 5px; margin-bottom: 0" id="explainText">
+                <strong>Sewa Flat:</strong> Harga konstan setiap hari. <br /><em
+                  >Rumus: Harga × Jumlah Hari × Kuantitas</em
+                >
+              </p>
+              <p
+                style="
+                  margin-top: 8px;
+                  font-size: 0.85rem;
+                  color: var(--danger);
+                "
+              >
+                *Asumsi belum termasuk ongkos kirim.
+              </p>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Total Stok Tersedia</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Contoh: 10"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Status Produk</label>
+                <select class="form-select">
+                  <option value="active">Aktif (Tersedia untuk disewa)</option>
+                  <option value="draft">Draft (Sembunyikan sementara)</option>
+                  <option value="maintenance">
+                    Maintenance (Sedang perbaikan)
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Media & Deskripsi -->
+            <h3 class="form-section-title" style="margin-top: 20px">
+              <i class="ti ti-photo"></i> Media & Deskripsi Lengkap
+            </h3>
+
+            <div class="form-group">
+              <label class="form-label"
+                >Foto Produk (Multi-upload & Drag untuk mengurutkan)</label
+              >
+              <div class="image-upload-wrapper" id="imageUpload">
+                <i class="ti ti-cloud-upload"></i>
+                <p>Klik atau drop gambar ke sini untuk mengunggah</p>
+                <p style="font-size: 0.8rem; margin-top: 5px">
+                  Gambar pertama secara berurutan akan menjadi
+                  <strong>Gambar Utama</strong>
+                </p>
+                <input
+                  type="file"
+                  id="fileInput"
+                  style="display: none"
+                  accept="image/*"
+                  multiple
+                />
+              </div>
+              <div class="preview-container" id="previewContainer"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Deskripsi Lengkap & Spesifikasi</label>
+              <!-- Quill JS Editor Container -->
+              <div
+                id="editor-container"
+                style="
+                  height: 200px;
+                  background-color: var(--bg-color);
+                  border-bottom-left-radius: 8px;
+                  border-bottom-right-radius: 8px;
+                  font-family: inherit;
+                "
+              ></div>
+              <!-- Hidden input to store real HTML content on submit -->
+              <input
+                type="hidden"
+                id="productDescription"
+                name="description"
+                required
+              />
+            </div>
+
+            <div class="form-actions">
+              <a href="admin-products.html" class="btn btn-outline">Batal</a>
+              <button type="submit" class="btn btn-primary">
+                <i class="ti ti-device-floppy"></i> Simpan Produk
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav admin-bottom-nav">
+      <a href="admin.html">
+        <i class="ti ti-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#">
+        <i class="ti ti-shopping-cart"></i>
+        <span>Pesanan</span>
+        <span class="nav-badge">12</span>
+      </a>
+      <a href="#" class="scan-btn">
+        <div class="icon-circle">
+          <i class="ti ti-scan"></i>
+        </div>
+        <span>Scan</span>
+      </a>
+      <a href="admin-products.html" class="active">
+        <i class="ti ti-box"></i>
+        <span>Produk</span>
+      </a>
+      <a href="#">
+        <i class="ti ti-user"></i>
+        <span>Profil</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="assets/js/admin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- Include Quill library -->
+    <link
+      href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script>
+      // Initialize Quill Editor
+      var quill = new Quill("#editor-container", {
+        theme: "snow",
+        placeholder:
+          "Tuliskan spesifikasi detail alat, brand, kapasitas, mendukung emoji 🎉...",
+        modules: {
+          toolbar: [
+            ["bold", "italic", "underline", "strike"],
+            ["blockquote", "code-block"],
+            [{ header: 1 }, { header: 2 }],
+            [{ list: "ordered" }, { list: "bullet" }],
+            [{ script: "sub" }, { script: "super" }],
+            [{ indent: "-1" }, { indent: "+1" }],
+            [{ size: ["small", false, "large", "huge"] }],
+            [{ color: [] }, { background: [] }],
+            [{ align: [] }],
+            ["clean"],
+          ],
+        },
+      });
+      // Form Handling
+      document
+        .getElementById("createProductForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Populate hidden input with HTML content from Quill
+          document.getElementById("productDescription").value =
+            quill.root.innerHTML;
+
+          if (quill.getText().trim().length === 0) {
+            Swal.fire("Oops!", "Deskripsi lengkap wajib diisi!", "warning");
+            return;
+          }
+
+          Swal.fire({
+            title: "Menyimpan Produk...",
+            text: "Mohon tunggu sebentar",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
+          // Simulate API Call
+          setTimeout(() => {
+            Swal.fire({
+              title: "Berhasil!",
+              text: "Produk baru telah ditambahkan ke katalog.",
+              icon: "success",
+              confirmButtonColor: "#D32F2F",
+            }).then(() => {
+              window.location.href = "admin-products.html";
+            });
+          }, 1500);
+        });
+
+      // Multiple Image Upload & Sortable Preview
+      const wrapper = document.getElementById("imageUpload");
+      const input = document.getElementById("fileInput");
+      const previewContainer = document.getElementById("previewContainer");
+
+      wrapper.addEventListener("click", () => {
+        input.click();
+      });
+
+      // Handle drag & drop over the wrapper
+      wrapper.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        wrapper.style.borderColor = "var(--primary-color)";
+        wrapper.style.backgroundColor = "var(--primary-light)";
+      });
+      wrapper.addEventListener("dragleave", () => {
+        wrapper.style.borderColor = "var(--border-color)";
+        wrapper.style.backgroundColor = "var(--bg-color)";
+      });
+      wrapper.addEventListener("drop", (e) => {
+        e.preventDefault();
+        wrapper.style.borderColor = "var(--border-color)";
+        wrapper.style.backgroundColor = "var(--bg-color)";
+        if (e.dataTransfer.files.length) {
+          handleFiles(e.dataTransfer.files);
+        }
+      });
+
+      input.addEventListener("change", function () {
+        if (this.files.length) {
+          handleFiles(this.files);
+        }
+      });
+
+      function handleFiles(files) {
+        Array.from(files).forEach((file) => {
+          if (!file.type.startsWith("image/")) return;
+
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            createPreviewItem(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        });
+        // Reset input logic
+        input.value = "";
+      }
+
+      function createPreviewItem(src) {
+        const item = document.createElement("div");
+        item.className = "preview-item";
+
+        item.innerHTML = `
+            <span class="main-badge">Utama</span>
+            <img src="${src}" alt="Preview" />
+            <button type="button" class="remove-img-btn" onclick="this.parentElement.remove()" title="Hapus"><i class="ti ti-trash"></i></button>
+        `;
+
+        previewContainer.appendChild(item);
+      }
+
+      // Initialize SortableJS
+      new Sortable(previewContainer, {
+        animation: 150,
+        ghostClass: "sortable-ghost",
+        delay: 50, // Helps prevent accidental drags on touch
+        delayOnTouchOnly: true,
+      });
+
+      // Toggle Pricing Visibility & Explanation
+      function togglePriceFields() {
+        const type = document.getElementById("priceType").value;
+        const tierGroup = document.getElementById("tierPriceGroup");
+        const baseLabel = document.getElementById("basePriceLabel");
+        const tierInput = document.getElementById("tierPrice");
+        const tierPromoInput = document.getElementById("tierPromoPrice");
+        const explainText = document.getElementById("explainText");
+
+        if (type === "rental_flat") {
+          tierGroup.style.display = "none";
+          tierInput.required = false;
+          baseLabel.innerText = "Harga Sewa (Per Hari)";
+          explainText.innerHTML =
+            "<strong>Sewa Flat:</strong> Harga konstan setiap harinya.<br/><em>Rumus: Harga × Jumlah Hari × Kuantitas</em>";
+        } else if (type === "rental_tiered") {
+          tierGroup.style.display = "flex";
+          tierInput.required = true;
+          baseLabel.innerText = "Harga Sewa (Hari Ke-1)";
+          explainText.innerHTML =
+            "<strong>Sewa Tiered:</strong> Hari pertama dihitung normal, hari kedua dan seterusnya lebih murah.<br/><em>Rumus: Harga Hari Pertama + ((Jumlah Hari - 1) × Harga Hari Ke-2) × Kuantitas</em>";
+        } else if (type === "sell_once") {
+          tierGroup.style.display = "none";
+          tierInput.required = false;
+          baseLabel.innerText = "Harga Jual";
+          explainText.innerHTML =
+            "<strong>Jual Putus:</strong> Pembelian sekali bayar (bukan sewa).<br/><em>Rumus: Harga Jual × Kuantitas</em>";
+        }
+      }
+    </script>
+  </body>
+</html>

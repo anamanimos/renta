@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pembayaran | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .layout-grid {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      @media (max-width: 992px) {
+        .layout-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .settings-nav {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+      .settings-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        color: var(--text-color);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: 0.2s;
+      }
+      .settings-nav a:hover,
+      .settings-nav a.active {
+        background-color: var(--bg-color);
+        color: var(--primary-color);
+      }
+      .settings-nav a i {
+        font-size: 1.2rem;
+      }
+
+      .card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 24px;
+      }
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+      .form-control,
+      .form-select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        outline: none;
+        font-family: inherit;
+        transition: 0.2s;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .bank-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .bank-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid var(--border-color);
+        padding: 15px 20px;
+        border-radius: 12px;
+        background: #f8fafc;
+      }
+      .bank-info strong {
+        display: block;
+        font-size: 1.1rem;
+      }
+      .bank-info span {
+        display: block;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-top: 4px;
+      }
+
+      .btn-outline-danger {
+        background: transparent;
+        border: 1px solid var(--danger);
+        color: var(--danger);
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: 0.2s;
+      }
+      .btn-outline-danger:hover {
+        background: var(--danger);
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-orders.html"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span
+            ><span class="badge">12</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"
+            ><i class="ti ti-users"></i> <span>Pengguna</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-reports.html"
+            ><i class="ti ti-chart-bar"></i> <span>Laporan</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-coupons.html"
+            ><i class="ti ti-ticket"></i> <span>Kupon</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-pages.html"
+            ><i class="ti ti-notebook"></i> <span>Halaman</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-articles.html"
+            ><i class="ti ti-article"></i> <span>Artikel</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-settings-general.html"
+            ><i class="ti ti-settings"></i> <span>Pengaturan</span></a
+          >
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="page-header" style="margin-bottom: 24px">
+          <h1>Pengaturan Pembayaran</h1>
+          <p>Kelola rekening bank dan opsi payment gateway.</p>
+        </div>
+
+        <div class="layout-grid">
+          <!-- Settings Sidebar -->
+          <div class="settings-nav">
+            <a href="admin-settings-general.html"
+              ><i class="ti ti-adjustments"></i> Umum</a
+            >
+            <a href="admin-settings-whatsapp.html"
+              ><i class="ti ti-brand-whatsapp"></i> Integrasi WhatsApp</a
+            >
+            <a href="admin-settings-payment.html" class="active"
+              ><i class="ti ti-credit-card"></i> Pembayaran</a
+            >
+            <a href="admin-settings-logs.html"
+              ><i class="ti ti-history"></i> Log Aktivitas</a
+            >
+          </div>
+
+          <!-- Settings Content -->
+          <div class="settings-content">
+            <div class="card">
+              <h3 class="card-title">
+                Rekening Bank Transfer Manual
+                <button
+                  class="btn-primary"
+                  style="font-size: 0.85rem; padding: 6px 12px"
+                >
+                  <i class="ti ti-plus"></i> Tambah Rekening
+                </button>
+              </h3>
+
+              <div class="bank-list">
+                <div class="bank-item">
+                  <div class="bank-info">
+                    <strong>BCA - Bank Central Asia</strong>
+                    <span>No. Rekening: 1234567890</span>
+                    <span>A/N: PT Renta Sistem Indonesia</span>
+                  </div>
+                  <div>
+                    <button class="btn-outline-danger" title="Hapus">
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="bank-item">
+                  <div class="bank-info">
+                    <strong>Bank Mandiri</strong>
+                    <span>No. Rekening: 0987654321</span>
+                    <span>A/N: Budi Santoso</span>
+                  </div>
+                  <div>
+                    <button class="btn-outline-danger" title="Hapus">
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 class="card-title">Payment Gateway (Otomatis)</h3>
+              <form id="gatewayForm">
+                <div class="form-group">
+                  <label class="form-label">Provider Aktif</label>
+                  <select class="form-select">
+                    <option value="midtrans">Midtrans</option>
+                    <option value="xendit">Xendit</option>
+                    <option value="none">
+                      Nonaktifkan (Hanya Transfer Manual)
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Midtrans Config -->
+                <div
+                  style="
+                    background: var(--bg-color);
+                    padding: 20px;
+                    border-radius: 12px;
+                    border: 1px solid var(--border-color);
+                  "
+                >
+                  <h4
+                    style="
+                      margin-top: 0;
+                      margin-bottom: 20px;
+                      color: var(--text-color);
+                    "
+                  >
+                    Konfigurasi Midtrans
+                  </h4>
+                  <div class="form-group">
+                    <label class="form-label">Client Key</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      value="SB-Mid-client-xxxxxxxxxxx"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Server Key</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      value="SB-Mid-server-xxxxxxxxxxx"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Environment</label>
+                    <select class="form-select">
+                      <option value="sandbox">Sandbox (Testing)</option>
+                      <option value="production">Production (Live)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="text-align: right; margin-top: 20px">
+                  <button type="submit" class="btn-primary">
+                    <i class="ti ti-device-floppy"></i> Simpan Gateway
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="assets/js/admin.js"></script>
+    <script>
+      document
+        .getElementById("gatewayForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          Swal.fire({
+            title: "Tersimpan!",
+            text: "Konfigurasi Payment Gateway berhasil diperbarui.",
+            icon: "success",
+          });
+        });
+    </script>
+  </body>
+</html>

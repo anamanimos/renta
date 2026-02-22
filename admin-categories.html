@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kelola Kategori | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SortableJS for nested list -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- jQuery and Select2 for searchable dropdown -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+      .category-container {
+        margin-top: 20px;
+        background: var(--white);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+      .actions-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+      .btn-success {
+        background-color: var(--success);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+      }
+      .btn-success:hover {
+        background-color: #059669;
+      }
+
+      /* Nested Sortable Styles */
+      .nested-sortable {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .nested-sortable .nested-sortable {
+        padding-left: 40px;
+        margin-top: 10px;
+        min-height: 20px; /* Empty target area for dragging */
+      }
+      .cat-item {
+        background: var(--white);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: box-shadow 0.2s;
+      }
+      .cat-item:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .cat-content-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .cat-drag-handle {
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        cursor: grab;
+        font-size: 1.2rem;
+      }
+      .cat-drag-handle:active {
+        cursor: grabbing;
+      }
+      .cat-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #eff6ff;
+        color: #3b82f6;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
+      .cat-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .cat-title {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--text-color);
+      }
+      .cat-meta {
+        font-size: 0.8rem;
+        color: var(--text-light);
+      }
+      .cat-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .btn-icon {
+        background: none;
+        border: 1px solid var(--border-color);
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-icon:hover {
+        background-color: var(--bg-color);
+        color: var(--primary-color);
+      }
+      .btn-icon.delete:hover {
+        border-color: #fca5a5;
+        background-color: #fef2f2;
+        color: var(--danger);
+      }
+
+      .sortable-ghost > .cat-item {
+        opacity: 0.5;
+        background-color: #f8fafc;
+        border-style: dashed;
+      }
+      .sortable-drag > .cat-item {
+        background-color: white;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        cursor: grabbing;
+      }
+
+      /* New Split Layout */
+      .categories-layout {
+        display: grid;
+        grid-template-columns: 5fr 7fr;
+        gap: 24px;
+        align-items: start;
+      }
+      @media (max-width: 992px) {
+        .categories-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Select2 Custom Styles */
+      .select2-container .select2-selection--single {
+        height: 44px;
+        padding: 6px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-family: inherit;
+        background-color: var(--white);
+        display: flex;
+        align-items: center;
+      }
+      .select2-container--default
+        .select2-selection--single
+        .select2-selection__rendered {
+        color: var(--text-color);
+        line-height: normal;
+        padding-left: 0;
+      }
+      .select2-container--default
+        .select2-selection--single
+        .select2-selection__arrow {
+        height: 42px;
+        right: 10px;
+      }
+      .select2-dropdown {
+        border-color: var(--border-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-family: inherit;
+      }
+      .select2-search--dropdown .select2-search__field {
+        border-radius: 6px;
+        border-color: var(--border-color);
+        padding: 6px 12px;
+      }
+      .select2-results__option {
+        padding: 8px 12px;
+        font-size: 0.95rem;
+      }
+      .select2-container--default
+        .select2-results__option--highlighted.select2-results__option--selectable {
+        background-color: #eff6ff;
+        color: #3b82f6;
+      }
+
+      /* Icon Picker Styles */
+      .icon-picker-wrapper {
+        position: relative;
+      }
+      .icon-picker-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--white);
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: var(--text-color);
+        width: 100%;
+        text-align: left;
+        transition: 0.2s;
+      }
+      .icon-picker-btn:hover {
+        border-color: var(--primary-color);
+      }
+      .icon-picker-btn i.selected-icon {
+        font-size: 1.4rem;
+        color: var(--primary-color);
+      }
+      .icon-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--white);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-top: 5px;
+        z-index: 10;
+        display: none;
+        padding: 15px;
+      }
+      .icon-dropdown.show {
+        display: block;
+      }
+      .icon-search {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        margin-bottom: 10px;
+        outline: none;
+        font-family: inherit;
+      }
+      .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        gap: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .icon-option {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.4rem;
+        color: var(--text-light);
+      }
+      .icon-option:hover,
+      .icon-option.active {
+        background: #eff6ff;
+        color: #3b82f6;
+        border-color: #bfdbfe;
+      }
+
+      /* Colors Select */
+      .color-options {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .color-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+      .color-circle.active {
+        border-color: var(--text-color);
+        transform: scale(1.1);
+      }
+      .color-circle i {
+        color: white;
+        font-size: 1rem;
+        display: none;
+      }
+      .color-circle.active i {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li>
+          <a href="#"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span>
+            <span class="badge">12</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"><i class="ti ti-users"></i> <span>Pengguna</span></a>
+        </li>
+        <li>
+          <a href="admin-reports.html"><i class="ti ti-chart-bar"></i> <span>Laporan</span></a>
+        </li>
+        <li>
+          <a href="admin-coupons.html"><i class="ti ti-ticket"></i> <span>Kupon</span></a>
+        </li>
+        <li>
+          <a href="admin-pages.html"><i class="ti ti-notebook"></i> <span>Halaman</span></a>
+        </li>
+        <li>
+          <a href="admin-articles.html"><i class="ti ti-article"></i> <span>Artikel</span></a>
+        </li>
+        <li>
+          <a href="admin-settings-general.html"><i class="ti ti-settings"></i> <span>Pengaturan</span></a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn" id="logoutBtn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Navbar -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <a
+            href="admin-products.html"
+            class="icon-btn"
+            style="
+              margin-right: 15px;
+              color: var(--text-color);
+              font-size: 1rem;
+              gap: 5px;
+            "
+          >
+            <i class="ti ti-arrow-left"></i> Kembali ke Produk
+          </a>
+        </div>
+        <div class="header-right">
+          <!-- Store Mode Switcher -->
+          <div class="mode-switcher-container">
+            <span class="mode-label mode-rental active">Rental</span>
+            <div class="switch mode-toggle-btn">
+              <div class="slider-knob"></div>
+            </div>
+            <span class="mode-label mode-katalog">Katalog</span>
+          </div>
+
+          <button class="icon-btn" id="notificationBtn">
+            <i class="ti ti-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="dashboard-content">
+        <div class="page-header">
+          <h1>Kelola Kategori</h1>
+          <p>
+            Susun hirarki kategori produk sewa, seret-lepas mendatar dan
+            bertingkat.
+          </p>
+        </div>
+
+        <div class="categories-layout">
+          <!-- Left side: 5 Columns for Form -->
+          <div class="category-container" style="margin-top: 0">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem">
+              Buat Kategori Baru
+            </h3>
+            <form id="addCategoryForm">
+              <div class="form-group mb-3">
+                <label
+                  class="form-label"
+                  style="display: block; margin-bottom: 8px; font-weight: 500"
+                  >Nama Kategori</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Contoh: Sound System"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 8px;
+                    font-family: inherit;
+                  "
+                />
+              </div>
+
+              <div class="form-group mb-3" style="margin-top: 15px">
+                <label
+                  class="form-label"
+                  style="display: block; margin-bottom: 8px; font-weight: 500"
+                  >Induk Kategori (Opsional)</label
+                >
+                <select
+                  class="form-select select2-basic"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 8px;
+                    font-family: inherit;
+                  "
+                >
+                  <option value="">-- Jadikan Kategori Utama --</option>
+                  <option value="1">Sound System</option>
+                  <option value="2">Lighting & Effect</option>
+                  <option value="3">Stage & Rigging</option>
+                </select>
+                <small
+                  style="
+                    color: var(--text-light);
+                    margin-top: 5px;
+                    display: block;
+                  "
+                  >Biarkan kosong jika ini kategori root/utama.</small
+                >
+              </div>
+
+              <div
+                class="form-group mb-3"
+                style="margin-top: 15px; margin-bottom: 25px"
+              >
+                <label
+                  class="form-label"
+                  style="display: block; margin-bottom: 8px; font-weight: 500"
+                  >Pilih Ikon</label
+                >
+                <div class="icon-picker-wrapper">
+                  <button
+                    type="button"
+                    class="icon-picker-btn"
+                    id="iconPickerBtn"
+                  >
+                    <i class="ti ti-box selected-icon" id="currentIcon"></i>
+                    <span id="currentIconName">ti-box</span>
+                  </button>
+                  <input type="hidden" id="selectedIconInput" value="ti-box" />
+
+                  <div class="icon-dropdown" id="iconDropdown">
+                    <input
+                      type="text"
+                      class="icon-search"
+                      id="iconSearch"
+                      placeholder="Cari ikon..."
+                    />
+
+                    <!-- SVG Upload Addon -->
+                    <div
+                      style="
+                        margin-bottom: 12px;
+                        padding-bottom: 12px;
+                        border-bottom: 1px solid var(--border-color);
+                      "
+                    >
+                      <label
+                        for="iconSvgUpload"
+                        style="
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                          cursor: pointer;
+                          color: var(--text-color);
+                          font-size: 0.9rem;
+                          padding: 6px 10px;
+                          border-radius: 6px;
+                          background: #f8fafc;
+                          border: 1px dashed #cbd5e1;
+                          transition: 0.2s;
+                        "
+                      >
+                        <i class="ti ti-upload" style="color: #3b82f6"></i>
+                        Upload SVG Kustom
+                      </label>
+                      <input
+                        type="file"
+                        id="iconSvgUpload"
+                        accept=".svg"
+                        style="display: none"
+                      />
+                      <div
+                        id="svgPreviewContainer"
+                        style="
+                          display: none;
+                          margin-top: 10px;
+                          align-items: center;
+                          gap: 10px;
+                        "
+                      >
+                        <div
+                          id="svgPreview"
+                          style="
+                            width: 32px;
+                            height: 32px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: var(--primary-color);
+                          "
+                        ></div>
+                        <span
+                          style="
+                            font-size: 0.85rem;
+                            color: var(--text-light);
+                            flex: 1;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                          "
+                          id="svgFileName"
+                          >icon.svg</span
+                        >
+                        <button
+                          type="button"
+                          id="removeSvgBtn"
+                          style="
+                            background-color: #fee2e2;
+                            border: 1px solid #fca5a5;
+                            color: var(--danger);
+                            cursor: pointer;
+                            border-radius: 6px;
+                            width: 32px;
+                            height: 32px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: 0.2s;
+                          "
+                          onmouseover="
+                            this.style.backgroundColor = '#fca5a5';
+                            this.style.color = '#fff';
+                          "
+                          onmouseout="
+                            this.style.backgroundColor = '#fee2e2';
+                            this.style.color = 'var(--danger)';
+                          "
+                        >
+                          <i class="ti ti-x"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="icon-grid" id="iconGrid">
+                      <!-- Rendered by JS -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Color options removed entirely as requested -->
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="width: 100%; justify-content: center"
+              >
+                <i class="ti ti-device-floppy"></i> Simpan Kategori
+              </button>
+            </form>
+          </div>
+
+          <!-- Right side: 7 Columns for List -->
+          <div class="category-container" style="margin-top: 0">
+            <div class="actions-top" style="margin-bottom: 15px">
+              <h3 style="font-size: 1.2rem; margin: 0">Susunan Kategori</h3>
+            </div>
+
+            <!-- Multi-level nested sortable -->
+            <ul id="categoryNestable" class="nested-sortable">
+              <!-- Item 1 -->
+              <li>
+                <div class="cat-item">
+                  <div class="cat-content-left">
+                    <span class="cat-drag-handle"
+                      ><i class="ti ti-grip-vertical"></i
+                    ></span>
+                    <div class="cat-icon">
+                      <i class="ti ti-speakerphone"></i>
+                    </div>
+                    <div class="cat-info">
+                      <span class="cat-title">Sound System</span>
+                      <span class="cat-meta">Subkategori: 2 - Produk: 124</span>
+                    </div>
+                  </div>
+                  <div class="cat-actions">
+                    <button class="btn-icon"><i class="ti ti-edit"></i></button>
+                    <button class="btn-icon delete">
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <ul class="nested-sortable">
+                  <li>
+                    <div class="cat-item">
+                      <div class="cat-content-left">
+                        <span class="cat-drag-handle"
+                          ><i class="ti ti-grip-vertical"></i
+                        ></span>
+                        <div
+                          class="cat-icon"
+                          style="background-color: #f1f5f9; color: #475569"
+                        >
+                          <i class="ti ti-microphone-2"></i>
+                        </div>
+                        <div class="cat-info">
+                          <span class="cat-title">Microphone</span>
+                          <span class="cat-meta">Produk: 45</span>
+                        </div>
+                      </div>
+                      <div class="cat-actions">
+                        <button class="btn-icon">
+                          <i class="ti ti-edit"></i>
+                        </button>
+                        <button class="btn-icon delete">
+                          <i class="ti ti-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="cat-item">
+                      <div class="cat-content-left">
+                        <span class="cat-drag-handle"
+                          ><i class="ti ti-grip-vertical"></i
+                        ></span>
+                        <div
+                          class="cat-icon"
+                          style="background-color: #f1f5f9; color: #475569"
+                        >
+                          <i class="ti ti-device-speaker"></i>
+                        </div>
+                        <div class="cat-info">
+                          <span class="cat-title">Speaker & Mixer</span>
+                          <span class="cat-meta">Produk: 79</span>
+                        </div>
+                      </div>
+                      <div class="cat-actions">
+                        <button class="btn-icon">
+                          <i class="ti ti-edit"></i>
+                        </button>
+                        <button class="btn-icon delete">
+                          <i class="ti ti-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+
+              <!-- Item 2 -->
+              <li>
+                <div class="cat-item">
+                  <div class="cat-content-left">
+                    <span class="cat-drag-handle"
+                      ><i class="ti ti-grip-vertical"></i
+                    ></span>
+                    <div
+                      class="cat-icon"
+                      style="background-color: #fef3c7; color: #d97706"
+                    >
+                      <i class="ti ti-bulb"></i>
+                    </div>
+                    <div class="cat-info">
+                      <span class="cat-title">Lighting & Effect</span>
+                      <span class="cat-meta">Subkategori: 0 - Produk: 58</span>
+                    </div>
+                  </div>
+                  <div class="cat-actions">
+                    <button class="btn-icon"><i class="ti ti-edit"></i></button>
+                    <button class="btn-icon delete">
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <ul class="nested-sortable"></ul>
+              </li>
+
+              <!-- Item 3 -->
+              <li>
+                <div class="cat-item">
+                  <div class="cat-content-left">
+                    <span class="cat-drag-handle"
+                      ><i class="ti ti-grip-vertical"></i
+                    ></span>
+                    <div
+                      class="cat-icon"
+                      style="background-color: #fee2e2; color: #dc2626"
+                    >
+                      <i class="ti ti-box-model"></i>
+                    </div>
+                    <div class="cat-info">
+                      <span class="cat-title">Stage & Rigging</span>
+                      <span class="cat-meta">Subkategori: 1 - Produk: 32</span>
+                    </div>
+                  </div>
+                  <div class="cat-actions">
+                    <button class="btn-icon"><i class="ti ti-edit"></i></button>
+                    <button class="btn-icon delete">
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <ul class="nested-sortable">
+                  <li>
+                    <div class="cat-item">
+                      <div class="cat-content-left">
+                        <span class="cat-drag-handle"
+                          ><i class="ti ti-grip-vertical"></i
+                        ></span>
+                        <div
+                          class="cat-icon"
+                          style="background-color: #f1f5f9; color: #475569"
+                        >
+                          <i class="ti ti-border-all"></i>
+                        </div>
+                        <div class="cat-info">
+                          <span class="cat-title">Rangka Rigging</span>
+                          <span class="cat-meta">Produk: 12</span>
+                        </div>
+                      </div>
+                      <div class="cat-actions">
+                        <button class="btn-icon">
+                          <i class="ti ti-edit"></i>
+                        </button>
+                        <button class="btn-icon delete">
+                          <i class="ti ti-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+
+              <!-- Item 4 -->
+              <li>
+                <div class="cat-item">
+                  <div class="cat-content-left">
+                    <span class="cat-drag-handle"
+                      ><i class="ti ti-grip-vertical"></i
+                    ></span>
+                    <div
+                      class="cat-icon"
+                      style="background-color: #e0e7ff; color: #4f46e5"
+                    >
+                      <i class="ti ti-video"></i>
+                    </div>
+                    <div class="cat-info">
+                      <span class="cat-title">Multimedia & Livestream</span>
+                      <span class="cat-meta">Subkategori: 0 - Produk: 21</span>
+                    </div>
+                  </div>
+                  <div class="cat-actions">
+                    <button class="btn-icon"><i class="ti ti-edit"></i></button>
+                    <button class="btn-icon delete">
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <ul class="nested-sortable"></ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="assets/js/admin.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Nested Sortable
+        var nestedSortables = [].slice.call(
+          document.querySelectorAll(".nested-sortable"),
+        );
+
+        for (var i = 0; i < nestedSortables.length; i++) {
+          new Sortable(nestedSortables[i], {
+            group: "nested", // allows dragging between different nested lists
+            animation: 150,
+            fallbackOnBody: true,
+            swapThreshold: 0.65,
+            handle: ".cat-drag-handle",
+            ghostClass: "sortable-ghost",
+            dragClass: "sortable-drag",
+          });
+        }
+        // Initialize Select2 for Induk Kategori
+        if (typeof jQuery !== "undefined" && $.fn.select2) {
+          $(".select2-basic").select2({
+            placeholder: "-- Jadikan Kategori Utama --",
+            allowClear: true,
+            width: "100%",
+          });
+        }
+
+        // Delete Mock Action
+        const deleteBtns = document.querySelectorAll(".btn-icon.delete");
+        deleteBtns.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            Swal.fire({
+              title: "Hapus Kategori?",
+              text: "Kategori beserta seluruh subkategori di bawahnya akan dihapus.",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#ef4444",
+              cancelButtonColor: "#64748b",
+              confirmButtonText: "Ya, Hapus!",
+              cancelButtonText: "Batal",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.closest("li").remove();
+                Swal.fire(
+                  "Terhapus!",
+                  "Data kategori telah dihapus.",
+                  "success",
+                );
+              }
+            });
+          });
+        });
+
+        // Icon Picker Logic
+        const iconPickerBtn = document.getElementById("iconPickerBtn");
+        const iconDropdown = document.getElementById("iconDropdown");
+        const iconSearch = document.getElementById("iconSearch");
+        const iconGrid = document.getElementById("iconGrid");
+        const currentIcon = document.getElementById("currentIcon");
+        const currentIconName = document.getElementById("currentIconName");
+        const selectedIconInput = document.getElementById("selectedIconInput");
+
+        // List of sample Tabler Icons for the picker (Expanded)
+        const availableIcons = [
+          "ti-box",
+          "ti-speakerphone",
+          "ti-microphone-2",
+          "ti-device-speaker",
+          "ti-bulb",
+          "ti-box-model",
+          "ti-border-all",
+          "ti-video",
+          "ti-camera",
+          "ti-music",
+          "ti-headset",
+          "ti-movie",
+          "ti-device-tv",
+          "ti-battery-charging",
+          "ti-plug",
+          "ti-tools",
+          "ti-truck",
+          "ti-sofa",
+          "ti-building-arch",
+          "ti-tent",
+          "ti-stars",
+          "ti-confetti",
+          "ti-ticket",
+          "ti-discount",
+          "ti-armchair",
+          "ti-barbell",
+          "ti-briefcase",
+          "ti-camera-plus",
+          "ti-car",
+          "ti-chair-director",
+          "ti-coffee",
+          "ti-device-gamepad",
+          "ti-drone",
+          "ti-flask",
+          "ti-flower",
+          "ti-gift",
+          "ti-headphones",
+          "ti-home",
+          "ti-jacket",
+          "ti-key",
+          "ti-lamp",
+          "ti-leaf",
+          "ti-map",
+          "ti-microphone",
+          "ti-paint",
+          "ti-palette",
+          "ti-piano",
+          "ti-plant",
+          "ti-printer",
+          "ti-scissors",
+          "ti-shirt",
+          "ti-shopping-cart",
+          "ti-skateboard",
+          "ti-soccer-field",
+          "ti-sword",
+          "ti-telescope",
+          "ti-tool",
+          "ti-tractor",
+          "ti-umbrella",
+          "ti-wand",
+        ];
+
+        function renderIcons(searchQuery = "") {
+          iconGrid.innerHTML = "";
+          const filteredIcons = availableIcons.filter((icon) =>
+            icon.includes(searchQuery.toLowerCase()),
+          );
+
+          if (filteredIcons.length === 0) {
+            iconGrid.innerHTML =
+              "<p style='grid-column: 1/-1; text-align: center; color: #94a3b8; font-size: 0.85rem;'>Tidak ditemukan</p>";
+            return;
+          }
+
+          filteredIcons.forEach((icon) => {
+            const iconDiv = document.createElement("div");
+            iconDiv.title = icon;
+            iconDiv.className = `icon-option ${icon === selectedIconInput.value ? "active" : ""}`;
+            iconDiv.innerHTML = `<i class="ti ${icon}"></i>`;
+            iconDiv.addEventListener("click", () => {
+              // Update selection (Tabler Icon)
+              selectedIconInput.value = icon;
+              currentIcon.className = `ti ${icon} selected-icon`;
+              currentIconName.textContent = icon;
+              currentIcon.innerHTML = ""; // Clear SVG if any
+
+              // Update active class
+              document
+                .querySelectorAll(".icon-option")
+                .forEach((el) => el.classList.remove("active"));
+              iconDiv.classList.add("active");
+
+              // Close dropdown
+              iconDropdown.classList.remove("show");
+            });
+            iconGrid.appendChild(iconDiv);
+          });
+        }
+
+        if (iconPickerBtn && iconDropdown) {
+          iconPickerBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            iconDropdown.classList.toggle("show");
+            if (iconDropdown.classList.contains("show")) {
+              iconSearch.focus();
+            }
+          });
+
+          iconSearch.addEventListener("input", (e) => {
+            renderIcons(e.target.value);
+          });
+
+          document.addEventListener("click", (e) => {
+            if (
+              !iconDropdown.contains(e.target) &&
+              e.target !== iconPickerBtn &&
+              !iconPickerBtn.contains(e.target)
+            ) {
+              iconDropdown.classList.remove("show");
+            }
+          });
+
+          // Initial render
+          renderIcons();
+        }
+
+        // SVG Custom Upload Logic
+        const iconSvgUpload = document.getElementById("iconSvgUpload");
+        const svgPreviewContainer = document.getElementById(
+          "svgPreviewContainer",
+        );
+        const svgPreview = document.getElementById("svgPreview");
+        const svgFileName = document.getElementById("svgFileName");
+        const removeSvgBtn = document.getElementById("removeSvgBtn");
+
+        if (iconSvgUpload) {
+          iconSvgUpload.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file && file.type === "image/svg+xml") {
+              const reader = new FileReader();
+              reader.onload = function (event) {
+                const svgContent = event.target.result;
+
+                // Show in UI
+                svgPreviewContainer.style.display = "flex";
+                svgPreview.innerHTML = svgContent;
+
+                // Adjust SVG to fit nicely
+                const svgElement = svgPreview.querySelector("svg");
+                if (svgElement) {
+                  svgElement.style.width = "100%";
+                  svgElement.style.height = "100%";
+                }
+                svgFileName.textContent = file.name;
+
+                // Set as selected icon
+                currentIcon.className = `selected-icon`; // Remove tabler classes
+                currentIcon.innerHTML = svgContent;
+                const mainSvgElement = currentIcon.querySelector("svg");
+                if (mainSvgElement) {
+                  mainSvgElement.style.width = "100%";
+                  mainSvgElement.style.height = "100%";
+                }
+                currentIconName.textContent = "Custom SVG";
+                selectedIconInput.value = "custom_svg";
+
+                // Unselect any active tabler icon
+                document
+                  .querySelectorAll(".icon-option")
+                  .forEach((el) => el.classList.remove("active"));
+                iconDropdown.classList.remove("show");
+              };
+              reader.readAsText(file);
+            } else if (file) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "File harus berformat SVG.",
+              });
+              this.value = ""; // Reset
+            }
+          });
+
+          removeSvgBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            iconSvgUpload.value = "";
+            svgPreviewContainer.style.display = "none";
+            svgPreview.innerHTML = "";
+
+            // Fallback to default tabler icon
+            selectedIconInput.value = "ti-box";
+            currentIcon.className = `ti ti-box selected-icon`;
+            currentIcon.innerHTML = "";
+            currentIconName.textContent = "ti-box";
+            renderIcons(); // Re-render to highlight ti-box
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

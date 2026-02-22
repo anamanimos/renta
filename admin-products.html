@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Produk | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      /* Additional styles specific to products page */
+      .product-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .filter-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .filter-select {
+        padding: 8px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        outline: none;
+        background-color: var(--white);
+        color: var(--text-color);
+        font-family: inherit;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: background-color 0.2s;
+      }
+
+      .btn-primary:hover {
+        background-color: #b71c1c; /* Darker red */
+      }
+
+      .product-list-card {
+        background-color: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+      }
+
+      .product-img-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .product-img-cell img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+      }
+
+      .product-img-cell .product-name {
+        font-weight: 600;
+        color: var(--text-color);
+        display: block;
+      }
+
+      .product-img-cell .product-category {
+        font-size: 0.8rem;
+        color: var(--text-light);
+      }
+
+      .action-btn.edit {
+        background-color: #eff6ff;
+        color: #3b82f6;
+      } /* Blue for edit */
+      .action-btn.delete {
+        background-color: #fef2f2;
+        color: var(--danger);
+      }
+
+      @media (max-width: 768px) {
+        .product-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .btn-primary {
+          justify-content: center;
+        }
+        .filter-select {
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li>
+          <a href="#"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span>
+            <span class="badge">12</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"><i class="ti ti-users"></i> <span>Pengguna</span></a>
+        </li>
+        <li>
+          <a href="admin-reports.html"><i class="ti ti-chart-bar"></i> <span>Laporan</span></a>
+        </li>
+        <li>
+          <a href="admin-coupons.html"><i class="ti ti-ticket"></i> <span>Kupon</span></a>
+        </li>
+        <li>
+          <a href="admin-pages.html"><i class="ti ti-notebook"></i> <span>Halaman</span></a>
+        </li>
+        <li>
+          <a href="admin-articles.html"><i class="ti ti-article"></i> <span>Artikel</span></a>
+        </li>
+        <li>
+          <a href="admin-settings-general.html"><i class="ti ti-settings"></i> <span>Pengaturan</span></a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn" id="logoutBtn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Navbar -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="search-bar">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Cari pesanan, produk..." />
+          </div>
+        </div>
+        <div class="header-right">
+          <!-- Store Mode Switcher -->
+          <div class="mode-switcher-container">
+            <span class="mode-label mode-rental active">Rental</span>
+            <div class="switch mode-toggle-btn">
+              <div class="slider-knob"></div>
+            </div>
+            <span class="mode-label mode-katalog">Katalog</span>
+          </div>
+
+          <button class="icon-btn" id="notificationBtn">
+            <i class="ti ti-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="dashboard-content">
+        <div class="page-header">
+          <h1>Kelola Produk</h1>
+          <p>Manajemen inventaris peralatan sewa</p>
+        </div>
+
+        <!-- Actions Top -->
+        <div
+          class="product-actions-top"
+          style="
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+          "
+        >
+          <a
+            href="admin-categories.html"
+            class="btn btn-outline"
+            style="
+              background-color: #eff6ff;
+              color: #3b82f6;
+              border-color: #bfdbfe;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              padding: 10px 20px;
+              border-radius: 8px;
+              font-weight: 500;
+              text-decoration: none;
+            "
+          >
+            <i class="ti ti-category"></i> Kelola Kategori
+          </a>
+          <a
+            href="admin-product-create.html"
+            class="btn btn-primary"
+            style="background-color: #3b82f6"
+          >
+            <i class="ti ti-plus"></i> Tambah
+          </a>
+        </div>
+
+        <!-- Filter and Search Row inside the card -->
+        <div class="product-list-card">
+          <div
+            class="table-header-actions"
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 20px;
+              position: relative;
+              flex-wrap: wrap;
+              gap: 15px;
+            "
+          >
+            <div
+              class="filter-controls"
+              style="display: flex; gap: 10px; position: relative"
+            >
+              <button
+                class="btn btn-primary"
+                id="filterBtn"
+                style="
+                  background-color: #3b82f6;
+                  padding: 8px 16px;
+                  font-size: 0.9rem;
+                "
+              >
+                <i class="ti ti-plus"></i> Tambah Filter
+              </button>
+              <button
+                class="btn btn-outline"
+                id="resetFilterBtn"
+                style="
+                  background-color: #f8fafc;
+                  border-color: transparent;
+                  color: var(--text-color);
+                  font-size: 0.9rem;
+                  padding: 8px 16px;
+                "
+              >
+                <i class="ti ti-refresh"></i> Reset
+              </button>
+
+              <!-- Popover -->
+              <div class="filter-popover" id="filterPopover">
+                <div class="filter-section">
+                  <div class="filter-section-title">Kategori Produk</div>
+                  <div class="filter-pills">
+                    <button class="filter-pill outline-blue">
+                      Sound System
+                    </button>
+                    <button class="filter-pill outline-blue">
+                      Lighting & Effect
+                    </button>
+                    <button class="filter-pill outline-blue">
+                      Stage & Rigging
+                    </button>
+                    <button class="filter-pill outline-blue">Multimedia</button>
+                    <button class="filter-pill outline-blue">Live Cam</button>
+                    <button class="filter-pill outline-blue">
+                      Cooling System
+                    </button>
+                  </div>
+                </div>
+                <div class="filter-section">
+                  <div class="filter-section-title">Status Produk</div>
+                  <div class="filter-pills">
+                    <button class="filter-pill status-badge success">
+                      <span class="dot bg-success"></span> Tersedia
+                    </button>
+                    <button class="filter-pill status-badge warning">
+                      <span class="dot bg-warning"></span> Disewa
+                    </button>
+                    <button class="filter-pill status-badge danger">
+                      <span class="dot bg-danger"></span> Maintenance
+                    </button>
+                    <button class="filter-pill status-badge gray">
+                      <span class="dot bg-gray"></span> Habis
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="search-control">
+              <input
+                type="text"
+                class="form-control"
+                id="customSearch"
+                placeholder="Cari data..."
+                style="
+                  background-color: #f8fafc;
+                  border: 1px solid var(--border-color);
+                  padding: 10px 15px;
+                  border-radius: 8px;
+                  font-size: 0.9rem;
+                  width: 250px;
+                "
+              />
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Produk</th>
+                  <th>SKU</th>
+                  <th>Harga Sewa</th>
+                  <th>Stok Tersedia</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="product-img-cell">
+                      <img
+                        src="assets/images/product-1.png"
+                        alt="Stage Karpet"
+                      />
+                      <div>
+                        <span class="product-name"
+                          >Stage (t: 40-60cm) + Karpet</span
+                        >
+                        <span class="product-category">Stage & Rigging</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>STG-040-KPT</td>
+                  <td>Rp 45.000 <small class="text-muted">/ meter</small></td>
+                  <td>120 m²</td>
+                  <td><span class="badge-status completed">Tersedia</span></td>
+                  <td>
+                    <button class="action-btn edit" title="Edit">
+                      <i class="ti ti-edit"></i>
+                    </button>
+                    <button
+                      class="action-btn delete"
+                      onclick="deleteProduct('STG-040-KPT')"
+                      title="Hapus"
+                    >
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="product-img-cell">
+                      <img src="assets/images/product-2.png" alt="AC 3 PK" />
+                      <div>
+                        <span class="product-name">AC Standing 3 PK</span>
+                        <span class="product-category">Cooling System</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>ACS-003</td>
+                  <td>Rp 450.000 <small class="text-muted">/ unit</small></td>
+                  <td>8 / 10 unit</td>
+                  <td><span class="badge-status active">Terbatas</span></td>
+                  <td>
+                    <button class="action-btn edit" title="Edit">
+                      <i class="ti ti-edit"></i>
+                    </button>
+                    <button
+                      class="action-btn delete"
+                      onclick="deleteProduct('ACS-003')"
+                      title="Hapus"
+                    >
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="product-img-cell">
+                      <img
+                        src="assets/images/product-4.png"
+                        alt="Sony Camera"
+                      />
+                      <div>
+                        <span class="product-name"
+                          >Kamera Sony Full HD + Operator</span
+                        >
+                        <span class="product-category">Live Cam</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>CAM-SNY-HD</td>
+                  <td>
+                    Rp 2.500.000 <small class="text-muted">/ shift</small>
+                  </td>
+                  <td>0 / 4 paket</td>
+                  <td>
+                    <span class="badge-status pending">Habis / Disewa</span>
+                  </td>
+                  <td>
+                    <button class="action-btn edit" title="Edit">
+                      <i class="ti ti-edit"></i>
+                    </button>
+                    <button
+                      class="action-btn delete"
+                      onclick="deleteProduct('CAM-SNY-HD')"
+                      title="Hapus"
+                    >
+                      <i class="ti ti-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav admin-bottom-nav">
+      <a href="admin.html">
+        <i class="ti ti-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#">
+        <i class="ti ti-shopping-cart"></i>
+        <span>Pesanan</span>
+        <span class="nav-badge">12</span>
+      </a>
+      <a href="#" class="scan-btn">
+        <div class="icon-circle">
+          <i class="ti ti-scan"></i>
+        </div>
+        <span>Scan</span>
+      </a>
+      <a href="admin-products.html" class="active">
+        <i class="ti ti-box"></i>
+        <span>Produk</span>
+      </a>
+      <a href="#">
+        <i class="ti ti-user"></i>
+        <span>Profil</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+      function deleteProduct(sku) {
+        Swal.fire({
+          title: "Hapus Produk?",
+          text: `Produk dengan SKU ${sku} akan dihapus permanen.`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#ef4444",
+          cancelButtonColor: "#64748b",
+          confirmButtonText: "Ya, Hapus!",
+          cancelButtonText: "Batal",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire("Terhapus!", "Data produk telah dihapus.", "success");
+          }
+        });
+      }
+
+      // Filter Popover Logic
+      document.addEventListener("DOMContentLoaded", () => {
+        const filterBtn = document.getElementById("filterBtn");
+        const filterPopover = document.getElementById("filterPopover");
+
+        if (filterBtn && filterPopover) {
+          filterBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            filterPopover.classList.toggle("show");
+          });
+
+          document.addEventListener("click", (e) => {
+            if (!filterPopover.contains(e.target) && e.target !== filterBtn) {
+              filterPopover.classList.remove("show");
+            }
+          });
+
+          filterPopover.addEventListener("click", (e) => {
+            e.stopPropagation();
+          });
+        }
+
+        // Pill selection logic
+        const pills = document.querySelectorAll(".filter-pill");
+        pills.forEach((pill) => {
+          pill.addEventListener("click", function () {
+            // ... filtering logic ...
+            filterPopover.classList.remove("show");
+          });
+        });
+        
+        // Initialize DataTables
+        const table = $('.admin-table').DataTable({
+            dom: 'rt<"pagination-container"p>',
+            "lengthChange": false,
+            "pageLength": 10,
+            language: {
+                paginate: {
+                    previous: '<i class="ti ti-chevron-left"></i>',
+                    next: '<i class="ti ti-chevron-right"></i>'
+                }
+            }
+        });
+
+        $('#customSearch').on('keyup', function() {
+            table.search(this.value).draw();
+        });
+      });
+    </script>
+  </body>
+</html>
+          pill.addEventListener("click", function () {
+            this.classList.toggle("selected");
+          });
+        });
+
+        // Reset filters
+        const resetBtn = document.getElementById("resetFilterBtn");
+        if (resetBtn) {
+          resetBtn.addEventListener("click", () => {
+            pills.forEach((p) => p.classList.remove("selected"));
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log Aktivitas | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <style>
+      .layout-grid {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      @media (max-width: 992px) {
+        .layout-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .settings-nav {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+      .settings-nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        color: var(--text-color);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: 0.2s;
+      }
+      .settings-nav a:hover,
+      .settings-nav a.active {
+        background-color: var(--bg-color);
+        color: var(--primary-color);
+      }
+      .settings-nav a i {
+        font-size: 1.2rem;
+      }
+
+      .card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 24px;
+      }
+
+      .log-level {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.75rem;
+      }
+      .log-info {
+        background: #e0f2fe;
+        color: #0284c7;
+      }
+      .log-warn {
+        background: #fefce8;
+        color: #ca8a04;
+      }
+      .log-danger {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-orders.html"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span
+            ><span class="badge">12</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"
+            ><i class="ti ti-users"></i> <span>Pengguna</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-reports.html"
+            ><i class="ti ti-chart-bar"></i> <span>Laporan</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-coupons.html"
+            ><i class="ti ti-ticket"></i> <span>Kupon</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-pages.html"
+            ><i class="ti ti-notebook"></i> <span>Halaman</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-articles.html"
+            ><i class="ti ti-article"></i> <span>Artikel</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-settings-general.html"
+            ><i class="ti ti-settings"></i> <span>Pengaturan</span></a
+          >
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="page-header" style="margin-bottom: 24px">
+          <h1>Log Aktivitas Sistem</h1>
+          <p>
+            Pantau semua perubahan dan login yang terjadi di dalam panel admin.
+          </p>
+        </div>
+
+        <div class="layout-grid">
+          <!-- Settings Sidebar -->
+          <div class="settings-nav">
+            <a href="admin-settings-general.html"
+              ><i class="ti ti-adjustments"></i> Umum</a
+            >
+            <a href="admin-settings-whatsapp.html"
+              ><i class="ti ti-brand-whatsapp"></i> Integrasi WhatsApp</a
+            >
+            <a href="admin-settings-payment.html"
+              ><i class="ti ti-credit-card"></i> Pembayaran</a
+            >
+            <a href="admin-settings-logs.html" class="active"
+              ><i class="ti ti-history"></i> Log Aktivitas</a
+            >
+          </div>
+
+          <!-- Settings Content -->
+          <div class="settings-content">
+            <div class="card" style="padding: 24px">
+              <div class="table-header-actions">
+                <div class="filter-controls"></div>
+                <div class="search-control">
+                  <input
+                    type="text"
+                    id="customSearch"
+                    class="form-control"
+                    placeholder="Cari log..."
+                  />
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover" id="logsTable">
+                  <thead>
+                    <tr>
+                      <th>Waktu</th>
+                      <th>Pengguna</th>
+                      <th>Aksi</th>
+                      <th>Modul</th>
+                      <th>IP Address</th>
+                      <th>Level</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Data populated below -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+      $(document).ready(function () {
+        const logsData = [
+          {
+            waktu: "24 Okt 2026 14:32:01",
+            user: "Admin Utama",
+            aksi: "Verifikasi Pembayaran ORD-001",
+            modul: "Pesanan",
+            ip: "192.168.1.15",
+            level: "<span class='log-level log-info'>INFO</span>",
+          },
+          {
+            waktu: "24 Okt 2026 11:15:44",
+            user: "Siti Aminah (Staf)",
+            aksi: "Menambahkan Produk 'Mic Wireless Shure'",
+            modul: "Katalog",
+            ip: "10.0.0.8",
+            level: "<span class='log-level log-info'>INFO</span>",
+          },
+          {
+            waktu: "23 Okt 2026 09:05:12",
+            user: "System",
+            aksi: "API Midtrans Gagal Terhubung (Timeout)",
+            modul: "Integrasi",
+            ip: "localhost",
+            level: "<span class='log-level log-warn'>WARNING</span>",
+          },
+          {
+            waktu: "22 Okt 2026 18:30:00",
+            user: "Budi Santoso",
+            aksi: "Gagal Login (Password Salah 3x)",
+            modul: "Otentikasi",
+            ip: "114.122.5.99",
+            level: "<span class='log-level log-danger'>CRITICAL</span>",
+          },
+        ];
+
+        const table = $("#logsTable").DataTable({
+          dom: 'rt<"pagination-container"p>',
+          data: logsData,
+          lengthChange: false,
+          pageLength: 10,
+          order: [[0, "desc"]],
+          columns: [
+            { data: "waktu" },
+            { data: "user" },
+            { data: "aksi" },
+            { data: "modul" },
+            { data: "ip" },
+            { data: "level" },
+          ],
+          language: {
+            search: "Cari Log:",
+            lengthMenu: "Tampil _MENU_ baris",
+            info: "Menampilkan _START_ s/d _END_ dari _TOTAL_ logs",
+            paginate: {
+              previous: '<i class="ti ti-chevron-left"></i>',
+              next: '<i class="ti ti-chevron-right"></i>',
+            },
+          },
+        });
+
+        $("#customSearch").on("keyup", function () {
+          table.search(this.value).draw();
+        });
+      });
+    </script>
+  </body>
+</html>

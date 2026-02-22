@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laporan Pendapatan | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+    />
+    <!-- Buttons for DataTables Export -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .product-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      .filter-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .product-list-card {
+        background-color: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+      }
+      .btn-primary:hover {
+        background-color: #b71c1c;
+      }
+
+      .form-control {
+        border: 1px solid var(--border-color);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-family: inherit;
+        outline: none;
+        transition: 0.2s;
+      }
+      .form-control:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      .stat-card {
+        background: var(--white);
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+      .stat-icon.income {
+        background-color: #ecfdf5;
+        color: var(--success);
+      }
+      .stat-icon.orders {
+        background-color: #eff6ff;
+        color: #3b82f6;
+      }
+      .stat-icon.avgsale {
+        background-color: #fefce8;
+        color: #f59e0b;
+      }
+
+      .stat-details h3 {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      .stat-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0;
+      }
+
+      /* overriding datatables buttons */
+      .dt-buttons {
+        display: flex;
+        gap: 8px;
+      }
+      .dt-buttons .btn {
+        border: 1px solid var(--border-color);
+        background: var(--white);
+        border-radius: 6px;
+        padding: 6px 12px;
+        color: var(--text-color);
+        font-weight: 500;
+        font-size: 0.85rem;
+      }
+      .dt-buttons .btn:hover {
+        background: var(--bg-color);
+      }
+
+      @media (max-width: 992px) {
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .active-filter-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--white);
+      }
+      .active-filter-tag.bg-blue {
+        background-color: #3b82f6;
+      }
+      .active-filter-tag.bg-green {
+        background-color: #10b981;
+      }
+      .active-filter-tag.bg-yellow {
+        background-color: #eab308;
+      }
+      .active-filter-tag.bg-red {
+        background-color: #ef4444;
+      }
+      .active-filter-tag .remove-tag {
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.8;
+      }
+      .active-filter-tag .remove-tag:hover {
+        opacity: 1;
+      }
+      .filter-pill-new:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-orders.html"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span
+            ><span class="badge">12</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"
+            ><i class="ti ti-users"></i> <span>Pengguna</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-reports.html"
+            ><i class="ti ti-chart-bar"></i> <span>Laporan</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-coupons.html"
+            ><i class="ti ti-ticket"></i> <span>Kupon</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-pages.html"
+            ><i class="ti ti-notebook"></i> <span>Halaman</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-articles.html"
+            ><i class="ti ti-article"></i> <span>Artikel</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-settings-general.html"
+            ><i class="ti ti-settings"></i> <span>Pengaturan</span></a
+          >
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="page-header" style="margin-bottom: 20px">
+          <h1>Laporan Penjualan</h1>
+          <p>Rekapitulasi transaksi sewa dan penjualan produk.</p>
+        </div>
+
+        <div
+          class="product-actions"
+          style="
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+          "
+        >
+          <div class="filter-group">
+            <label style="font-weight: 500; font-size: 0.9rem"
+              >Rentang Tanggal:</label
+            >
+            <input
+              type="date"
+              class="form-control"
+              id="dateStart"
+              value="2026-10-01"
+            />
+            <span style="color: var(--text-light)">-</span>
+            <input
+              type="date"
+              class="form-control"
+              id="dateEnd"
+              value="2026-10-31"
+            />
+          </div>
+          <div class="filter-group">
+            <button class="btn-primary" onclick="generateReport()">
+              <i class="ti ti-search"></i> Terapkan Filter
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon income"><i class="ti ti-cash"></i></div>
+            <div class="stat-details">
+              <h3>Total Pendapatan (Bulan Ini)</h3>
+              <p class="stat-value">Rp 24.500.000</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orders"><i class="ti ti-checkups"></i></div>
+            <div class="stat-details">
+              <h3>Pesanan Sukses</h3>
+              <p class="stat-value">124</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon avgsale"><i class="ti ti-receipt"></i></div>
+            <div class="stat-details">
+              <h3>Rata-rata Transaksi</h3>
+              <p class="stat-value">Rp 197.580</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-list-card">
+          <div
+            class="active-filters-area"
+            id="activeFiltersArea"
+            style="
+              display: none;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 20px;
+              flex-wrap: wrap;
+              padding-bottom: 16px;
+              border-bottom: 1px dashed var(--border-color);
+            "
+          >
+            <span
+              style="
+                font-size: 0.95rem;
+                color: var(--text-light);
+                font-weight: 500;
+                white-space: nowrap;
+              "
+              >Filter aktif:</span
+            >
+            <div
+              id="activeFiltersList"
+              style="
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                align-items: center;
+              "
+            ></div>
+          </div>
+          <div
+            class="table-header-actions"
+            style="
+              margin-bottom: 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 15px;
+            "
+          >
+            <div
+              class="filter-toolbar"
+              style="
+                display: flex;
+                gap: 10px;
+                position: relative;
+                align-items: center;
+              "
+            >
+              <button
+                class="btn btn-primary"
+                id="btnTambahFilter"
+                style="
+                  background-color: #2563eb;
+                  color: #fff;
+                  border: none;
+                  padding: 8px 16px;
+                  border-radius: 6px;
+                  font-weight: 500;
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 8px;
+                "
+              >
+                <i class="ti ti-plus"></i> Tambah Filter
+              </button>
+              <button
+                class="btn"
+                id="btnResetFilter"
+                style="
+                  background-color: #f8fafc;
+                  border: 1px solid #e2e8f0;
+                  color: #475569;
+                  padding: 8px 16px;
+                  border-radius: 6px;
+                  font-weight: 500;
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 8px;
+                  cursor: pointer;
+                "
+              >
+                <i class="ti ti-refresh"></i> Reset
+              </button>
+              <div
+                id="exportButtonsContainer"
+                style="display: flex; gap: 4px"
+              ></div>
+              <div
+                class="filter-popover"
+                id="filterPopover"
+                style="
+                  position: absolute;
+                  top: 100%;
+                  left: 0;
+                  margin-top: 10px;
+                  background: #fff;
+                  border: 1px solid #e2e8f0;
+                  border-radius: 8px;
+                  padding: 16px;
+                  width: 280px;
+                  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                  z-index: 100;
+                "
+              >
+                <div
+                  style="
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    color: #94a3b8;
+                    margin-bottom: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                  "
+                >
+                  STATUS TRANSAKSI
+                </div>
+                <div
+                  class="filter-section"
+                  style="display: flex; flex-wrap: wrap; gap: 8px"
+                >
+                  <div
+                    class="filter-pill-new"
+                    data-value="Selesai"
+                    data-color="green"
+                    style="
+                      background: #bbf7d0;
+                      color: #14532d;
+                      padding: 4px 10px;
+                      border-radius: 6px;
+                      font-size: 0.85rem;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      transition: 0.2s;
+                    "
+                  >
+                    <span
+                      style="
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: #16a34a;
+                      "
+                    ></span
+                    >Selesai
+                  </div>
+                  <div
+                    class="filter-pill-new"
+                    data-value="Dibatalkan"
+                    data-color="red"
+                    style="
+                      background: #fecaca;
+                      color: #991b1b;
+                      padding: 4px 10px;
+                      border-radius: 6px;
+                      font-size: 0.85rem;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      transition: 0.2s;
+                    "
+                  >
+                    <span
+                      style="
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: #ef4444;
+                      "
+                    ></span
+                    >Dibatalkan
+                  </div>
+                  <div
+                    class="filter-pill-new"
+                    data-value="Menunggu"
+                    data-color="yellow"
+                    style="
+                      background: #fef08a;
+                      color: #854d0e;
+                      padding: 4px 10px;
+                      border-radius: 6px;
+                      font-size: 0.85rem;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      transition: 0.2s;
+                    "
+                  >
+                    <span
+                      style="
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: #ca8a04;
+                      "
+                    ></span
+                    >Menunggu
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="search-control">
+              <input
+                type="text"
+                id="customSearch"
+                class="form-control"
+                placeholder="Cari laporan..."
+              />
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="admin-table" id="reportTable" style="width: 100%">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>ID Pesanan</th>
+                  <th>Tanggal</th>
+                  <th>Pelanggan</th>
+                  <th>Metode Pembayaran</th>
+                  <th>Total Tagihan</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="5" style="text-align: right">
+                    Total Pemasukan:
+                  </th>
+                  <th
+                    colspan="2"
+                    style="color: var(--primary-color); font-size: 1.1rem"
+                  >
+                    Rp 6.550.000
+                  </th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <!-- DT Export Plugins -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <script src="assets/js/admin.js"></script>
+    <script>
+      $(document).ready(function () {
+        const reportData = [
+          {
+            no: 1,
+            id: "<a href='admin-orders-detail.html?id=ORD-001'>ORD-001</a>",
+            date: "24 Okt 2026",
+            cust: "Budi Santoso",
+            pmt: "Transfer BCA",
+            total: "Rp 1.500.000",
+            status: "Selesai",
+          },
+          {
+            no: 2,
+            id: "<a href='admin-orders-detail.html?id=ORD-002'>ORD-002</a>",
+            date: "20 Okt 2026",
+            cust: "Anita Wijaya",
+            pmt: "Qris / GoPay",
+            total: "Rp 4.250.000",
+            status: "Selesai",
+          },
+          {
+            no: 3,
+            id: "<a href='admin-orders-detail.html?id=ORD-003'>ORD-003</a>",
+            date: "15 Okt 2026",
+            cust: "Caca Marica",
+            pmt: "Transfer Mandiri",
+            total: "Rp 800.000",
+            status: "Selesai",
+          },
+        ];
+
+        const table = $("#reportTable").DataTable({
+          data: reportData,
+          columns: [
+            { data: "no" },
+            { data: "id" },
+            { data: "date" },
+            { data: "cust" },
+            { data: "pmt" },
+            { data: "total" },
+            { data: "status" },
+          ],
+          dom: 'B<"table-scroll"rt><"bottom-controls"lp>',
+          buttons: [
+            {
+              extend: "excelHtml5",
+              text: '<i class="ti ti-file-spreadsheet"></i> Excel',
+              className: "btn",
+            },
+            {
+              extend: "pdfHtml5",
+              text: '<i class="ti ti-file-text"></i> PDF',
+              className: "btn",
+            },
+            {
+              extend: "print",
+              text: '<i class="ti ti-printer"></i> Print',
+              className: "btn",
+            },
+          ],
+          language: {
+            search: "Cari:",
+            lengthMenu: "Tampil _MENU_",
+            info: "Menampilkan _START_ s/d _END_ dari _TOTAL_ transaksi",
+            paginate: {
+              previous: '<i class="ti ti-chevron-left"></i>',
+              next: '<i class="ti ti-chevron-right"></i>',
+            },
+          },
+        });
+
+        table.buttons().container().appendTo("#exportButtonsContainer");
+
+        $("#customSearch").on("keyup", function () {
+          table.search(this.value).draw();
+        });
+
+        // Filter Logic
+        const btnTambahFilter = document.getElementById("btnTambahFilter");
+        const filterPopover = document.getElementById("filterPopover");
+        const btnResetFilter = document.getElementById("btnResetFilter");
+        const activeFiltersArea = document.getElementById("activeFiltersArea");
+        const activeFiltersList = document.getElementById("activeFiltersList");
+
+        btnTambahFilter.addEventListener("click", (e) => {
+          e.stopPropagation();
+          filterPopover.classList.toggle("show");
+        });
+        document.addEventListener("click", (e) => {
+          if (
+            !filterPopover.contains(e.target) &&
+            !btnTambahFilter.contains(e.target)
+          )
+            filterPopover.classList.remove("show");
+        });
+
+        let selectedFilters = new Set();
+        document.querySelectorAll(".filter-pill-new").forEach((pill) => {
+          pill.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const val = this.getAttribute("data-value");
+            if (selectedFilters.has(val)) {
+              selectedFilters.delete(val);
+              this.style.opacity = "1";
+            } else {
+              selectedFilters.add(val);
+              this.style.opacity = "0.5";
+            }
+            updateActiveFilters();
+          });
+        });
+
+        function updateActiveFilters() {
+          activeFiltersList.innerHTML = "";
+          if (selectedFilters.size === 0) {
+            activeFiltersArea.style.display = "none";
+            table.column(6).search("").draw();
+            return;
+          }
+          activeFiltersArea.style.display = "flex";
+          selectedFilters.forEach((val) => {
+            const pillEl = document.querySelector(
+              `.filter-pill-new[data-value="${val}"]`,
+            );
+            let bgClass = "bg-blue";
+            if (pillEl) {
+              const c = pillEl.getAttribute("data-color");
+              if (c) bgClass = "bg-" + c;
+            }
+            const tag = document.createElement("div");
+            tag.className = `active-filter-tag ${bgClass}`;
+            tag.innerHTML = `Status: ${val} <span class="remove-tag" data-value="${val}"><i class="ti ti-x"></i></span>`;
+            activeFiltersList.appendChild(tag);
+          });
+          document.querySelectorAll(".remove-tag").forEach((btn) => {
+            btn.addEventListener("click", function () {
+              const v = this.getAttribute("data-value");
+              selectedFilters.delete(v);
+              const p = document.querySelector(
+                `.filter-pill-new[data-value="${v}"]`,
+              );
+              if (p) p.style.opacity = "1";
+              updateActiveFilters();
+            });
+          });
+          table
+            .column(6)
+            .search(Array.from(selectedFilters).join("|"), true, false)
+            .draw();
+        }
+
+        btnResetFilter.addEventListener("click", () => {
+          selectedFilters.clear();
+          document
+            .querySelectorAll(".filter-pill-new")
+            .forEach((p) => (p.style.opacity = "1"));
+          updateActiveFilters();
+        });
+      });
+
+      function generateReport() {
+        Swal.fire({
+          title: "Memuat Laporan...",
+          html: "Menarik data transaksi pada rentang tanggal terpilih.",
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        }).then(() => {
+          Swal.fire("Selesai!", "Laporan berhasil diperbarui.", "success");
+        });
+      }
+    </script>
+  </body>
+</html>

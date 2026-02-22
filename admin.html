@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-orders.html"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span>
+            <span class="badge">12</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"
+            ><i class="ti ti-users"></i> <span>Pengguna</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-reports.html"
+            ><i class="ti ti-chart-bar"></i> <span>Laporan</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-coupons.html"
+            ><i class="ti ti-ticket"></i> <span>Kupon</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-pages.html"
+            ><i class="ti ti-notebook"></i> <span>Halaman</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-articles.html"
+            ><i class="ti ti-article"></i> <span>Artikel</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-settings-general.html"
+            ><i class="ti ti-settings"></i> <span>Pengaturan</span></a
+          >
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn" id="logoutBtn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Navbar -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="search-bar">
+            <i class="ti ti-search"></i>
+            <input type="text" placeholder="Cari pesanan, produk..." />
+          </div>
+        </div>
+        <div class="header-right">
+          <!-- Store Mode Switcher -->
+          <div class="mode-switcher-container">
+            <span class="mode-label mode-rental active">Rental</span>
+            <div class="switch mode-toggle-btn">
+              <div class="slider-knob"></div>
+            </div>
+            <span class="mode-label mode-katalog">Katalog</span>
+          </div>
+
+          <button class="icon-btn" id="notificationBtn">
+            <i class="ti ti-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <div class="dashboard-content">
+        <div class="page-header">
+          <h1>Overview Dashboard</h1>
+          <p>Selamat datang kembali, Admin!</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon income"><i class="ti ti-wallet"></i></div>
+            <div class="stat-details">
+              <h3>Total Pendapatan</h3>
+              <p class="stat-value">Rp 24.500.000</p>
+              <span class="stat-change positive"
+                ><i class="ti ti-trending-up"></i> 12% dari bulan lalu</span
+              >
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orders">
+              <i class="ti ti-shopping-bag"></i>
+            </div>
+            <div class="stat-details">
+              <h3>Pesanan Baru</h3>
+              <p class="stat-value">45</p>
+              <span class="stat-change positive"
+                ><i class="ti ti-trending-up"></i> 5% dari bulan lalu</span
+              >
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon active-rentals">
+              <i class="ti ti-refresh"></i>
+            </div>
+            <div class="stat-details">
+              <h3>Penyewaan Aktif</h3>
+              <p class="stat-value">18</p>
+              <span class="stat-change text-muted">Barang sedang disewa</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon customers">
+              <i class="ti ti-users"></i>
+            </div>
+            <div class="stat-details">
+              <h3>Total Pelanggan</h3>
+              <p class="stat-value">1,250</p>
+              <span class="stat-change positive"
+                ><i class="ti ti-trending-up"></i> 24 pengguna baru</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders Section -->
+        <div class="recent-orders-section">
+          <div class="section-header">
+            <h2>Pesanan Terbaru</h2>
+            <a href="#" class="view-all">Lihat Semua</a>
+          </div>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID Pesanan</th>
+                  <th>Pelanggan</th>
+                  <th>Tanggal Sewa</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#ORD-001</td>
+                  <td>
+                    <div class="table-user">
+                      <img
+                        src="https://ui-avatars.com/api/?name=Budi+Santoso&background=f0e68c"
+                        alt="Budi"
+                      />
+                      <span>Budi Santoso</span>
+                    </div>
+                  </td>
+                  <td>24 Okt 2026</td>
+                  <td>Rp 1.500.000</td>
+                  <td><span class="badge-status pending">Menunggu</span></td>
+                  <td>
+                    <button
+                      class="action-btn approve"
+                      onclick="approveOrder('ORD-001')"
+                      title="Terima"
+                    >
+                      <i class="ti ti-check"></i>
+                    </button>
+                    <button
+                      class="action-btn reject"
+                      onclick="rejectOrder('ORD-001')"
+                      title="Tolak"
+                    >
+                      <i class="ti ti-x"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#ORD-002</td>
+                  <td>
+                    <div class="table-user">
+                      <img
+                        src="https://ui-avatars.com/api/?name=Anita+Wijaya&background=ffb6c1"
+                        alt="Anita"
+                      />
+                      <span>Anita Wijaya</span>
+                    </div>
+                  </td>
+                  <td>23 Okt 2026</td>
+                  <td>Rp 4.250.000</td>
+                  <td><span class="badge-status active">Berjalan</span></td>
+                  <td>
+                    <button
+                      class="action-btn view"
+                      onclick="viewOrder('ORD-002')"
+                      title="Lihat"
+                    >
+                      <i class="ti ti-eye"></i>
+                    </button>
+                    <button
+                      class="action-btn complete"
+                      onclick="completeOrder('ORD-002')"
+                      title="Selesai"
+                    >
+                      <i class="ti ti-checks"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#ORD-003</td>
+                  <td>
+                    <div class="table-user">
+                      <img
+                        src="https://ui-avatars.com/api/?name=PT+Maju+Jaya&background=add8e6"
+                        alt="PT Maju"
+                      />
+                      <span>PT Maju Jaya</span>
+                    </div>
+                  </td>
+                  <td>22 Okt 2026</td>
+                  <td>Rp 12.000.000</td>
+                  <td><span class="badge-status completed">Selesai</span></td>
+                  <td>
+                    <button
+                      class="action-btn view"
+                      onclick="viewOrder('ORD-003')"
+                      title="Lihat"
+                    >
+                      <i class="ti ti-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation (App-like feel) -->
+    <nav class="mobile-bottom-nav admin-bottom-nav">
+      <a href="admin.html" class="active">
+        <i class="ti ti-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#">
+        <i class="ti ti-shopping-cart"></i>
+        <span>Pesanan</span>
+        <span class="nav-badge">12</span>
+      </a>
+      <a href="#" class="scan-btn">
+        <div class="icon-circle">
+          <i class="ti ti-scan"></i>
+        </div>
+        <span>Scan</span>
+      </a>
+      <a href="#">
+        <i class="ti ti-box"></i>
+        <span>Produk</span>
+      </a>
+      <a href="#">
+        <i class="ti ti-user"></i>
+        <span>Profil</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="assets/js/admin.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buat Pesanan Baru | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <!-- Select2 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+    />
+    <!-- Flatpickr -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      .detail-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .detail-title h1 {
+        font-size: 1.5rem;
+        margin: 0;
+        color: var(--text-color);
+      }
+      .btn-outline {
+        padding: 8px 16px;
+        border: 1px solid var(--border-color);
+        background: var(--white);
+        border-radius: 6px;
+        color: var(--text-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .btn-outline:hover {
+        background-color: var(--bg-color);
+        border-color: var(--text-light);
+      }
+
+      .create-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+      }
+      @media (max-width: 992px) {
+        .create-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 24px;
+      }
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-title i {
+        color: var(--text-light);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: var(--text-color);
+        font-size: 0.9rem;
+      }
+      .form-group label .required {
+        color: var(--primary-color);
+      }
+      .form-control {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        box-sizing: border-box;
+        background: var(--white);
+      }
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+      }
+      select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8.825L.6 3.4l.85-.825L6 7.15l4.55-4.575.85.825z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+      }
+      textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      @media (max-width: 600px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Product Picker */
+      .product-picker-list {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .product-picker-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: background-color 0.15s;
+      }
+      .product-picker-item:last-child {
+        border-bottom: none;
+      }
+      .product-picker-item:hover {
+        background-color: #f8fafc;
+      }
+      .product-picker-item.selected {
+        background-color: #eff6ff;
+      }
+      .product-picker-item img {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 1px solid var(--border-color);
+      }
+      .product-picker-info {
+        flex: 1;
+      }
+      .product-picker-info .name {
+        font-weight: 600;
+        display: block;
+        font-size: 0.9rem;
+        color: var(--text-color);
+      }
+      .product-picker-info .price {
+        font-size: 0.8rem;
+        color: var(--text-light);
+      }
+      .product-picker-qty {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .product-picker-qty button {
+        width: 28px;
+        height: 28px;
+        border: 1px solid var(--border-color);
+        background: var(--white);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1rem;
+        color: var(--text-color);
+        transition: 0.15s;
+      }
+      .product-picker-qty button:hover {
+        background-color: var(--bg-color);
+      }
+      .product-picker-qty span {
+        min-width: 24px;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      /* Cart Table */
+      .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .cart-table th {
+        text-align: left;
+        padding: 10px 12px;
+        background: var(--bg-color);
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+      }
+      .cart-table td {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+        font-size: 0.9rem;
+      }
+      .cart-item-product {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .cart-item-product img {
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+        object-fit: cover;
+      }
+      .cart-remove {
+        background: none;
+        border: none;
+        color: var(--danger);
+        cursor: pointer;
+        font-size: 1.1rem;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+      }
+      .cart-remove:hover {
+        opacity: 0.7;
+      }
+
+      /* Summary */
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px dashed var(--border-color);
+        font-size: 0.95rem;
+      }
+      .summary-row.total {
+        border-bottom: none;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        padding-top: 14px;
+      }
+
+      .btn-primary-lg {
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: background-color 0.2s;
+      }
+      .btn-primary-lg:hover {
+        background-color: #b71c1c;
+      }
+
+      /* Select2 Override */
+      .select2-container--default .select2-selection--single {
+        height: 42px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+      }
+      .select2-container--default
+        .select2-selection--single
+        .select2-selection__arrow {
+        height: 42px;
+        right: 8px;
+      }
+      .select2-container--default
+        .select2-selection--single
+        .select2-selection__rendered {
+        line-height: normal;
+        padding-left: 0;
+        color: var(--text-color);
+      }
+      .select2-container--default
+        .select2-selection--single
+        .select2-selection__placeholder {
+        color: var(--text-light);
+      }
+      .select2-container--default.select2-container--focus
+        .select2-selection--single,
+      .select2-container--default.select2-container--open
+        .select2-selection--single {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+      }
+      .select2-dropdown {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        font-family: inherit;
+        font-size: 0.95rem;
+      }
+      .select2-container--default
+        .select2-results__option--highlighted.select2-results__option--selectable {
+        background-color: var(--primary-color);
+      }
+      .select2-container--default
+        .select2-search--dropdown
+        .select2-search__field {
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-family: inherit;
+        outline: none;
+      }
+      .select2-container--default
+        .select2-search--dropdown
+        .select2-search__field:focus {
+        border-color: var(--primary-color);
+      }
+      .select2-container {
+        width: 100% !important;
+      }
+
+      /* Flatpickr Override */
+      .flatpickr-input {
+        background: var(--white) !important;
+      }
+
+      .empty-cart {
+        text-align: center;
+        padding: 32px 16px;
+        color: var(--text-light);
+      }
+      .empty-cart i {
+        font-size: 2.5rem;
+        margin-bottom: 8px;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-orders.html"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span
+            ><span class="badge">12</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"
+            ><i class="ti ti-users"></i> <span>Pengguna</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-reports.html"
+            ><i class="ti ti-chart-bar"></i> <span>Laporan</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-coupons.html"
+            ><i class="ti ti-ticket"></i> <span>Kupon</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-pages.html"
+            ><i class="ti ti-notebook"></i> <span>Halaman</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-articles.html"
+            ><i class="ti ti-article"></i> <span>Artikel</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-settings-general.html"
+            ><i class="ti ti-settings"></i> <span>Pengaturan</span></a
+          >
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <!-- Header -->
+        <div class="detail-header">
+          <div class="detail-title">
+            <a href="admin-orders.html" class="btn-outline"
+              ><i class="ti ti-arrow-left"></i
+            ></a>
+            <h1>Buat Pesanan Baru</h1>
+          </div>
+        </div>
+
+        <div class="create-grid">
+          <!-- Left Column -->
+          <div class="left-col">
+            <!-- Customer Info -->
+            <div class="card">
+              <h3 class="card-title">
+                <i class="ti ti-user"></i> Informasi Pelanggan
+              </h3>
+              <div class="form-group">
+                <label>Pelanggan <span class="required">*</span></label>
+                <select class="form-control" id="customerSelect">
+                  <option value="">-- Pilih Pelanggan --</option>
+                  <option value="1">Budi Santoso — 0812-3456-7890</option>
+                  <option value="2">Anita Wijaya — 0856-1234-5678</option>
+                  <option value="3">Caca Marica — 0878-9012-3456</option>
+                  <option value="new">+ Tambah Pelanggan Baru</option>
+                </select>
+              </div>
+              <div id="newCustomerFields" style="display: none">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Nama Lengkap <span class="required">*</span></label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Nama pelanggan"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>No. WhatsApp <span class="required">*</span></label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="08xx-xxxx-xxxx"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    placeholder="email@contoh.com"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Rental Details -->
+            <div class="card">
+              <h3 class="card-title">
+                <i class="ti ti-calendar-event"></i> Detail Penyewaan
+              </h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Tanggal Mulai <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="startDate"
+                    placeholder="Pilih tanggal mulai"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Tanggal Selesai <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="endDate"
+                    placeholder="Pilih tanggal selesai"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Metode Pengambilan</label>
+                <select class="form-control" id="deliverySelect">
+                  <option>Diambil di Toko (Gudang Pusat)</option>
+                  <option>Diantar ke Lokasi</option>
+                </select>
+              </div>
+              <div class="form-group" id="alamatField" style="display: none">
+                <label>Alamat Pengiriman</label>
+                <textarea
+                  class="form-control"
+                  placeholder="Masukkan alamat lengkap..."
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label>Catatan Pesanan</label>
+                <textarea
+                  class="form-control"
+                  placeholder="Catatan khusus dari pelanggan..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Product Picker -->
+            <div class="card">
+              <h3 class="card-title"><i class="ti ti-box"></i> Pilih Produk</h3>
+              <div class="form-group" style="margin-bottom: 12px">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="productSearch"
+                  placeholder="Cari produk..."
+                  style="background: #f8fafc"
+                />
+              </div>
+              <div class="product-picker-list" id="productPickerList">
+                <!-- Product 1 -->
+                <div
+                  class="product-picker-item"
+                  data-id="1"
+                  data-name='Line Array Speaker 12" Active'
+                  data-price="400000"
+                  data-img="https://placehold.co/100x100?text=SP"
+                >
+                  <img
+                    src="https://placehold.co/100x100?text=SP"
+                    alt="Product"
+                  />
+                  <div class="product-picker-info">
+                    <span class="name">Line Array Speaker 12" Active</span>
+                    <span class="price">Rp 400.000 / hari</span>
+                  </div>
+                  <div class="product-picker-qty">
+                    <button class="qty-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="qty-plus">+</button>
+                  </div>
+                </div>
+                <!-- Product 2 -->
+                <div
+                  class="product-picker-item"
+                  data-id="2"
+                  data-name="Digital Mixer 16 Channel"
+                  data-price="350000"
+                  data-img="https://placehold.co/100x100?text=MX"
+                >
+                  <img
+                    src="https://placehold.co/100x100?text=MX"
+                    alt="Product"
+                  />
+                  <div class="product-picker-info">
+                    <span class="name">Digital Mixer 16 Channel</span>
+                    <span class="price">Rp 350.000 / hari</span>
+                  </div>
+                  <div class="product-picker-qty">
+                    <button class="qty-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="qty-plus">+</button>
+                  </div>
+                </div>
+                <!-- Product 3 -->
+                <div
+                  class="product-picker-item"
+                  data-id="3"
+                  data-name='Subwoofer 18" Powered'
+                  data-price="500000"
+                  data-img="https://placehold.co/100x100?text=SW"
+                >
+                  <img
+                    src="https://placehold.co/100x100?text=SW"
+                    alt="Product"
+                  />
+                  <div class="product-picker-info">
+                    <span class="name">Subwoofer 18" Powered</span>
+                    <span class="price">Rp 500.000 / hari</span>
+                  </div>
+                  <div class="product-picker-qty">
+                    <button class="qty-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="qty-plus">+</button>
+                  </div>
+                </div>
+                <!-- Product 4 -->
+                <div
+                  class="product-picker-item"
+                  data-id="4"
+                  data-name="Wireless Mic Shure GLXD"
+                  data-price="250000"
+                  data-img="https://placehold.co/100x100?text=MC"
+                >
+                  <img
+                    src="https://placehold.co/100x100?text=MC"
+                    alt="Product"
+                  />
+                  <div class="product-picker-info">
+                    <span class="name">Wireless Mic Shure GLXD</span>
+                    <span class="price">Rp 250.000 / hari</span>
+                  </div>
+                  <div class="product-picker-qty">
+                    <button class="qty-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="qty-plus">+</button>
+                  </div>
+                </div>
+                <!-- Product 5 -->
+                <div
+                  class="product-picker-item"
+                  data-id="5"
+                  data-name="LED Par Light 200W RGBW"
+                  data-price="150000"
+                  data-img="https://placehold.co/100x100?text=LT"
+                >
+                  <img
+                    src="https://placehold.co/100x100?text=LT"
+                    alt="Product"
+                  />
+                  <div class="product-picker-info">
+                    <span class="name">LED Par Light 200W RGBW</span>
+                    <span class="price">Rp 150.000 / hari</span>
+                  </div>
+                  <div class="product-picker-qty">
+                    <button class="qty-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="qty-plus">+</button>
+                  </div>
+                </div>
+                <!-- Product 6 -->
+                <div
+                  class="product-picker-item"
+                  data-id="6"
+                  data-name="Stage Platform 2x1 Meter"
+                  data-price="200000"
+                  data-img="https://placehold.co/100x100?text=ST"
+                >
+                  <img
+                    src="https://placehold.co/100x100?text=ST"
+                    alt="Product"
+                  />
+                  <div class="product-picker-info">
+                    <span class="name">Stage Platform 2x1 Meter</span>
+                    <span class="price">Rp 200.000 / hari</span>
+                  </div>
+                  <div class="product-picker-qty">
+                    <button class="qty-minus">−</button>
+                    <span class="qty-value">0</span>
+                    <button class="qty-plus">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="right-col">
+            <!-- Cart Summary -->
+            <div class="card">
+              <h3 class="card-title">
+                <i class="ti ti-shopping-cart"></i> Keranjang Pesanan
+              </h3>
+              <div id="cartEmpty" class="empty-cart">
+                <i class="ti ti-shopping-cart-off"></i>
+                <p>
+                  Belum ada produk dipilih.<br />Pilih produk dari daftar di
+                  sebelah kiri.
+                </p>
+              </div>
+              <div id="cartContent" style="display: none">
+                <table class="cart-table">
+                  <thead>
+                    <tr>
+                      <th>Produk</th>
+                      <th>Qty</th>
+                      <th style="text-align: right">Subtotal</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="cartBody"></tbody>
+                </table>
+
+                <div style="margin-top: 20px">
+                  <div class="form-group" style="margin-bottom: 12px">
+                    <label style="font-size: 0.85rem">Kode Kupon</label>
+                    <div style="display: flex; gap: 8px">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="couponCode"
+                        placeholder="Masukkan kode"
+                        style="flex: 1"
+                      />
+                      <button
+                        class="btn-outline"
+                        id="applyCoupon"
+                        style="white-space: nowrap"
+                      >
+                        Terapkan
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style="
+                    margin-top: 16px;
+                    border-top: 1px solid var(--border-color);
+                    padding-top: 16px;
+                  "
+                >
+                  <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="summarySubtotal">Rp 0</span>
+                  </div>
+                  <div class="summary-row">
+                    <span>Durasi</span>
+                    <span id="summaryDuration">0 Hari</span>
+                  </div>
+                  <div class="summary-row">
+                    <span>Diskon</span>
+                    <span id="summaryDiscount" style="color: var(--danger)"
+                      >- Rp 0</span
+                    >
+                  </div>
+                  <div class="summary-row total">
+                    <span>Total</span>
+                    <span id="summaryTotal">Rp 0</span>
+                  </div>
+                </div>
+
+                <button
+                  class="btn-primary-lg"
+                  id="btnSubmitOrder"
+                  style="margin-top: 20px"
+                >
+                  <i class="ti ti-check"></i> Simpan Pesanan
+                </button>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="card">
+              <h3 class="card-title">
+                <i class="ti ti-credit-card"></i> Metode Pembayaran
+              </h3>
+              <div class="form-group">
+                <label>Status Pembayaran</label>
+                <select class="form-control" id="paymentStatusSelect">
+                  <option>Menunggu Pembayaran</option>
+                  <option>DP (Uang Muka)</option>
+                  <option>Lunas</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Metode Pembayaran</label>
+                <select class="form-control" id="paymentMethodSelect">
+                  <option>Transfer Bank</option>
+                  <option>Tunai</option>
+                  <option>QRIS</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // -- Initialize Select2 --
+        $("#customerSelect").select2({
+          placeholder: "-- Pilih Pelanggan --",
+          allowClear: true,
+          width: "100%",
+        });
+        $("#deliverySelect").select2({
+          minimumResultsForSearch: Infinity,
+          width: "100%",
+        });
+        $("#paymentStatusSelect").select2({
+          minimumResultsForSearch: Infinity,
+          width: "100%",
+        });
+        $("#paymentMethodSelect").select2({
+          minimumResultsForSearch: Infinity,
+          width: "100%",
+        });
+
+        // -- Initialize Flatpickr --
+        const fpStart = flatpickr("#startDate", {
+          locale: "id",
+          dateFormat: "d M Y",
+          minDate: "today",
+          onChange: function (selectedDates) {
+            if (selectedDates.length > 0) {
+              fpEnd.set("minDate", selectedDates[0]);
+            }
+            updateCart();
+          },
+        });
+        const fpEnd = flatpickr("#endDate", {
+          locale: "id",
+          dateFormat: "d M Y",
+          minDate: "today",
+          onChange: function () {
+            updateCart();
+          },
+        });
+
+        // -- Toggle new customer fields --
+        const customerSelect = document.getElementById("customerSelect");
+        const newCustomerFields = document.getElementById("newCustomerFields");
+        $("#customerSelect").on("change", function () {
+          newCustomerFields.style.display =
+            this.value === "new" ? "block" : "none";
+        });
+
+        // -- Toggle alamat field --
+        const alamatField = document.getElementById("alamatField");
+        $("#deliverySelect").on("change", function () {
+          alamatField.style.display =
+            $(this).val() === "Diantar ke Lokasi" ? "block" : "none";
+        });
+
+        // -- Product Search --
+        const productSearch = document.getElementById("productSearch");
+        const pickerItems = document.querySelectorAll(".product-picker-item");
+        productSearch.addEventListener("input", function () {
+          const q = this.value.toLowerCase();
+          pickerItems.forEach((item) => {
+            const name = item.querySelector(".name").textContent.toLowerCase();
+            item.style.display = name.includes(q) ? "flex" : "none";
+          });
+        });
+
+        // -- Cart State --
+        const cart = {}; // { id: { name, price, qty, img } }
+
+        function formatRupiah(num) {
+          return "Rp " + num.toLocaleString("id-ID");
+        }
+
+        function getDuration() {
+          const sArr = fpStart.selectedDates;
+          const eArr = fpEnd.selectedDates;
+          if (!sArr.length || !eArr.length) return 0;
+          const diff = Math.ceil((eArr[0] - sArr[0]) / (1000 * 60 * 60 * 24));
+          return diff > 0 ? diff : 0;
+        }
+
+        function updateCart() {
+          const cartBody = document.getElementById("cartBody");
+          const cartEmpty = document.getElementById("cartEmpty");
+          const cartContent = document.getElementById("cartContent");
+          const duration = getDuration();
+
+          cartBody.innerHTML = "";
+          let hasItems = false;
+          let subtotal = 0;
+
+          Object.keys(cart).forEach((id) => {
+            const item = cart[id];
+            if (item.qty > 0) {
+              hasItems = true;
+              const lineTotal = item.price * item.qty * (duration || 1);
+              subtotal += lineTotal;
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td>
+                  <div class="cart-item-product">
+                    <img src="${item.img}" alt="${item.name}" />
+                    <span style="font-weight:500; font-size:0.85rem;">${item.name}</span>
+                  </div>
+                </td>
+                <td>${item.qty}</td>
+                <td style="text-align:right; font-weight:600;">${formatRupiah(lineTotal)}</td>
+                <td><button class="cart-remove" data-id="${id}"><i class="ti ti-trash"></i></button></td>
+              `;
+              cartBody.appendChild(tr);
+            }
+          });
+
+          cartEmpty.style.display = hasItems ? "none" : "block";
+          cartContent.style.display = hasItems ? "block" : "none";
+
+          document.getElementById("summarySubtotal").textContent =
+            formatRupiah(subtotal);
+          document.getElementById("summaryDuration").textContent =
+            (duration || 0) + " Hari";
+          document.getElementById("summaryTotal").textContent =
+            formatRupiah(subtotal);
+
+          // Rebind remove buttons
+          document.querySelectorAll(".cart-remove").forEach((btn) => {
+            btn.addEventListener("click", function () {
+              const id = this.getAttribute("data-id");
+              cart[id].qty = 0;
+              // Reset picker qty display
+              const pickerItem = document.querySelector(
+                `.product-picker-item[data-id="${id}"]`,
+              );
+              if (pickerItem) {
+                pickerItem.querySelector(".qty-value").textContent = "0";
+                pickerItem.classList.remove("selected");
+              }
+              updateCart();
+            });
+          });
+        }
+
+        // -- Qty Buttons --
+        document.querySelectorAll(".qty-plus").forEach((btn) => {
+          btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const item = this.closest(".product-picker-item");
+            const id = item.dataset.id;
+            const qtyEl = item.querySelector(".qty-value");
+            let qty = parseInt(qtyEl.textContent) + 1;
+            qtyEl.textContent = qty;
+            item.classList.add("selected");
+
+            cart[id] = {
+              name: item.dataset.name,
+              price: parseInt(item.dataset.price),
+              qty: qty,
+              img: item.dataset.img,
+            };
+            updateCart();
+          });
+        });
+
+        document.querySelectorAll(".qty-minus").forEach((btn) => {
+          btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const item = this.closest(".product-picker-item");
+            const id = item.dataset.id;
+            const qtyEl = item.querySelector(".qty-value");
+            let qty = Math.max(0, parseInt(qtyEl.textContent) - 1);
+            qtyEl.textContent = qty;
+
+            if (qty === 0) {
+              item.classList.remove("selected");
+              if (cart[id]) cart[id].qty = 0;
+            } else {
+              cart[id] = {
+                name: item.dataset.name,
+                price: parseInt(item.dataset.price),
+                qty: qty,
+                img: item.dataset.img,
+              };
+            }
+            updateCart();
+          });
+        });
+
+        // -- Date change recalculates --
+        document
+          .getElementById("startDate")
+          .addEventListener("change", updateCart);
+        document
+          .getElementById("endDate")
+          .addEventListener("change", updateCart);
+
+        // -- Coupon --
+        document
+          .getElementById("applyCoupon")
+          .addEventListener("click", function () {
+            const code = document.getElementById("couponCode").value.trim();
+            if (!code) return;
+            // Mock: apply 10% discount
+            Swal.fire({
+              icon: "success",
+              title: "Kupon Diterapkan!",
+              text: "Diskon 10% berhasil ditambahkan.",
+              timer: 1500,
+              showConfirmButton: false,
+            });
+            document.getElementById("summaryDiscount").textContent = "- 10%";
+          });
+
+        // -- Submit Order --
+        document
+          .getElementById("btnSubmitOrder")
+          .addEventListener("click", function () {
+            const customer = customerSelect.value;
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            const hasProducts = Object.values(cart).some((i) => i.qty > 0);
+
+            if (!customer) {
+              Swal.fire(
+                "Perhatian",
+                "Silakan pilih pelanggan terlebih dahulu.",
+                "warning",
+              );
+              return;
+            }
+            if (!startDate || !endDate) {
+              Swal.fire(
+                "Perhatian",
+                "Silakan isi tanggal sewa terlebih dahulu.",
+                "warning",
+              );
+              return;
+            }
+            if (!hasProducts) {
+              Swal.fire(
+                "Perhatian",
+                "Silakan pilih minimal satu produk.",
+                "warning",
+              );
+              return;
+            }
+
+            Swal.fire({
+              title: "Simpan Pesanan?",
+              text: 'Pesanan baru akan dibuat dan status awalnya "Menunggu Pembayaran".',
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonColor: "#d32f2f",
+              cancelButtonColor: "#64748b",
+              confirmButtonText: "Ya, Simpan!",
+              cancelButtonText: "Batal",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                Swal.fire({
+                  icon: "success",
+                  title: "Pesanan Dibuat!",
+                  text: "Pesanan baru berhasil disimpan.",
+                  confirmButtonColor: "#d32f2f",
+                }).then(() => {
+                  window.location.href = "admin-orders.html";
+                });
+              }
+            });
+          });
+      });
+    </script>
+  </body>
+</html>

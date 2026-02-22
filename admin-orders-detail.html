@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Pesanan | Admin Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      .detail-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .detail-title h1 {
+        font-size: 1.5rem;
+        margin: 0;
+        color: var(--text-color);
+      }
+      .btn-outline {
+        padding: 8px 16px;
+        border: 1px solid var(--border-color);
+        background: var(--white);
+        border-radius: 6px;
+        color: var(--text-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .btn-outline:hover {
+        background-color: var(--bg-color);
+        border-color: var(--text-light);
+      }
+      .detail-actions {
+        display: flex;
+        gap: 10px;
+      }
+      .btn-success-solid {
+        background-color: var(--success);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-danger-solid {
+        background-color: var(--danger);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+      }
+      @media (max-width: 992px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 24px;
+      }
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .info-row {
+        display: flex;
+        margin-bottom: 12px;
+      }
+      .info-label {
+        width: 150px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+      .info-value {
+        flex: 1;
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 0.95rem;
+      }
+
+      .item-list {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .item-list th {
+        text-align: left;
+        padding: 12px;
+        background: var(--bg-color);
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .item-list td {
+        padding: 16px 12px;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+      }
+      .item-product {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .item-img {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: #f1f5f9;
+        border: 1px solid var(--border-color);
+      }
+      .item-name {
+        font-weight: 600;
+        color: var(--text-color);
+        display: block;
+      }
+      .item-sku {
+        font-size: 0.8rem;
+        color: var(--text-light);
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--border-color);
+      }
+      .summary-row.total {
+        border-bottom: none;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        padding-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img
+          src="assets/images/logo-renta.png"
+          alt="Renta Logo"
+          class="sidebar-logo"
+        />
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="admin.html"
+            ><i class="ti ti-home"></i> <span>Dashboard</span></a
+          >
+        </li>
+        <li class="active">
+          <a href="admin-orders.html"
+            ><i class="ti ti-shopping-cart"></i> <span>Pesanan</span
+            ><span class="badge">12</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-products.html"
+            ><i class="ti ti-box"></i> <span>Produk</span></a
+          >
+        </li>
+        <li>
+          <a href="admin-users.html"><i class="ti ti-users"></i> <span>Pengguna</span></a>
+        </li>
+        <li>
+          <a href="admin-reports.html"><i class="ti ti-chart-bar"></i> <span>Laporan</span></a>
+        </li>
+        <li>
+          <a href="admin-coupons.html"><i class="ti ti-ticket"></i> <span>Kupon</span></a>
+        </li>
+        <li>
+          <a href="admin-pages.html"><i class="ti ti-notebook"></i> <span>Halaman</span></a>
+        </li>
+        <li>
+          <a href="admin-articles.html"><i class="ti ti-article"></i> <span>Artikel</span></a>
+        </li>
+        <li>
+          <a href="admin-settings-general.html"><i class="ti ti-settings"></i> <span>Pengaturan</span></a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="#" class="logout-btn"
+          ><i class="ti ti-logout"></i> <span>Logout</span></a
+        >
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Top Navbar -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="ti ti-menu-2"></i>
+          </button>
+        </div>
+        <div class="header-right">
+          <div class="user-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin+Renta&background=D32F2F&color=fff"
+              alt="Admin"
+            />
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Super Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+        <div class="detail-header">
+          <div class="detail-title">
+            <a href="admin-orders.html" class="btn-outline"
+              ><i class="ti ti-arrow-left"></i
+            ></a>
+            <h1>Pesanan #ORD-001</h1>
+            <span class="badge-status pending" style="margin-left: 10px"
+              >Baru</span
+            >
+          </div>
+          <div class="detail-actions">
+            <button class="btn-outline" onclick="window.print()">
+              <i class="ti ti-printer"></i> Cetak Invoice
+            </button>
+            <button class="btn-danger-solid" id="btnReject">
+              <i class="ti ti-x"></i> Tolak
+            </button>
+            <button class="btn-success-solid" id="btnApprove">
+              <i class="ti ti-check"></i> Proses Pesanan
+            </button>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <!-- Left Column: Items & Customer -->
+          <div class="left-col">
+            <div class="card">
+              <h3 class="card-title">Informasi Penyewaan</h3>
+              <div class="info-row">
+                <span class="info-label">Durasi Sewa</span>
+                <span class="info-value"
+                  >24 Okt 2026 s/d 26 Okt 2026 (2 Hari)</span
+                >
+              </div>
+              <div class="info-row">
+                <span class="info-label">Titik Pengambilan</span>
+                <span class="info-value">Diambil di Toko (Gudang Pusat)</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Catatan Pembeli</span>
+                <span class="info-value"
+                  >"Tolong kabel speakon panjang 20m disertakan ekstra"</span
+                >
+              </div>
+            </div>
+
+            <div class="card" style="padding: 0; overflow: hidden">
+              <h3
+                class="card-title"
+                style="margin: 24px 24px 16px; border-bottom: none"
+              >
+                Barang yang Disewa
+              </h3>
+              <div style="overflow-x: auto">
+                <table class="item-list">
+                  <thead>
+                    <tr>
+                      <th>Produk</th>
+                      <th>Harga/Hari</th>
+                      <th>Qty</th>
+                      <th style="text-align: right">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="item-product">
+                          <img
+                            src="https://placehold.co/100x100"
+                            class="item-img"
+                            alt="Product"
+                          />
+                          <div>
+                            <span class="item-name"
+                              >Line Array Speaker 12" Active</span
+                            >
+                            <span class="item-sku">SKU: SND-LN-12A</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>Rp 400.000</td>
+                      <td>2 Unit</td>
+                      <td style="text-align: right; font-weight: 600">
+                        Rp 1.600.000
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="item-product">
+                          <img
+                            src="https://placehold.co/100x100"
+                            class="item-img"
+                            alt="Product"
+                          />
+                          <div>
+                            <span class="item-name"
+                              >Digital Mixer 16 Channel</span
+                            >
+                            <span class="item-sku">SKU: SND-MX-16D</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>Rp 350.000</td>
+                      <td>1 Unit</td>
+                      <td style="text-align: right; font-weight: 600">
+                        Rp 700.000
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Customer & Payment Summary -->
+          <div class="right-col">
+            <div class="card">
+              <h3 class="card-title">Pelanggan</h3>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 15px;
+                  margin-bottom: 20px;
+                "
+              >
+                <img
+                  src="https://ui-avatars.com/api/?name=Budi+Santoso&background=f0e68c"
+                  style="width: 50px; height: 50px; border-radius: 50%"
+                  alt="Budi"
+                />
+                <div>
+                  <h4 style="margin: 0; font-size: 1rem">Budi Santoso</h4>
+                  <span style="font-size: 0.85rem; color: var(--text-light)"
+                    >Member Sejak 2025</span
+                  >
+                </div>
+              </div>
+              <div class="info-row" style="margin-bottom: 8px">
+                <i
+                  class="ti ti-mail"
+                  style="
+                    color: var(--text-light);
+                    margin-right: 8px;
+                    display: flex;
+                    align-items: center;
+                  "
+                ></i>
+                <span class="info-value">budi.santoso@example.com</span>
+              </div>
+              <div class="info-row" style="margin-bottom: 8px">
+                <i
+                  class="ti ti-brand-whatsapp"
+                  style="
+                    color: var(--text-light);
+                    margin-right: 8px;
+                    display: flex;
+                    align-items: center;
+                  "
+                ></i>
+                <span class="info-value">0812-3456-7890</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 class="card-title">Rincian Pembayaran</h3>
+              <div class="summary-row">
+                <span>Subtotal Barang (2 Hari)</span>
+                <span>Rp 2.300.000</span>
+              </div>
+              <div class="summary-row">
+                <span>Diskon Kupon (MEMBERVIP)</span>
+                <span style="color: var(--danger)">- Rp 200.000</span>
+              </div>
+              <div class="summary-row">
+                <span>Pajak (0%)</span>
+                <span>Rp 0</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total Tagihan</span>
+                <span>Rp 2.100.000</span>
+              </div>
+
+              <div style="margin-top: 20px; text-align: center">
+                <button
+                  class="btn-outline"
+                  style="width: 100%; justify-content: center"
+                  onclick="window.location.href = 'admin-orders-payment.html'"
+                >
+                  Lihat Bukti Transfer <i class="ti ti-external-link"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="assets/js/admin.js"></script>
+    <script>
+      document
+        .getElementById("btnApprove")
+        .addEventListener("click", function () {
+          Swal.fire({
+            title: "Proses Pesanan?",
+            text: "Status akan diubah menjadi 'Sedang Disiapkan'.",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#10b981",
+            cancelButtonColor: "#64748b",
+            confirmButtonText: "Ya, Proses!",
+            cancelButtonText: "Batal",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire("Berhasil!", "Pesanan mulai disiapkan.", "success");
+            }
+          });
+        });
+
+      document
+        .getElementById("btnReject")
+        .addEventListener("click", function () {
+          Swal.fire({
+            title: "Tolak Pesanan?",
+            input: "textarea",
+            inputLabel: "Alasan Penolakan (Opsional)",
+            inputPlaceholder: "Ketik alasan Anda di sini...",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ef4444",
+            cancelButtonColor: "#64748b",
+            confirmButtonText: "Tolak Pesanan",
+            cancelButtonText: "Kembali",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire("Dibatalkan!", "Pesanan ditolak.", "success");
+            }
+          });
+        });
+    </script>
+  </body>
+</html>

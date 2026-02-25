@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist | Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <style>
+        .account-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-bottom: 50px;
+        }
+        
+        .account-sidebar {
+            width: 280px;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .account-user-info {
+            padding: 25px 20px;
+            background: #f9f9f9;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .user-details h4 {
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .account-menu {
+            list-style: none;
+            padding: 10px 0;
+            margin: 0;
+        }
+
+        .account-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+
+        .account-menu li a i {
+            width: 24px;
+            font-size: 16px;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .account-menu li a:hover, .account-menu li a.active {
+            background: #fff8f8;
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .account-menu li a:hover i, .account-menu li a.active i {
+            color: var(--primary-color);
+        }
+
+        .account-content {
+            flex: 1;
+        }
+
+        @media (max-width: 991px) {
+            .account-container {
+                flex-direction: column;
+                margin-bottom: 30px;
+                width: 100%;
+                overflow: hidden;
+            }
+            .account-content {
+                width: 100%;
+                min-width: 0px;
+            }
+            .account-sidebar {
+                display: none;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="assets/css/shop.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span><i class="fas fa-map-marker-alt"></i> Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang, Jawa Timur 65122</span>
+            </div>
+            <div class="top-bar-right">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header Area -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/images/logo-renta.png" alt="Renta Enterprise">
+                </a>
+            </div>
+            <div class="search-box">
+                <form action="#">
+                    <input type="text" placeholder="Search for products">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            <div class="header-actions">
+                <a href="#" class="auth-link">LOGIN / REGISTER</a>
+                <a href="wishlist.html" class="action-icon wishlist-icon">
+                    <i class="far fa-heart"></i>
+                    <span class="badge">1</span>
+                </a>
+                <a href="cart.html" class="action-icon cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">2</span>
+                    <span class="cart-total">Rp1.100.000</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Area -->
+    <nav class="main-nav">
+        <div class="container nav-container">
+            <div class="categories-btn">
+                <i class="fas fa-bars"></i>
+                <span>BROWSE CATEGORIES</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="product.html">PRODUK</a></li>
+                <li><a href="#">TENTANG KAMI</a></li>
+                <li><a href="#">KONTAK</a></li>
+                <li><a href="#">CARA SEWA</a></li>
+                <li><a href="#" class="highlight">KONFIRMASI PEMBAYARAN</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="shop-breadcrumb" style="margin-bottom: 30px;">
+                <a href="index.html">Beranda</a> <span class="separator"><i class="fas fa-chevron-right"></i></span> 
+                <a href="#">Akun Saya</a> <span class="separator"><i class="fas fa-chevron-right"></i></span> 
+                <span>Wishlist</span>
+            </div>
+
+            <div class="account-container">
+                <!-- Sidebar Account -->
+                <aside class="account-sidebar">
+                    <div class="account-user-info">
+                        <div class="user-avatar">B</div>
+                        <div class="user-details">
+                            <h4>Budi Santoso</h4>
+                            <p>budi.santoso@email.com</p>
+                        </div>
+                    </div>
+                    <ul class="account-menu">
+                        <li><a href="profil-saya.html"><i class="far fa-user"></i> Profil Saya</a></li>
+                        <li><a href="pesanan-saya.html"><i class="fas fa-shopping-bag"></i> Pesanan Saya</a></li>
+                        <li><a href="buku-alamat.html"><i class="far fa-map"></i> Buku Alamat</a></li>
+                        <li><a href="wishlist.html" class="active"><i class="far fa-heart"></i> Wishlist</a></li>
+                        <li><a href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Main Account Content -->
+                <div class="account-content">
+                    <h1 class="shop-page-title" style="text-align: left; padding-bottom: 10px; border-bottom: none; margin-bottom: 20px;">Wishlist Anda</h1>
+                    
+                    <table class="shop-table">
+                        <thead>
+                            <tr>
+                                <th width="50%">Produk</th>
+                                <th width="20%">Harga</th>
+                                <th width="20%">Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-title="Produk">
+                                    <div class="item-product-info">
+                                        <div class="item-img">
+                                            <img src="assets/images/product-3.png" alt="AC 5 PK">
+                                        </div>
+                                        <div class="item-title">
+                                            <a href="product-detail.html">AC 5 PK</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-title="Harga">Rp750.000 / Hari</td>
+                                <td data-title="Status">Tersedia</td>
+                                <td data-title="Aksi">
+                                    <div style="display: flex; gap: 15px; align-items: center; justify-content: flex-end;">
+                                        <a href="product-detail.html" class="btn-primary" style="padding: 8px 15px; font-size: 12px;">Lihat Produk</a>
+                                        <i class="fas fa-times item-remove" title="Hapus dari wishlist"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="footer-widget brand-info">
+                <img src="assets/images/Logo-putih.png" alt="Renta" class="footer-logo">
+                <p>Spesialis sewa peralatan event dan multimedia lengkap di Malang dan sekitarnya. Solusi profesional untuk mensukseskan berbagai acara Anda.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-widget link-helper">
+                <h3>Link Helper</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Cara Sewa</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Konfirmasi Pembayaran</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Kebijakan Privasi</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Syarat & Ketentuan</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sitemap</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-widget services-list">
+                <h3>Layanan Kami</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sound System</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Lighting & Effect</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Stage & Rigging</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Multimedia LED</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Vendor Event</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-widget">
+                <h3>Hubungi Kami</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Alamat Kantor</strong>
+                            Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang 65122
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <strong>Telepon / WA</strong>
+                            0812-3456-7890
+                        </div>
+                    </li>
+                </ul>
+                <div class="payment-methods">
+                    <h3>Metode Pembayaran</h3>
+                    <div class="payment-icons">
+                        <img src="assets/images/bca.png" alt="BCA">
+                        <img src="assets/images/bni.png" alt="BNI">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © <span>Renta Enterprise</span> 2026. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Account Modal -->
+    <div id="accountMobileModal" class="account-mobile-modal" style="display: none;">
+        <div class="account-mobile-overlay" onclick="document.getElementById('accountMobileModal').style.display='none'"></div>
+        <div class="account-mobile-content">
+            <button class="account-mobile-close-btn" onclick="document.getElementById('accountMobileModal').style.display='none'">&times;</button>
+            <div class="account-user-info" style="border-radius: 8px 8px 0 0; background: #fafafa; border-bottom: 1px solid var(--border-color); padding-right: 40px;">
+                <div class="user-avatar" style="background: #d32f2f;">B</div>
+                <div class="user-details">
+                    <h4 style="font-size: 16px; margin: 0 0 4px; color: var(--text-dark);">Budi Santoso</h4>
+                    <p style="font-size: 13px; color: var(--text-light); margin: 0;">budi.santoso@email.com</p>
+                </div>
+            </div>
+            <ul class="account-menu">
+                <li><a href="profil-saya.html"><i class="far fa-user"></i> Profil Saya</a></li>
+                <li><a href="pesanan-saya.html"><i class="fas fa-shopping-bag"></i> Pesanan Saya</a></li>
+                <li><a href="buku-alamat.html"><i class="far fa-map"></i> Buku Alamat</a></li>
+                <li><a href="wishlist.html" style="background: #fdf5f5; color: #d32f2f; border-left: 3px solid #d32f2f;"><i class="far fa-heart" style="color: #d32f2f;"></i> Wishlist</a></li>
+                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="product.html">
+            <i class="fas fa-box"></i>
+            <span>Produk</span>
+        </a>
+        <a href="pesanan-saya.html">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Pesanan</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-th-large"></i>
+            <span>Kategori</span>
+        </a>
+        <a href="#" class="akun-btn active" style="position: relative;" onclick="document.getElementById('accountMobileModal').style.display='flex'; return false;">
+            <div class="icon-circle">
+                <i class="fas fa-user"></i>
+            </div>
+            <span>Akun</span>
+        </a>
+    </nav>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

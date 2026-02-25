@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Pesanan | Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/shop.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        .detail-page-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+
+        .order-header-box {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .order-header-info h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .order-header-info p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .order-status-badge {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: #fff3cd; 
+            color: #856404;
+            display: inline-block;
+        }
+
+        /* Order Tracking Timeline */
+        .order-timeline-box {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px 25px;
+            margin-bottom: 25px;
+        }
+
+        .timeline-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            right: 40px;
+            height: 4px;
+            background: #eee;
+            z-index: 1;
+        }
+
+        .timeline-line-active {
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            width: 25%; /* Change width based on progress */
+            height: 4px;
+            background: var(--primary-color);
+            z-index: 2;
+        }
+
+        .timeline-step {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            width: 80px;
+        }
+
+        .timeline-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #eee;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 0 auto 10px;
+            transition: var(--transition);
+        }
+
+        .timeline-step.active .timeline-icon {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .timeline-step.completed .timeline-icon {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .timeline-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .timeline-date {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Detail Cards */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .detail-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 25px;
+        }
+
+        .detail-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .detail-content p {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .detail-content p strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* Order Items Table */
+        .order-items-box {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+        }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-items-table th {
+            text-align: left;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--text-light);
+        }
+        
+        .order-items-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid #f5f5f5;
+            vertical-align: middle;
+        }
+
+        .order-items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .item-info-flex {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .item-info-flex img {
+            width: 60px;
+            height: 60px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 5px;
+        }
+
+        .item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .item-meta {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: #fdfdfd;
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 20px 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .order-header-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            .timeline-container {
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            .timeline-line, .timeline-line-active {
+                left: 30px;
+                right: 30px;
+            }
+            .order-items-table th { display: none; }
+            .order-items-table tr {
+                display: block;
+                margin-bottom: 15px;
+                background: #fefefe;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 10px;
+            }
+            .order-items-table td {
+                display: block;
+                padding: 5px 0;
+                border: none;
+                text-align: right;
+            }
+            .order-items-table td[data-title]::before {
+                content: attr(data-title);
+                float: left;
+                font-weight: 600;
+                color: var(--text-light);
+                font-size: 12px;
+                text-transform: uppercase;
+            }
+            .item-info-flex {
+                text-align: left;
+                float: none;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span><i class="fas fa-map-marker-alt"></i> Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang, Jawa Timur 65122</span>
+            </div>
+            <div class="top-bar-right">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header Area -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/images/logo-renta.png" alt="Renta Enterprise">
+                </a>
+            </div>
+            <div class="search-box">
+                <form action="#">
+                    <input type="text" placeholder="Search for products">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            <div class="header-actions">
+                <a href="#" class="auth-link">Budi Santoso</a>
+                <a href="wishlist.html" class="action-icon wishlist-icon">
+                    <i class="far fa-heart"></i>
+                    <span class="badge">0</span>
+                </a>
+                <a href="cart.html" class="action-icon cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">2</span>
+                    <span class="cart-total">Rp1.100.000</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="detail-page-wrapper" style="padding-top: 30px;">
+                <a href="pesanan-saya.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Pesanan Saya</a>
+
+                <!-- Header -->
+                <div class="order-header-box">
+                    <div class="order-header-info">
+                        <h2>Pesanan #INV-20260223-001</h2>
+                        <p>Dibuat pada 23 Februari 2026 14:30 WIB</p>
+                    </div>
+                    <div class="order-status-badge">Menunggu Pembayaran</div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="order-timeline-box">
+                    <h3 style="font-size: 16px; margin-bottom: 25px; margin-top: 0;">Status Pelacakan</h3>
+                    <div class="timeline-container">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-line-active"></div>
+                        
+                        <div class="timeline-step completed">
+                            <div class="timeline-icon"><i class="fas fa-file-invoice"></i></div>
+                            <div class="timeline-label">Pesanan Dibuat</div>
+                            <span class="timeline-date">23 Feb 14:30</span>
+                        </div>
+                        <div class="timeline-step active">
+                            <div class="timeline-icon"><i class="fas fa-wallet"></i></div>
+                            <div class="timeline-label">Menunggu Pemb.</div>
+                            <span class="timeline-date">-</span>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-icon"><i class="fas fa-box-open"></i></div>
+                            <div class="timeline-label">Diproses</div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-icon"><i class="fas fa-truck-loading"></i></div>
+                            <div class="timeline-label">Dikirim / Setup</div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="timeline-label">Selesai</div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Action Banner (Visible only when unpaid) -->
+                    <div style="margin-top: 30px; background: #fdf6f6; border: 1px dashed var(--primary-color); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <h4 style="margin: 0 0 5px; color: var(--text-dark); font-size: 15px;">Selesaikan Pembayaran Anda!</h4>
+                            <p style="margin: 0; font-size: 13px; color: var(--text-light);">Batas akhir pembayaran <strong>24 Februari 2026 14:30 WIB</strong>. Pesanan akan dibatalkan otomatis jika melewati batas waktu.</p>
+                        </div>
+                        <button class="btn-primary" style="background: #28a745; border-color: #28a745;">Cara Pembayaran</button>
+                    </div>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h3>Alamat Pengiriman</h3>
+                        <div class="detail-content">
+                            <p><strong>Budi Santoso - Kantor Utama</strong></p>
+                            <p>0812-3456-7890</p>
+                            <p>Renta Enterprise, Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing</p>
+                            <p>Kota Malang, Jawa Timur 65122</p>
+                            <p style="margin-top: 10px;"><strong>Catatan Tambahan:</strong> Mohon loading via pintu belakang gedung.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <h3>Informasi Pembayaran</h3>
+                        <div class="detail-content">
+                            <p><strong>Metode Pembayaran:</strong> Transfer Bank Langsung</p>
+                            <p><strong>Status Pembayaran:</strong> <span style="color: #d9534f; font-weight: 600;">Belum Dibayar</span></p>
+                            
+                            <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                                <p style="font-size: 12px; margin-bottom: 5px;">Transfer Pembayaran Ke:</p>
+                                <p><strong>BCA: 1234567890 (PT Renta Enterprise)</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="order-items-box">
+                    <h3 style="font-size: 16px; margin-bottom: 15px; margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Daftar Produk yang Disewa</h3>
+                    <table class="order-items-table">
+                        <thead>
+                            <tr>
+                                <th width="50%">Produk</th>
+                                <th width="15%">Harga</th>
+                                <th width="15%" style="text-align: center;">Qty</th>
+                                <th width="20%" style="text-align: right;">Total Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-title="Produk">
+                                    <div class="item-info-flex">
+                                        <img src="assets/images/product-2.png" alt="AC 3 PK">
+                                        <div>
+                                            <div class="item-name">AC 3 PK</div>
+                                            <div class="item-meta">Tgl Sewa: 25 Feb 2026 - 26 Feb 2026</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-title="Harga">Rp650.000</td>
+                                <td data-title="Qty" style="text-align: center;">1</td>
+                                <td data-title="Total Harga" style="text-align: right; font-weight: 600;">Rp650.000</td>
+                            </tr>
+                            <tr>
+                                <td data-title="Produk">
+                                    <div class="item-info-flex">
+                                        <img src="assets/images/product-4.png" alt="Misty Fan">
+                                        <div>
+                                            <div class="item-name">Misty Fan</div>
+                                            <div class="item-meta">Tgl Sewa: 25 Feb 2026 - 26 Feb 2026</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-title="Harga">Rp450.000</td>
+                                <td data-title="Qty" style="text-align: center;">1</td>
+                                <td data-title="Total Harga" style="text-align: right; font-weight: 600;">Rp450.000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Summary -->
+                <div style="display: flex; justify-content: flex-end;">
+                    <div style="width: 100%; max-width: 350px;">
+                        <div class="summary-box">
+                            <div class="summary-row">
+                                <span>Total Harga Barang</span>
+                                <span>Rp1.100.000</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Biaya Pengiriman (Malang)</span>
+                                <span>Rp50.000</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Pajak (0%)</span>
+                                <span>Rp0</span>
+                            </div>
+                            <div class="summary-total">
+                                <span>Total Tagihan</span>
+                                <span>Rp1.150.000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="footer-widget brand-info">
+                <img src="assets/images/Logo-putih.png" alt="Renta" class="footer-logo">
+                <p>Spesialis sewa peralatan event dan multimedia lengkap di Malang dan sekitarnya. Solusi profesional untuk mensukseskan berbagai acara Anda.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-widget link-helper">
+                <h3>Link Helper</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Cara Sewa</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Konfirmasi Pembayaran</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Kebijakan Privasi</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Syarat & Ketentuan</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sitemap</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-widget services-list">
+                <h3>Layanan Kami</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sound System</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Lighting & Effect</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Stage & Rigging</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Multimedia LED</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Vendor Event</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-widget">
+                <h3>Hubungi Kami</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Alamat Kantor</strong>
+                            Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang 65122
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <strong>Telepon / WA</strong>
+                            0812-3456-7890
+                        </div>
+                    </li>
+                </ul>
+                <div class="payment-methods">
+                    <h3>Metode Pembayaran</h3>
+                    <div class="payment-icons">
+                        <img src="assets/images/bca.png" alt="BCA">
+                        <img src="assets/images/bni.png" alt="BNI">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © <span>Renta Enterprise</span> 2026. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Account Modal -->
+    <div id="accountMobileModal" class="account-mobile-modal" style="display: none;">
+        <div class="account-mobile-overlay" onclick="document.getElementById('accountMobileModal').style.display='none'"></div>
+        <div class="account-mobile-content">
+            <button class="account-mobile-close-btn" onclick="document.getElementById('accountMobileModal').style.display='none'">&times;</button>
+            <div class="account-user-info" style="border-radius: 8px 8px 0 0; background: #fafafa; border-bottom: 1px solid var(--border-color); padding-right: 40px;">
+                <div class="user-avatar" style="background: #d32f2f;">B</div>
+                <div class="user-details">
+                    <h4 style="font-size: 16px; margin: 0 0 4px; color: var(--text-dark);">Budi Santoso</h4>
+                    <p style="font-size: 13px; color: var(--text-light); margin: 0;">budi.santoso@email.com</p>
+                </div>
+            </div>
+            <ul class="account-menu">
+                <li><a href="#"><i class="far fa-user"></i> Profil Saya</a></li>
+                <li><a href="pesanan-saya.html" style="background: #fdf5f5; color: #d32f2f; border-left: 3px solid #d32f2f;"><i class="fas fa-shopping-bag" style="color: #d32f2f;"></i> Pesanan Saya</a></li>
+                <li><a href="#"><i class="far fa-map"></i> Buku Alamat</a></li>
+                <li><a href="wishlist.html"><i class="far fa-heart"></i> Wishlist</a></li>
+                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="product.html">
+            <i class="fas fa-box"></i>
+            <span>Produk</span>
+        </a>
+        <a href="pesanan-saya.html" class="pesanan-btn active" style="position: relative;">
+            <div class="icon-circle">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <span>Pesanan Saya</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-th-large"></i>
+            <span>Kategori</span>
+        </a>
+        <a href="#" class="akun-btn" onclick="document.getElementById('accountMobileModal').style.display='flex'; return false;">
+            <i class="fas fa-user"></i>
+            <span>Akun</span>
+        </a>
+    </nav>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

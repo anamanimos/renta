@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Alamat | Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/shop.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        .account-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-bottom: 50px;
+        }
+        
+        .account-content {
+            flex: 1;
+        }
+
+        .address-book-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: none;
+            margin-bottom: 20px;
+            padding-bottom: 0;
+        }
+
+        .address-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: var(--transition);
+        }
+
+        .address-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            border-color: #eaeaea;
+        }
+
+        .address-card.is-main {
+            border-color: var(--primary-color);
+            background: #fffafa;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.08);
+        }
+
+        .address-card.is-main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), #f76b6b);
+            border-radius: 12px 0 0 12px;
+        }
+
+        .address-label {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .address-label.main-label {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .account-menu {
+            list-style: none;
+            padding: 10px 0;
+            margin: 0;
+        }
+
+        .account-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+
+        .account-menu li a i {
+            width: 24px;
+            font-size: 16px;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .account-menu li a:hover, .account-menu li a.active {
+            background: #fff8f8;
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .account-menu li a:hover i, .account-menu li a.active i {
+            color: var(--primary-color);
+        }
+
+        .address-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .address-phone {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .address-detail {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .address-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .address-actions a {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            padding: 8px 15px;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+
+        .address-actions a:hover {
+            color: var(--primary-color);
+            background: #fff;
+            border-color: var(--border-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .btn-set-main {
+            background: none;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-set-main:hover {
+            background: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 991px) {
+            .account-container {
+                flex-direction: column;
+                margin-bottom: 30px;
+                width: 100%;
+                overflow: hidden;
+            }
+            .account-content {
+                width: 100%;
+                min-width: 0px;
+            }
+            .account-sidebar {
+                display: none;
+            }
+            .address-book-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .address-card {
+                padding: 15px;
+            }
+            .address-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span><i class="fas fa-map-marker-alt"></i> Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang, Jawa Timur 65122</span>
+            </div>
+            <div class="top-bar-right">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header Area -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/images/logo-renta.png" alt="Renta Enterprise">
+                </a>
+            </div>
+            <div class="search-box">
+                <form action="#">
+                    <input type="text" placeholder="Search for products">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            <div class="header-actions">
+                <a href="#" class="auth-link">Budi Santoso</a>
+                <a href="wishlist.html" class="action-icon wishlist-icon">
+                    <i class="far fa-heart"></i>
+                    <span class="badge">0</span>
+                </a>
+                <a href="cart.html" class="action-icon cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">2</span>
+                    <span class="cart-total">Rp1.100.000</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Area -->
+    <nav class="main-nav">
+        <div class="container nav-container">
+            <div class="categories-btn">
+                <i class="fas fa-bars"></i>
+                <span>BROWSE CATEGORIES</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="product.html">PRODUK</a></li>
+                <li><a href="#">TENTANG KAMI</a></li>
+                <li><a href="#">KONTAK</a></li>
+                <li><a href="#">CARA SEWA</a></li>
+                <li><a href="#" class="highlight">KONFIRMASI PEMBAYARAN</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="shop-breadcrumb" style="margin-bottom: 30px;">
+                <a href="index.html">Beranda</a> <span class="separator"><i class="fas fa-chevron-right"></i></span> 
+                <a href="#">Akun Saya</a> <span class="separator"><i class="fas fa-chevron-right"></i></span> 
+                <span>Buku Alamat</span>
+            </div>
+
+            <div class="account-container">
+                <!-- Sidebar Account -->
+                <aside class="account-sidebar">
+                    <div class="account-user-info">
+                        <div class="user-avatar">B</div>
+                        <div class="user-details">
+                            <h4>Budi Santoso</h4>
+                            <p>budi.santoso@email.com</p>
+                        </div>
+                    </div>
+                    <ul class="account-menu">
+                        <li><a href="profil-saya.html"><i class="far fa-user"></i> Profil Saya</a></li>
+                        <li><a href="pesanan-saya.html"><i class="fas fa-shopping-bag"></i> Pesanan Saya</a></li>
+                        <li><a href="buku-alamat.html" class="active"><i class="far fa-map"></i> Buku Alamat</a></li>
+                        <li><a href="wishlist.html"><i class="far fa-heart"></i> Wishlist</a></li>
+                        <li><a href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Main Account Content -->
+                <div class="account-content">
+                    <div class="address-book-header">
+                        <h1 class="shop-page-title" style="margin: 0; border: none; padding: 0;">Buku Alamat</h1>
+                        <button class="btn-primary" onclick="document.getElementById('addressModal').style.display='flex'">+ Tambah Alamat Baru</button>
+                    </div>
+                    
+                    <div class="address-list">
+                        <!-- Address 1 (Utama) -->
+                        <div class="address-card is-main">
+                            <span class="address-label main-label">Alamat Utama (Kantor)</span>
+                            <div class="address-name">Budi Santoso</div>
+                            <div class="address-phone">0812-3456-7890</div>
+                            <div class="address-detail">
+                                Renta Enterprise, Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing<br>
+                                Kota Malang, Jawa Timur 65122
+                            </div>
+                            <div class="address-actions">
+                                <a href="#">Ubah Alamat</a>
+                            </div>
+                        </div>
+
+                        <!-- Address 2 -->
+                        <div class="address-card">
+                            <span class="address-label">Rumah</span>
+                            <div class="address-name">Budi Santoso</div>
+                            <div class="address-phone">0812-9876-5432</div>
+                            <div class="address-detail">
+                                Perumahan Permata Jingga Blok D No. 12, Tunggulwulung, Kec. Lowokwaru<br>
+                                Kota Malang, Jawa Timur 65143
+                            </div>
+                            <div class="address-actions">
+                                <a href="#">Ubah Alamat</a>
+                                <a href="#" style="color: #666;">Hapus</a>
+                                <button class="btn-set-main" style="margin-left: auto;">Jadikan Utama</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="footer-widget brand-info">
+                <img src="assets/images/Logo-putih.png" alt="Renta" class="footer-logo">
+                <p>Spesialis sewa peralatan event dan multimedia lengkap di Malang dan sekitarnya. Solusi profesional untuk mensukseskan berbagai acara Anda.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-widget link-helper">
+                <h3>Link Helper</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Cara Sewa</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Konfirmasi Pembayaran</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Kebijakan Privasi</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Syarat & Ketentuan</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sitemap</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-widget services-list">
+                <h3>Layanan Kami</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sound System</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Lighting & Effect</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Stage & Rigging</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Multimedia LED</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Vendor Event</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-widget">
+                <h3>Hubungi Kami</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Alamat Kantor</strong>
+                            Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang 65122
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <strong>Telepon / WA</strong>
+                            0812-3456-7890
+                        </div>
+                    </li>
+                </ul>
+                <div class="payment-methods">
+                    <h3>Metode Pembayaran</h3>
+                    <div class="payment-icons">
+                        <img src="assets/images/bca.png" alt="BCA">
+                        <img src="assets/images/bni.png" alt="BNI">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © <span>Renta Enterprise</span> 2026. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Address Add Modal -->
+    <div id="addressModal" class="address-modal" style="display: none;">
+        <div class="address-modal-overlay" onclick="document.getElementById('addressModal').style.display='none'"></div>
+        <div class="address-modal-content">
+            <div class="address-modal-header">
+                <h3>Tambah Alamat Baru</h3>
+                <button class="address-modal-close" onclick="document.getElementById('addressModal').style.display='none'">&times;</button>
+            </div>
+            <div class="address-modal-body">
+                <form action="#">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px;">Label Alamat (Misal: Rumah/Kantor)</label>
+                            <input type="text" class="form-control" placeholder="Contoh: Rumah" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px;">Nama Penerima</label>
+                            <input type="text" class="form-control" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 13px;">Nomor Telepon</label>
+                        <input type="text" class="form-control" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 13px;">Provinsi, Kota, Kecamatan, Kode Pos</label>
+                        <input type="text" class="form-control" placeholder="Cari area pengiriman..." style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 13px;">Detail Alamat (Nama Jalan, Gedung, No. Rumah)</label>
+                        <textarea class="form-control" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;"></textarea>
+                    </div>
+                    <button type="button" class="btn-primary" style="width: 100%;" onclick="document.getElementById('addressModal').style.display='none'">Simpan Alamat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Account Modal -->
+    <div id="accountMobileModal" class="account-mobile-modal" style="display: none;">
+        <div class="account-mobile-overlay" onclick="document.getElementById('accountMobileModal').style.display='none'"></div>
+        <div class="account-mobile-content">
+            <button class="account-mobile-close-btn" onclick="document.getElementById('accountMobileModal').style.display='none'">&times;</button>
+            <div class="account-user-info" style="border-radius: 8px 8px 0 0; background: #fafafa; border-bottom: 1px solid var(--border-color); padding-right: 40px;">
+                <div class="user-avatar" style="background: #d32f2f;">B</div>
+                <div class="user-details">
+                    <h4 style="font-size: 16px; margin: 0 0 4px; color: var(--text-dark);">Budi Santoso</h4>
+                    <p style="font-size: 13px; color: var(--text-light); margin: 0;">budi.santoso@email.com</p>
+                </div>
+            </div>
+            <ul class="account-menu">
+                <li><a href="profil-saya.html"><i class="far fa-user"></i> Profil Saya</a></li>
+                <li><a href="pesanan-saya.html"><i class="fas fa-shopping-bag"></i> Pesanan Saya</a></li>
+                <li><a href="buku-alamat.html" style="background: #fdf5f5; color: #d32f2f; border-left: 3px solid #d32f2f;"><i class="far fa-map" style="color: #d32f2f;"></i> Buku Alamat</a></li>
+                <li><a href="wishlist.html"><i class="far fa-heart"></i> Wishlist</a></li>
+                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Keluar</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="product.html">
+            <i class="fas fa-box"></i>
+            <span>Produk</span>
+        </a>
+        <a href="pesanan-saya.html">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Pesanan</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-th-large"></i>
+            <span>Kategori</span>
+        </a>
+        <a href="#" class="akun-btn active" style="position: relative;" onclick="document.getElementById('accountMobileModal').style.display='flex'; return false;">
+            <div class="icon-circle">
+                <i class="fas fa-user"></i>
+            </div>
+            <span>Akun</span>
+        </a>
+    </nav>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

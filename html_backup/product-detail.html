@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC 3 PK | Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/product-detail.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span><i class="fas fa-map-marker-alt"></i> Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang, Jawa Timur 65122</span>
+            </div>
+            <div class="top-bar-right">
+                <!-- Social links if any, left blank for now as in screenshot -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header Area -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/images/logo-renta.png" alt="Renta Enterprise">
+                </a>
+            </div>
+            <div class="search-box">
+                <form action="#">
+                    <input type="text" placeholder="Search for products">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            <div class="header-actions">
+                <a href="#" class="auth-link">LOGIN / REGISTER</a>
+                <a href="#" class="action-icon wishlist-icon">
+                    <i class="far fa-heart"></i>
+                    <span class="badge">0</span>
+                </a>
+                <a href="#" class="action-icon cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">0</span>
+                    <span class="cart-total">RP0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Area -->
+    <nav class="main-nav">
+        <div class="container nav-container">
+            <div class="categories-btn">
+                <i class="fas fa-bars"></i>
+                <span>BROWSE CATEGORIES</span>
+                <i class="fas fa-chevron-down"></i>
+                
+                <!-- Dropdown menu (hidden by default maybe in other pages, here we keep it hidden via CSS or JS) -->
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="#" class="active">PRODUK</a></li>
+                <li><a href="#">TENTANG KAMI</a></li>
+                <li><a href="#">KONTAK</a></li>
+                <li><a href="#">CARA SEWA</a></li>
+                <li><a href="#" class="highlight">KONFIRMASI PEMBAYARAN</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="index.html">Beranda</a> <span class="separator"><i class="fas fa-chevron-right"></i></span> 
+                <a href="#">Product</a> <span class="separator"><i class="fas fa-chevron-right"></i></span> 
+                <a href="#">Cooling System</a> <span class="separator"><i class="fas fa-chevron-right"></i></span> 
+                <span>AC 3 PK</span>
+            </div>
+
+            <!-- Product Detail Section -->
+            <section class="product-detail-section">
+                <div class="product-detail-container">
+                    
+                    <!-- Left: Gallery -->
+                    <div class="product-gallery">
+                        <div class="product-main-image">
+                            <!-- Detail badges -->
+                            <div class="product-badges-detail">
+                                <span class="badge-red">AC 3 PK</span>
+                            </div>
+                            <img src="assets/images/product-2.png" alt="AC 3 PK Main" id="mainImage">
+                        </div>
+                        <div class="product-thumbnails">
+                            <div class="thumb-item active" onclick="changeImage('assets/images/product-2.png')">
+                                <img src="assets/images/product-2.png" alt="Thumb 1">
+                            </div>
+                            <div class="thumb-item" onclick="changeImage('assets/images/product-2.png')">
+                                <img src="assets/images/product-2.png" alt="Thumb 2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Info -->
+                    <div class="product-info-detail">
+                        <div class="product-title-row">
+                            <h1>AC 3 PK</h1>
+                            <div class="product-nav">
+                                <a href="#"><i class="fas fa-chevron-left"></i></a>
+                                <a href="#"><i class="fas fa-th"></i></a>
+                                <a href="#"><i class="fas fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+                        
+                        <div class="product-price">
+                            Rp650.000 <span style="font-size:16px; font-weight:normal; color:var(--text-light);">Unit Price</span>
+                        </div>
+                        
+                        <div class="product-short-desc">
+                            <ul>
+                                <li>AC 3 PK - Single Blower (5.000 W)</li>
+                                <li>Dimensi Mesin Indoor uk. 1,600x500x298mm</li>
+                            </ul>
+                        </div>
+
+                        <!-- Accordion -->
+                        <div class="info-accordion">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>Informasi Harga</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <p style="font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--text-dark);">Day based pricing : AC 5 PK</p>
+                                <p style="color: var(--primary-color); font-weight: 700; font-size: 16px;">Rp750.000 / Hari</p>
+                            </div>
+                        </div>
+
+                        <!-- Booking Form -->
+                        <div class="booking-form">
+                            <div class="date-picker-group">
+                                <label>Tanggal Mulai Acara</label>
+                                <div class="date-inputs">
+                                    <div class="date-input-wrap">
+                                        <i class="far fa-calendar-alt"></i>
+                                        <input type="text" class="flatpickr-date" placeholder="Tanggal">
+                                    </div>
+                                    <div class="date-input-wrap">
+                                        <i class="far fa-clock"></i>
+                                        <input type="text" class="flatpickr-time" placeholder="Jam">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="date-picker-group">
+                                <label>Tanggal Selesai Acara</label>
+                                <div class="date-inputs">
+                                    <div class="date-input-wrap">
+                                        <i class="far fa-calendar-alt"></i>
+                                        <input type="text" class="flatpickr-date" placeholder="Tanggal">
+                                    </div>
+                                    <div class="date-input-wrap">
+                                        <i class="far fa-clock"></i>
+                                        <input type="text" class="flatpickr-time" placeholder="Jam">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-booking">Booking Sekarang</button>
+                        </div>
+
+                        <!-- Need Help Box -->
+                        <div class="need-help-box">
+                            <div class="nh-avatar">
+                                <img src="assets/images/project-1.png" alt="Agent"> <!-- Placeholder image -->
+                            </div>
+                            <div class="nh-text">
+                                <span>Bombom <span style="color: #fff; background: rgba(0,0,0,0.2); padding: 1px 4px; border-radius: 4px; font-size: 10px;">Online</span></span>
+                                <strong>Need Help? Chat with us</strong>
+                            </div>
+                            <i class="fab fa-whatsapp" style="font-size: 24px;"></i>
+                        </div>
+
+                        <!-- Meta Data -->
+                        <div class="product-meta-actions">
+                            <div class="meta-action-btn">
+                                <i class="fas fa-exchange-alt"></i> Add to compare
+                            </div>
+                            <div class="meta-action-btn">
+                                <i class="far fa-heart"></i> Add to wishlist
+                            </div>
+                        </div>
+
+                        <div class="product-meta-info">
+                            <div class="meta-item">
+                                <strong>Kategori:</strong> <span>Cooling System</span>
+                            </div>
+                            <div class="meta-item meta-share">
+                                <strong>Share:</strong> 
+                                <div class="share-links">
+                                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="#"><i class="fab fa-twitter"></i></a>
+                                    <a href="#"><i class="far fa-envelope"></i></a>
+                                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                                    <a href="#"><i class="far fa-comment-dots"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tabs Section -->
+            <section class="product-tabs-section">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="openTab('tab-desc', this)">Deskripsi</button>
+                    <button class="tab-btn" onclick="openTab('tab-reviews', this)">Ulasan (0)</button>
+                    <button class="tab-btn" onclick="openTab('tab-shipping', this)">Shipping & Delivery</button>
+                </div>
+                
+                <div class="tab-content active" id="tab-desc">
+                    <ul>
+                        <li>AC 3 PK - Single Blower (5.000 W)</li>
+                        <li>Dimensi Mesin Indoor uk. 1,600x500x298mm</li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="tab-reviews">
+                    <p>Belum ada ulasan untuk produk ini.</p>
+                </div>
+                <div class="tab-content" id="tab-shipping">
+                    <p>Pengiriman dan pemasangan alat akan dilakukan oleh teknisi internal Renta Enterprise. Jadwal pengiriman dapat disesuaikan dengan permintaan klien.</p>
+                </div>
+            </section>
+
+            <!-- Related Products -->
+            <section class="related-products">
+                <h2 class="section-title">Produk Terkait</h2>
+                <div class="products-grid">
+                    <!-- Product 1 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-badges">
+                                <span class="badge-red">AC 5 PK</span>
+                            </div>
+                            <img src="assets/images/product-3.png" alt="AC 5 PK">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo-small.png" alt="Renta">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>AC 5 PK</h3>
+                            <div class="price">
+                                <span class="current-price">Rp750.000 Unit Price</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-badges">
+                                <span class="badge-red">Air Cooler</span>
+                            </div>
+                            <!-- Placeholder specific to cooler if available, using 2 for now -->
+                            <img src="assets/images/product-2.png" alt="Air Cooler">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo-small.png" alt="Renta">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Air Cooler</h3>
+                            <div class="price">
+                                <span class="current-price">Rp350.000 Unit Price</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-badges">
+                                <span class="badge-red">Kipas Blower</span>
+                            </div>
+                            <img src="assets/images/product-1.png" alt="Kipas Blower">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo-small.png" alt="Renta">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Kipas Blower</h3>
+                            <div class="price">
+                                <span class="current-price">Rp250.000 Unit Price</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-badges">
+                                <span class="badge-red">Misty Fan</span>
+                            </div>
+                            <img src="assets/images/product-4.png" alt="Misty Fan">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo-small.png" alt="Renta">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Misty Fan</h3>
+                            <div class="price">
+                                <span class="current-price">Rp450.000 Unit Price</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="footer-widget brand-info">
+                <img src="assets/images/Logo-putih.png" alt="Renta" class="footer-logo">
+                <p>Spesialis sewa peralatan event dan multimedia lengkap di Malang dan sekitarnya. Solusi profesional untuk mensukseskan berbagai acara Anda.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-widget link-helper">
+                <h3>Link Helper</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Cara Sewa</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Konfirmasi Pembayaran</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Kebijakan Privasi</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Syarat & Ketentuan</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sitemap</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-widget services-list">
+                <h3>Layanan Kami</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sound System</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Lighting & Effect</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Stage & Rigging</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Multimedia LED</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Vendor Event</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-widget">
+                <h3>Hubungi Kami</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Alamat Kantor</strong>
+                            Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang 65122
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <strong>Telepon / WA</strong>
+                            0812-3456-7890
+                        </div>
+                    </li>
+                </ul>
+                <div class="payment-methods">
+                    <h3>Metode Pembayaran</h3>
+                    <div class="payment-icons">
+                        <img src="assets/images/bca.png" alt="BCA">
+                        <img src="assets/images/bni.png" alt="BNI">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © <span>Renta Enterprise</span> 2026. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="#" class="float-wa">
+        <div class="wa-tooltip">Butuh bantuan? Hubungi kami sekarang</div>
+        <div class="wa-icon-wrapper">
+            <i class="fab fa-whatsapp"></i>
+        </div>
+    </a>
+
+    <a href="#" class="scroll-top">
+        <i class="fas fa-chevron-up"></i>
+    </a>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="product.html" class="active">
+            <i class="fas fa-box"></i>
+            <span>Produk</span>
+        </a>
+        <a href="#" class="pesanan-btn" style="position: relative;">
+            <div class="icon-circle">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <span>Pesanan Saya</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-th-large"></i>
+            <span>Kategori</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-user"></i>
+            <span>Akun</span>
+        </a>
+    </nav>
+
+    <script src="assets/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Custom Scripts for Product Detail
+        
+        // Tab functionality
+        function openTab(tabId, element) {
+            // Remove active class from all tabs
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button and target tab
+            element.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Accordion functionality
+        function toggleAccordion(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            content.classList.toggle('active');
+        }
+
+        // Image change functionality
+        function changeImage(src) {
+            document.getElementById('mainImage').src = src;
+            // Update active state on thumbnails
+            const thumbnails = document.querySelectorAll('.thumb-item');
+            thumbnails.forEach(thumb => {
+                if(thumb.querySelector('img').src.includes(src)) {
+                    thumb.classList.add('active');
+                } else {
+                    thumb.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize Flatpickr
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr(".flatpickr-date", {
+                dateFormat: "Y-m-d",
+                minDate: "today"
+            });
+            flatpickr(".flatpickr-time", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true
+            });
+        });
+    </script>
+</body>
+</html>

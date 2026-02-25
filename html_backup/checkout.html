@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Renta Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/shop.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span><i class="fas fa-map-marker-alt"></i> Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang, Jawa Timur 65122</span>
+            </div>
+            <div class="top-bar-right">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header Area -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/images/logo-renta.png" alt="Renta Enterprise">
+                </a>
+            </div>
+            <div class="search-box">
+                <form action="#">
+                    <input type="text" placeholder="Search for products">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            <div class="header-actions">
+                <a href="#" class="auth-link">LOGIN / REGISTER</a>
+                <a href="wishlist.html" class="action-icon wishlist-icon">
+                    <i class="far fa-heart"></i>
+                    <span class="badge">0</span>
+                </a>
+                <a href="cart.html" class="action-icon cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge">2</span>
+                    <span class="cart-total">Rp1.100.000</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Area -->
+    <nav class="main-nav">
+        <div class="container nav-container">
+            <div class="categories-btn">
+                <i class="fas fa-bars"></i>
+                <span>BROWSE CATEGORIES</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="product.html">PRODUK</a></li>
+                <li><a href="#">TENTANG KAMI</a></li>
+                <li><a href="#">KONTAK</a></li>
+                <li><a href="#">CARA SEWA</a></li>
+                <li><a href="#" class="highlight">KONFIRMASI PEMBAYARAN</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="shop-breadcrumb">
+                <a href="index.html">Beranda</a> <span class="separator"><i class="fas fa-chevron-right"></i></span> 
+                <span>Checkout</span>
+            </div>
+
+            <section class="shop-page-section">
+                <h1 class="shop-page-title">Checkout</h1>
+                
+                <div class="checkout-container">
+                    <!-- Address Selection -->
+                    <div class="checkout-form-area">
+                        <h3 class="billing-title">Alamat Pengiriman</h3>
+                        
+                        <div class="address-grid">
+                            <!-- Address Card 1 (Active) -->
+                            <label class="address-card">
+                                <input type="radio" name="shipping_address" value="1" checked>
+                                <div class="address-card-inner">
+                                    <div class="address-header">
+                                        <h4>Kantor Utama</h4>
+                                        <span class="badge-primary">Utama</span>
+                                    </div>
+                                    <div class="address-body">
+                                        <p><strong>Budi Santoso</strong> (0812-3456-7890)</p>
+                                        <p>Renta Enterprise, Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing</p>
+                                        <p>Kota Malang, Jawa Timur 65122</p>
+                                    </div>
+                                    <div class="address-footer">
+                                        <button type="button" class="btn-text">Ubah Alamat</button>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- Address Card 2 -->
+                            <label class="address-card">
+                                <input type="radio" name="shipping_address" value="2">
+                                <div class="address-card-inner">
+                                    <div class="address-header">
+                                        <h4>Gudang Surabaya</h4>
+                                    </div>
+                                    <div class="address-body">
+                                        <p><strong>Budi Santoso</strong> (0812-9876-5432)</p>
+                                        <p>Jl. Rungkut Industri Raya No. 10, Kendangsari</p>
+                                        <p>Tenggilis Mejoyo, Kota Surabaya, Jawa Timur 60292</p>
+                                    </div>
+                                    <div class="address-footer">
+                                        <button type="button" class="btn-text">Ubah Alamat</button>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- Add New Address Button -->
+                            <div class="address-card add-new-address" onclick="document.getElementById('addressModal').style.display='flex'">
+                                <div class="add-new-inner">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Tambah Alamat Baru</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 30px;">
+                            <h3 class="billing-title" style="font-size: 16px;">Catatan Pesanan</h3>
+                            <textarea class="form-control" placeholder="Catatan khusus terkait pengiriman atau setup di lapangan..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Sidebar Order Summary -->
+                    <div class="checkout-sidebar">
+                        <h3 class="cart-totals-title">Pesanan Anda</h3>
+                        
+                        <div class="review-table-wrapper">
+                            <table class="review-table">
+                                <thead>
+                                    <tr>
+                                        <th>Produk</th>
+                                        <th style="text-align: right;">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span class="review-item-name">AC 3 PK</span> 
+                                            <span class="review-item-qty">x 1</span>
+                                            <div style="font-size: 11px; color: var(--text-light); margin-top:3px;">2026-02-25 s/d 2026-02-26</div>
+                                        </td>
+                                        <td class="review-item-price">Rp650.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="review-item-name">Misty Fan</span> 
+                                            <span class="review-item-qty">x 1</span>
+                                            <div style="font-size: 11px; color: var(--text-light); margin-top:3px;">2026-02-25 s/d 2026-02-26</div>
+                                        </td>
+                                        <td class="review-item-price">Rp450.000</td>
+                                    </tr>
+                                    <!-- Coupon Input Added -->
+                                    <tr>
+                                        <td colspan="2" style="padding-top: 20px;">
+                                            <div class="coupon-box" style="width: 100%;">
+                                                <input type="text" class="coupon-input" placeholder="Kode Kupon" style="flex:1;">
+                                                <button class="btn-primary" style="padding: 10px 15px;">Terapkan</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Subtotal</th>
+                                        <td class="review-subtotal">Rp1.100.000</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total</th>
+                                        <td class="review-subtotal" style="font-size: 18px; color: var(--primary-color);">Rp1.100.000</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Payment Methods -->
+                        <div class="payment-methods-box">
+                            <h3 class="cart-totals-title" style="margin-top: 25px;">Metode Pembayaran</h3>
+                            <div class="payment-modern-grid">
+                                <label class="payment-modern-card">
+                                    <input type="radio" name="payment_method" value="transfer" checked>
+                                    <div class="payment-card-inner">
+                                        <div class="payment-icon"><i class="fas fa-university"></i></div>
+                                        <div class="payment-info">
+                                            <h4>Transfer Bank Langsung</h4>
+                                            <p>Pembayaran aman ke rekening perusahaan</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="payment-modern-card">
+                                    <input type="radio" name="payment_method" value="cod">
+                                    <div class="payment-card-inner">
+                                        <div class="payment-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                                        <div class="payment-info">
+                                            <h4>Bayar di Tempat (DP Required)</h4>
+                                            <p>Bayar DP 30%, sisanya dilunasi saat loading</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 12px; color: var(--text-light); margin-bottom: 20px; text-align: center;">
+                            Dengan melanjutkan, Anda menyetujui <a href="#" style="color: var(--primary-color);">Syarat & Ketentuan</a> penyewaan kami.
+                        </p>
+
+                        <button class="btn-primary place-order-btn">Buat Pesanan</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Address Modal -->
+    <div id="addressModal" class="address-modal" style="display: none;">
+        <div class="address-modal-content">
+            <div class="address-modal-header">
+                <h3>Tambah Alamat Baru</h3>
+                <span class="address-modal-close" onclick="document.getElementById('addressModal').style.display='none'">&times;</span>
+            </div>
+            <div class="address-modal-body">
+                <form action="#">
+                    <div class="form-group">
+                        <label>Label Alamat</label>
+                        <input type="text" class="form-control" placeholder="Contoh: Rumah, Kantor, Gedung A">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nama Penerima <span class="req">*</span></label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor Telepon <span class="req">*</span></label>
+                            <input type="tel" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Alamat Lengkap <span class="req">*</span></label>
+                        <input type="text" class="form-control" placeholder="Nama Jalan, Gedung, Nomor Rumah" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Kota / Kabupaten <span class="req">*</span></label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                    <div class="form-group" style="margin-top: 25px;">
+                        <button type="button" class="btn-primary" style="width: 100%;" onclick="document.getElementById('addressModal').style.display='none'">Simpan Alamat</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="footer-widget brand-info">
+                <img src="assets/images/Logo-putih.png" alt="Renta" class="footer-logo">
+                <p>Spesialis sewa peralatan event dan multimedia lengkap di Malang dan sekitarnya. Solusi profesional untuk mensukseskan berbagai acara Anda.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-widget link-helper">
+                <h3>Link Helper</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Cara Sewa</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Konfirmasi Pembayaran</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Kebijakan Privasi</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Syarat & Ketentuan</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sitemap</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-widget services-list">
+                <h3>Layanan Kami</h3>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Sound System</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Lighting & Effect</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Stage & Rigging</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Multimedia LED</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Vendor Event</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-widget">
+                <h3>Hubungi Kami</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Alamat Kantor</strong>
+                            Jl. Saman H No.33/35, Purwantoro, Kec. Blimbing, Kota Malang 65122
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <strong>Telepon / WA</strong>
+                            0812-3456-7890
+                        </div>
+                    </li>
+                </ul>
+                <div class="payment-methods">
+                    <h3>Metode Pembayaran</h3>
+                    <div class="payment-icons">
+                        <img src="assets/images/bca.png" alt="BCA">
+                        <img src="assets/images/bni.png" alt="BNI">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © <span>Renta Enterprise</span> 2026. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="#" class="float-wa">
+        <div class="wa-tooltip">Butuh bantuan? Hubungi kami sekarang</div>
+        <div class="wa-icon-wrapper">
+            <i class="fab fa-whatsapp"></i>
+        </div>
+    </a>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="product.html">
+            <i class="fas fa-box"></i>
+            <span>Produk</span>
+        </a>
+        <a href="#" class="pesanan-btn active" style="position: relative;">
+            <div class="icon-circle">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <span>Pesanan Saya</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-th-large"></i>
+            <span>Kategori</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-user"></i>
+            <span>Akun</span>
+        </a>
+    </nav>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

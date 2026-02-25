@@ -1,0 +1,517 @@
+@extends('layouts.app')
+
+@section('title', 'Upload Bukti Pembayaran | Renta Enterprise')
+
+@push('styles')
+<style>
+    .payment-page-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 15px;
+    }
+
+    .payment-card {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .payment-header {
+        background: linear-gradient(135deg, var(--primary-color), #f76b6b);
+        color: #fff;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .payment-header h1 {
+        color: #fff;
+        margin: 0 0 10px;
+        font-size: 24px;
+    }
+
+    .payment-header p {
+        margin: 0;
+        font-size: 15px;
+        opacity: 0.9;
+    }
+
+    .payment-body {
+        padding: 35px;
+    }
+
+    .order-summary-box {
+        background: #fdfdfd;
+        border: 1px solid #eaeaea;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-summary-item h5 {
+        font-size: 13px;
+        color: var(--text-light);
+        margin: 0 0 5px;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    .order-summary-item p {
+        font-size: 18px;
+        color: var(--text-dark);
+        margin: 0;
+        font-weight: 700;
+    }
+    
+    .order-summary-item.total p {
+        color: var(--primary-color);
+        font-size: 20px;
+    }
+
+    .bank-info-section {
+        margin-bottom: 35px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: var(--text-dark);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+    }
+
+    .bank-card {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 15px;
+        transition: var(--transition);
+    }
+
+    .bank-card:hover {
+        border-color: #d0d0d0;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+
+    .bank-logo {
+        width: 80px;
+        height: 50px;
+        object-fit: contain;
+    }
+
+    .bank-details {
+        flex: 1;
+    }
+
+    .bank-details h4 {
+        margin: 0 0 5px;
+        font-size: 16px;
+    }
+
+    .bank-details p {
+        margin: 0;
+        color: var(--text-light);
+        font-size: 14px;
+    }
+
+    .copy-btn {
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        cursor: pointer;
+        color: #555;
+        font-weight: 600;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .copy-btn:hover {
+        background: #ebebeb;
+        color: #333;
+    }
+
+    .upload-area {
+        border: 2px dashed #ccc;
+        border-radius: 12px;
+        padding: 40px 20px;
+        text-align: center;
+        background: #fafafa;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+        border-color: var(--primary-color);
+        background: #fffafa;
+    }
+
+    .upload-icon {
+        font-size: 40px;
+        color: #bbb;
+        margin-bottom: 15px;
+        transition: var(--transition);
+    }
+
+    .upload-area:hover .upload-icon {
+        color: var(--primary-color);
+    }
+
+    .upload-text h4 {
+        margin: 0 0 5px;
+        font-size: 16px;
+        color: var(--text-dark);
+    }
+
+    .upload-text p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--text-light);
+        margin-bottom: 15px;
+    }
+
+    .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .btn-upload {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        pointer-events: none;
+    }
+
+    .preview-area {
+        display: none;
+        margin-top: 20px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        position: relative;
+    }
+
+    .preview-area img {
+        max-width: 100%;
+        max-height: 250px;
+        border-radius: 4px;
+    }
+
+    .remove-preview {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+    .remove-preview:hover {
+        background: #d32f2f;
+    }
+
+    .submit-btn-wrapper {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+    }
+
+    .btn-cancel {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        color: var(--text-dark);
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .btn-cancel:hover {
+        background: #f5f5f5;
+    }
+
+    .btn-submit {
+        background: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        color: #fff;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 15px;
+    }
+
+    .btn-submit:hover {
+        background: #b02323;
+        border-color: #b02323;
+        box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);
+        transform: translateY(-1px);
+    }
+    
+    .btn-submit:disabled {
+        background: #ccc;
+        border-color: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    @media (max-width: 768px) {
+        .order-summary-box {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .bank-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .bank-logo {
+            width: 100px;
+        }
+        .submit-btn-wrapper {
+            flex-direction: column-reverse;
+        }
+        .submit-btn-wrapper button, .submit-btn-wrapper a {
+            width: 100%;
+            text-align: center;
+        }
+        .payment-body {
+            padding: 25px 20px;
+        }
+    }
+</style>
+@endpush
+
+@section('content')
+<main style="background-color: #f7f9fc; min-height: 80vh;">
+    <div class="container payment-page-container">
+        
+        <a href="{{ url('/orders/' . $order->id) }}" class="btn-outline" style="background: #fff; margin-bottom: 20px; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 8px 15px; display: inline-flex; align-items: center; gap: 8px; text-decoration:none;"><i class="fas fa-arrow-left"></i> Kembali ke Pesanan</a>
+
+        @if(session('error'))
+            <div class="alert" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="payment-card">
+            <div class="payment-header">
+                <h1>Selesaikan Pembayaran Anda</h1>
+                <p>Silakan transfer sesuai detail di bawah dan unggah bukti pembayaran.</p>
+            </div>
+            
+            <div class="payment-body">
+                
+                <div class="order-summary-box">
+                    <div class="order-summary-item">
+                        <h5>ID Pesanan</h5>
+                        <p>{{ $order->order_number }}</p>
+                    </div>
+                    <div class="order-summary-item total">
+                        <h5>Total Tagihan</h5>
+                        <p>Rp {{ number_format($order->grand_total, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+
+                <div class="bank-info-section">
+                    <h3 class="section-title">Pilih Rekening Tujuan</h3>
+                    
+                    <div class="bank-card">
+                        <img src="{{ asset('assets/images/bca.png') }}" alt="BCA" class="bank-logo">
+                        <div class="bank-details">
+                            <h4>Bank Central Asia (BCA)</h4>
+                            <p>A.n Renta Enterprise</p>
+                            <p style="font-size: 18px; font-weight: 700; color: var(--text-dark); margin-top: 5px;" id="bca-norek">1234567890</p>
+                        </div>
+                        <button type="button" class="copy-btn" onclick="copyToClipboard('bca-norek', this)">
+                            <i class="far fa-copy"></i> <span>Salin</span>
+                        </button>
+                    </div>
+                    
+                    <div class="bank-card">
+                        <img src="{{ asset('assets/images/bni.png') }}" alt="BNI" class="bank-logo">
+                        <div class="bank-details">
+                            <h4>Bank Negara Indonesia (BNI)</h4>
+                            <p>A.n Renta Enterprise</p>
+                            <p style="font-size: 18px; font-weight: 700; color: var(--text-dark); margin-top: 5px;" id="bni-norek">0987654321</p>
+                        </div>
+                        <button type="button" class="copy-btn" onclick="copyToClipboard('bni-norek', this)">
+                            <i class="far fa-copy"></i> <span>Salin</span>
+                        </button>
+                    </div>
+                </div>
+
+                <form action="{{ route('payment.upload', $order->id) }}" method="POST" enctype="multipart/form-data" id="paymentForm">
+                    @csrf
+                    <div class="upload-section">
+                        <h3 class="section-title">Unggah Bukti Transfer</h3>
+                        
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <div class="upload-text">
+                                <h4>Klik atau tarik gambar ke sini</h4>
+                                <p>Format yang didukung: JPG, JPEG, PNG (Maks 3MB)</p>
+                            </div>
+                            <button type="button" class="btn-upload">Pilih File</button>
+                            <input type="file" name="payment_proof" class="file-input" id="paymentProof" accept="image/jpeg, image/png, image/jpg" required>
+                        </div>
+
+                        <div class="preview-area" id="previewArea">
+                            <button type="button" class="remove-preview" id="removePreview"><i class="fas fa-times"></i></button>
+                            <img id="imagePreview" src="" alt="Preview Bukti Pembayaran">
+                            <p style="margin: 10px 0 0; font-size: 14px; font-weight: 600;" id="fileName">struk_bca.jpg</p>
+                        </div>
+                        @error('payment_proof')
+                        <div style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="submit-btn-wrapper">
+                        <a href="{{ url('/orders/' . $order->id) }}" class="btn-cancel">Batalkan</a>
+                        <button type="submit" class="btn-submit" id="submitBtn" disabled>Kirim Bukti Pembayaran</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</main>
+@endsection
+
+@push('scripts')
+<script>
+    function copyToClipboard(elementId, btnElement) {
+        const textToCopy = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fas fa-check"></i> <span>Disalin</span>';
+            btnElement.style.color = '#2e7d32';
+            setTimeout(() => {
+                btnElement.innerHTML = originalText;
+                btnElement.style.color = '';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    }
+
+    const fileInput = document.getElementById('paymentProof');
+    const uploadArea = document.getElementById('uploadArea');
+    const previewArea = document.getElementById('previewArea');
+    const imagePreview = document.getElementById('imagePreview');
+    const fileNameDisplay = document.getElementById('fileName');
+    const removePreviewBtn = document.getElementById('removePreview');
+    const submitBtn = document.getElementById('submitBtn');
+    const paymentForm = document.getElementById('paymentForm');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false)
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.add('dragover');
+        }, false)
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.remove('dragover');
+        }, false)
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        fileInput.files = files; // Assign to input
+        handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+    });
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            const file = files[0];
+            
+            if (!file.type.match('image.*')) {
+                alert('Hanya file gambar (JPG, PNG) yang diizinkan!');
+                fileInput.value = '';
+                return;
+            }
+            
+            if (file.size > 3 * 1024 * 1024) {
+                alert('Ukuran file tidak boleh lebih dari 3MB!');
+                fileInput.value = '';
+                return;
+            }
+
+            fileNameDisplay.textContent = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                uploadArea.style.display = 'none';
+                previewArea.style.display = 'block';
+                submitBtn.disabled = false;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    removePreviewBtn.addEventListener('click', () => {
+        fileInput.value = '';
+        imagePreview.src = '';
+        uploadArea.style.display = 'block';
+        previewArea.style.display = 'none';
+        submitBtn.disabled = true;
+    });
+
+    paymentForm.addEventListener('submit', () => {
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+        submitBtn.disabled = true;
+        // submit forms
+    });
+</script>
+@endpush

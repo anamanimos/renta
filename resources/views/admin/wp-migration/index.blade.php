@@ -114,13 +114,19 @@
             </thead>
             <tbody>
                 @forelse($wpProducts as $prod)
-                <tr>
-                    <td>{{ $prod->ID }}</td>
-                    <td>{{ $prod->post_title }}</td>
-                    <td><span style="font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; background: {{ $prod->post_status == 'publish' ? '#dcfce7' : '#f1f5f9' }}; color: {{ $prod->post_status == 'publish' ? '#166534' : '#475569' }}">{{ $prod->post_status }}</span></td>
+                @php $isImported = in_array($prod->ID, $importedProductIds); @endphp
+                <tr style="{{ $isImported ? 'background-color: #f8fafc;' : '' }}">
+                    <td style="{{ $isImported ? 'color: #94a3b8;' : '' }}">{{ $prod->ID }}</td>
+                    <td>
+                        <span style="{{ $isImported ? 'color: #94a3b8;' : 'font-weight: 500;' }}">{{ $prod->post_title }}</span>
+                        @if($isImported)
+                            <span style="margin-left: 8px; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #64748b; display: inline-flex; align-items: center; gap: 3px; vertical-align: middle;"><i class="ti ti-circle-check"></i> Sudah Diimpor</span>
+                        @endif
+                    </td>
+                    <td><span style="font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; background: {{ $prod->post_status == 'publish' ? '#dcfce7' : '#f1f5f9' }}; color: {{ $prod->post_status == 'publish' ? '#166534' : '#475569' }}; {{ $isImported ? 'opacity: 0.6;' : '' }}">{{ $prod->post_status }}</span></td>
                     <td style="text-align: center;">
-                        @if(in_array($prod->ID, $importedProductIds))
-                            <span class="btn-sm btn-imported"><i class="ti ti-check"></i> Diimpor</span>
+                        @if($isImported)
+                            <span class="btn-sm btn-imported" style="opacity: 0.7;"><i class="ti ti-check"></i> Selesai</span>
                         @else
                             <button class="btn-sm btn-preview" onclick="openPreview({{ $prod->ID }})"><i class="ti ti-eye"></i> Detail & Impor</button>
                         @endif

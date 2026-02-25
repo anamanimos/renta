@@ -69,7 +69,7 @@ class WpMigrationController extends Controller
     {
         // 1. Meta Primer Produk (WooCommerce Dasar)
         $prodMeta = DB::connection('wp_legacy')->table('wpej_postmeta')->where('post_id', $productId)
-            ->whereIn('meta_key', ['_price', '_regular_price', '_thumbnail_id', '_stock', '_redq_product_inventory', 'pricing_type'])
+            ->whereIn('meta_key', ['_price', '_regular_price', '_thumbnail_id', '_stock', '_redq_product_inventory', 'pricing_type', 'rnb_settings_for_display'])
             ->pluck('meta_value', 'meta_key')->toArray();
 
         // 2. Cek apakah ada relasi ke Inventory RnB
@@ -82,7 +82,7 @@ class WpMigrationController extends Controller
                 $targetId = $invArray[0]; // Ambil Inventory ID
                 $isRnb = true;
             }
-        } elseif (isset($prodMeta['pricing_type'])) {
+        } elseif (isset($prodMeta['pricing_type']) || isset($prodMeta['rnb_settings_for_display'])) {
             $isRnb = true;
         }
 

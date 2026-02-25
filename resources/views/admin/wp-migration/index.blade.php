@@ -87,8 +87,20 @@
 
 @if($connectionStatus === 'connected')
 <div class="migration-card">
-    <h3>Daftar Produk WordPress</h3>
-    <p style="font-size: 0.85rem; color: var(--text-light);">Klik tombol Pratinjau untuk melihat detail Harga, Stok, dan Kategori sebelum mengimpor.</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div>
+            <h3 style="margin: 0;">Daftar Produk WordPress</h3>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin: 5px 0 0 0;">Klik tombol Pratinjau untuk melihat detail Harga, Stok, dan Kategori sebelum mengimpor.</p>
+        </div>
+        
+        <form action="{{ route('admin.migration.index') }}" method="GET" style="display: flex; gap: 10px;">
+            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari nama produk WP..." style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; width: 250px;">
+            <button type="submit" style="padding: 8px 15px; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;"><i class="ti ti-search"></i> Cari</button>
+            @if(!empty($search))
+                <a href="{{ route('admin.migration.index') }}" style="padding: 8px 15px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;">Reset</a>
+            @endif
+        </form>
+    </div>
     
     <div class="table-responsive">
         <table class="preview-table">
@@ -115,7 +127,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="4" style="text-align: center;">Tidak ada produk (post_type=product) ditemukan</td></tr>
+                <tr><td colspan="4" style="text-align: center;">Tidak ada produk {{ !empty($search) ? 'dengan kata kunci tersebut' : '' }} ditemukan</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -158,8 +170,12 @@
             </div>
             
             <div class="preview-meta">
+                <div class="meta-box" style="grid-column: span 2;">
+                    <div class="meta-label">Sistem Harga Sewa (RnB WP)</div>
+                    <div class="meta-value" id="prevPriceType" style="color: var(--primary-color); "><i class="ti ti-tags"></i> -</div>
+                </div>
                 <div class="meta-box">
-                    <div class="meta-label">Harga Dasar (Per Hari)</div>
+                    <div class="meta-label">Sewa Aktual</div>
                     <div class="meta-value">Rp <span id="prevPrice">0</span></div>
                 </div>
                 <div class="meta-box">
@@ -220,6 +236,7 @@
                 document.getElementById('prevPrice').textContent = data.price;
                 document.getElementById('prevStock').textContent = data.stock;
                 document.getElementById('prevCategory').textContent = data.category;
+                document.getElementById('prevPriceType').innerHTML = '<i class="ti ti-tags"></i> ' + data.price_type_label;
                 
                 const prevLink = document.getElementById('prevLink');
                 if (data.url && data.url !== '#') {

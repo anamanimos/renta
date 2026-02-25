@@ -13,9 +13,11 @@ class WpMigrationController extends Controller
     /**
      * Menampilkan Halaman Pratinjau Sinkronisasi Database WP
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
+            $search = $request->input('search');
+
             $wpCategories = DB::connection('wp_legacy')
                 ->table('wpej_terms')
                 ->join('wpej_term_taxonomy', 'wpej_terms.term_id', '=', 'wpej_term_taxonomy.term_id')
@@ -23,21 +25,32 @@ class WpMigrationController extends Controller
                 ->select('wpej_terms.term_id', 'wpej_terms.name', 'wpej_term_taxonomy.count')
                 ->get();
 
-            $wpProducts = DB::connection('wp_legacy')
+            $query = DB::connection('wp_legacy')
                 ->table('wpej_posts')
                 ->where('post_type', 'product')
                 ->whereIn('post_status', ['publish', 'draft'])
-                ->select('ID', 'post_title', 'post_status')
-                ->paginate(15);
+                ->select('ID', 'post_title', 'post_status');
+
+            if ($search) {
+                $query->where('post_title', 'like', '%' . $search . '%');
+            }
+
+            $wpProducts = $query->paginate(15)->appends(['search' => $search]);
 
             $totalWpCat = $wpCategories->count();
-            $totalWpProd = $wpProducts->total();
             
-            // Get already imported WP IDs to disable the import button if already imported
+            // Re-query total without search for global stat
+            $totalWpProd = DB::connection('wp_legacy')
+                ->table('wpej_posts')
+                ->where('post_type', 'product')
+                ->whereIn('post_status', ['publish', 'draft'])
+                ->count();
+            
             $importedProductIds = Product::whereNotNull('wp_post_id')->pluck('wp_post_id')->toArray();
 
             $connectionStatus = 'connected';
         } catch (\Exception $e) {
+            $search = '';
             $wpCategories = collect([]);
             $wpProducts = null;
             $totalWpCat = 0;
@@ -46,7 +59,61 @@ class WpMigrationController extends Controller
             $connectionStatus = 'error: ' . $e->getMessage();
         }
 
-        return view('admin.wp-migration.index', compact('wpCategories', 'wpProducts', 'totalWpCat', 'totalWpProd', 'connectionStatus', 'importedProductIds'));
+        return view('admin.wp-migration.index', compact('wpCategories', 'wpProducts', 'totalWpCat', 'totalWpProd', 'connectionStatus', 'importedProductIds', 'search'));
+    }
+
+    /**
+     * Mengekstrak Logika Harga dan Stok Khusus Plugin RnB
+     */
+    private function extractRnbData($postId)
+    {
+        $metaData = DB::connection('wp_legacy')->table('wpej_postmeta')->where('post_id', $postId)
+            ->whereIn('meta_key', [
+                'pricing_type', 'general_price', 'quantity', 
+                'redq_day_ranges_cost', '_thumbnail_id'
+            ])
+            ->pluck('meta_value', 'meta_key')->toArray();
+
+        $pricingType = $metaData['pricing_type'] ?? 'general_pricing';
+        $quantity = isset($metaData['quantity']) && is_numeric($metaData['quantity']) ? $metaData['quantity'] : 10;
+        
+        $basePrice = 0;
+        $tierPrice = null; // harga kenaikan harian
+        $rentaPriceType = 'rental_flat';
+
+        if ($pricingType === 'days_range' && isset($metaData['redq_day_ranges_cost'])) {
+            $rentaPriceType = 'rental_tiered';
+            $daysArray = @unserialize($metaData['redq_day_ranges_cost']);
+            if (is_array($daysArray) && count($daysArray) > 0) {
+                // Harga hari ke-1
+                $day1 = collect($daysArray)->firstWhere('min_days', '1');
+                $day2 = collect($daysArray)->firstWhere('min_days', '2');
+                
+                $basePrice = $day1 ? intval($day1['range_cost']) : 0;
+                
+                if ($day2) {
+                    $tierPrice = intval($day2['range_cost']) - $basePrice; 
+                }
+            }
+        } else {
+            // General Pricing default RnB
+            $basePrice = isset($metaData['general_price']) && is_numeric($metaData['general_price']) ? $metaData['general_price'] : 0;
+        }
+
+        // Thumbnail Image
+        $imageUrl = null;
+        if (isset($metaData['_thumbnail_id'])) {
+            $attachPost = DB::connection('wp_legacy')->table('wpej_posts')->where('ID', $metaData['_thumbnail_id'])->first();
+            if ($attachPost) $imageUrl = $attachPost->guid;
+        }
+
+        return [
+            'price_type' => $rentaPriceType,
+            'base_price' => $basePrice,
+            'tier_price' => $tierPrice,
+            'stock' => $quantity,
+            'image' => $imageUrl
+        ];
     }
 
     /**
@@ -58,9 +125,7 @@ class WpMigrationController extends Controller
             $wpProd = DB::connection('wp_legacy')->table('wpej_posts')->where('ID', $id)->first();
             if (!$wpProd) return response()->json(['error' => 'Product not found'], 404);
 
-            $metaData = DB::connection('wp_legacy')->table('wpej_postmeta')->where('post_id', $id)
-                ->whereIn('meta_key', ['_regular_price', '_sale_price', '_stock', '_thumbnail_id'])
-                ->pluck('meta_value', 'meta_key')->toArray();
+            $rnbData = $this->extractRnbData($id);
 
             $termRel = DB::connection('wp_legacy')->table('wpej_term_relationships')
                 ->join('wpej_term_taxonomy', 'wpej_term_relationships.term_taxonomy_id', '=', 'wpej_term_taxonomy.term_taxonomy_id')
@@ -70,21 +135,21 @@ class WpMigrationController extends Controller
                 ->select('wpej_terms.name')
                 ->first();
 
-            $imageUrl = null;
-            if (isset($metaData['_thumbnail_id'])) {
-                $attachPost = DB::connection('wp_legacy')->table('wpej_posts')->where('ID', $metaData['_thumbnail_id'])->first();
-                if ($attachPost) $imageUrl = $attachPost->guid;
+            $priceText = number_format($rnbData['base_price'], 0, ',', '.');
+            if ($rnbData['price_type'] == 'rental_tiered' && $rnbData['tier_price']) {
+                $priceText .= " (Tiers " . number_format($rnbData['tier_price'], 0, ',', '.') . "/hari berikutnya)";
             }
 
             return response()->json([
                 'id' => $wpProd->ID,
                 'name' => $wpProd->post_title,
                 'status' => $wpProd->post_status,
-                'price' => number_format($metaData['_regular_price'] ?? 0, 0, ',', '.'),
-                'stock' => $metaData['_stock'] ?? 'N/A',
+                'price' => $priceText,
+                'price_type_label' => $rnbData['price_type'] == 'rental_tiered' ? 'Harga Bertingkat (RnB Day Based)' : 'Harga Flat Rata (RnB General)',
+                'stock' => $rnbData['stock'],
                 'category' => $termRel ? $termRel->name : 'Tanpa Kategori',
-                'image' => $imageUrl,
-                'url' => 'https://rentaenterprise.com/product/' . $wpProd->post_name // Tautan web asli
+                'image' => $rnbData['image'],
+                'url' => 'https://rentaenterprise.com/product/' . $wpProd->post_name
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -100,14 +165,9 @@ class WpMigrationController extends Controller
             $wpProd = DB::connection('wp_legacy')->table('wpej_posts')->where('ID', $id)->first();
             if (!$wpProd) return back()->with('error', 'Produk tidak ditemukan di WordPress.');
 
-            $metaData = DB::connection('wp_legacy')->table('wpej_postmeta')->where('post_id', $id)
-                ->pluck('meta_value', 'meta_key')->toArray();
+            $rnbData = $this->extractRnbData($id);
 
-            $basePrice = isset($metaData['_regular_price']) && is_numeric($metaData['_regular_price']) ? $metaData['_regular_price'] : 0;
-            $promoPrice = isset($metaData['_sale_price']) && is_numeric($metaData['_sale_price']) ? $metaData['_sale_price'] : null;
-            $stock = isset($metaData['_stock']) && is_numeric($metaData['_stock']) ? $metaData['_stock'] : 10;
-
-            // Memetakan dan secara rekursif mengimpor kategori jika ada
+            // Memetakan kategori
             $termRel = DB::connection('wp_legacy')->table('wpej_term_relationships')
                 ->join('wpej_term_taxonomy', 'wpej_term_relationships.term_taxonomy_id', '=', 'wpej_term_taxonomy.term_taxonomy_id')
                 ->where('wpej_term_taxonomy.taxonomy', 'product_cat')
@@ -119,12 +179,6 @@ class WpMigrationController extends Controller
                 $categoryId = $this->importCategoryRecursive($termRel->term_id);
             }
 
-            $imageUrl = null;
-            if (isset($metaData['_thumbnail_id'])) {
-                $attachPost = DB::connection('wp_legacy')->table('wpej_posts')->where('ID', $metaData['_thumbnail_id'])->first();
-                if ($attachPost) $imageUrl = $attachPost->guid;
-            }
-
             Product::updateOrCreate(
                 ['wp_post_id' => $wpProd->ID],
                 [
@@ -132,11 +186,12 @@ class WpMigrationController extends Controller
                     'name' => $wpProd->post_title,
                     'slug' => urldecode($wpProd->post_name),
                     'description' => $wpProd->post_content,
-                    'price_type' => 'rental_flat',
-                    'price_per_day' => $basePrice,
-                    'promo_price' => $promoPrice,
-                    'stock_quantity' => $stock,
-                    'image' => $imageUrl,
+                    'price_type' => $rnbData['price_type'],
+                    'price_per_day' => $rnbData['base_price'],
+                    'tier_price' => $rnbData['tier_price'],
+                    'promo_price' => null, // Abaikan promo dr WP bila tidak selaras
+                    'stock_quantity' => $rnbData['stock'],
+                    'image' => $rnbData['image'],
                     'is_active' => $wpProd->post_status === 'publish' ? 1 : 0,
                 ]
             );

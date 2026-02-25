@@ -65,39 +65,85 @@ class WpMigrationController extends Controller
     /**
      * Mengekstrak Logika Harga dan Stok Khusus Plugin RnB
      */
-    private function extractRnbData($postId)
+    private function extractRnbData($productId)
     {
-        $metaData = DB::connection('wp_legacy')->table('wpej_postmeta')->where('post_id', $postId)
+        // 1. Cek apakah Product terhubung dengan Inventory RnB terpisah
+        $invRel = DB::connection('wp_legacy')->table('wpej_postmeta')
+            ->where('post_id', $productId)
+            ->where('meta_key', '_redq_product_inventory')
+            ->first();
+
+        // Target target meta, default ke product
+        $targetId = $productId;
+        if ($invRel && !empty($invRel->meta_value)) {
+            $invArray = @unserialize($invRel->meta_value);
+            if (is_array($invArray) && isset($invArray[0])) {
+                $targetId = $invArray[0]; // Ambil Inventory ID
+            }
+        }
+
+        // 2. Ambil MetaData dari Target ID (Inventory atau Product)
+        $metaData = DB::connection('wp_legacy')->table('wpej_postmeta')->where('post_id', $targetId)
             ->whereIn('meta_key', [
                 'pricing_type', 'general_price', 'quantity', 
-                'redq_day_ranges_cost', '_thumbnail_id'
+                'redq_day_ranges_cost', 'redq_custom_pricing', 'redq_daily_pricing', '_thumbnail_id', '_price'
             ])
             ->pluck('meta_value', 'meta_key')->toArray();
 
+        // 3. Setup Default
         $pricingType = $metaData['pricing_type'] ?? 'general_pricing';
         $quantity = isset($metaData['quantity']) && is_numeric($metaData['quantity']) ? $metaData['quantity'] : 10;
         
-        $basePrice = 0;
-        $tierPrice = null; // harga kenaikan harian
+        $basePrice = isset($metaData['_price']) ? intval($metaData['_price']) : 0; // Fallback unit price
+        $tierPrice = null; 
         $rentaPriceType = 'rental_flat';
+        $priceDesc = '';
 
+        // Kasus 1: Days Range (Biasanya Hari 1, Hari 2 dst terstruktur jelas)
         if ($pricingType === 'days_range' && isset($metaData['redq_day_ranges_cost'])) {
             $rentaPriceType = 'rental_tiered';
             $daysArray = @unserialize($metaData['redq_day_ranges_cost']);
             if (is_array($daysArray) && count($daysArray) > 0) {
-                // Harga hari ke-1
                 $day1 = collect($daysArray)->firstWhere('min_days', '1');
                 $day2 = collect($daysArray)->firstWhere('min_days', '2');
                 
-                $basePrice = $day1 ? intval($day1['range_cost']) : 0;
-                
+                if ($day1) {
+                    $basePrice = intval($day1['range_cost']);
+                    $priceDesc = "Hari pertama: Rp " . number_format($basePrice, 0, ',', '.');
+                }
                 if ($day2) {
                     $tierPrice = intval($day2['range_cost']) - $basePrice; 
+                    $priceDesc .= " | Hari berikutnya: Rp " . number_format($tierPrice, 0, ',', '.');
                 }
             }
-        } else {
-            // General Pricing default RnB
-            $basePrice = isset($metaData['general_price']) && is_numeric($metaData['general_price']) ? $metaData['general_price'] : 0;
+        } 
+        // Kasus 2: Custom / Daily Pricing (Admin WP memakai slot Friday untuk Hari Ke-1, Saturday Hari Ke-2)
+        elseif ($pricingType === 'custom_pricing' || $pricingType === 'daily_pricing') {
+            $rentaPriceType = 'rental_tiered';
+            $dailyArrayText = $metaData['redq_custom_pricing'] ?? ($metaData['redq_daily_pricing'] ?? null);
+            $dailyArray = $dailyArrayText ? @unserialize($dailyArrayText) : [];
+            
+            if (is_array($dailyArray)) {
+                // Sesuai temuan, 'friday' sering ditarik sebagai harga dasar, 'saturday' hari lanjutan
+                $d1 = isset($dailyArray['friday']) ? intval($dailyArray['friday']) : 0;
+                $d2 = isset($dailyArray['saturday']) ? intval($dailyArray['saturday']) : 0;
+                
+                if ($d1 > 0) {
+                    $basePrice = $d1;
+                    $priceDesc = "Hari pertama: Rp " . number_format($basePrice, 0, ',', '.');
+                }
+                if ($d2 > 0) {
+                    $tierPrice = $d2; // Ini adalah harga satuan hari berikut via custom_pricing
+                    $priceDesc .= " | Hari berikutnya: Rp " . number_format($tierPrice, 0, ',', '.');
+                }
+            }
+        } 
+        // Kasus 3: General Pricing RNB
+        else {
+            if (isset($metaData['general_price']) && is_numeric($metaData['general_price']) && $metaData['general_price'] > 0) {
+                $basePrice = intval($metaData['general_price']);
+            }
+            $priceDesc = "Tarif Harga Tetap: Rp " . number_format($basePrice, 0, ',', '.') . " per hari";
         }
 
         // Thumbnail Image
@@ -112,7 +158,8 @@ class WpMigrationController extends Controller
             'base_price' => $basePrice,
             'tier_price' => $tierPrice,
             'stock' => $quantity,
-            'image' => $imageUrl
+            'image' => $imageUrl,
+            'description' => $priceDesc
         ];
     }
 
@@ -135,16 +182,11 @@ class WpMigrationController extends Controller
                 ->select('wpej_terms.name')
                 ->first();
 
-            $priceText = number_format($rnbData['base_price'], 0, ',', '.');
-            if ($rnbData['price_type'] == 'rental_tiered' && $rnbData['tier_price']) {
-                $priceText .= " (Tiers " . number_format($rnbData['tier_price'], 0, ',', '.') . "/hari berikutnya)";
-            }
-
             return response()->json([
                 'id' => $wpProd->ID,
                 'name' => $wpProd->post_title,
                 'status' => $wpProd->post_status,
-                'price' => $priceText,
+                'price' => $rnbData['description'],
                 'price_type_label' => $rnbData['price_type'] == 'rental_tiered' ? 'Harga Bertingkat (RnB Day Based)' : 'Harga Flat Rata (RnB General)',
                 'stock' => $rnbData['stock'],
                 'category' => $termRel ? $termRel->name : 'Tanpa Kategori',

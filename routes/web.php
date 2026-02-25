@@ -42,6 +42,11 @@ Route::prefix('wp-admin')->name('admin.')->group(function () {
         Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
         Route::resource('orders', App\Http\Controllers\Admin\OrderController::class)->only(['index', 'show', 'update']);
 
+        // Impor Katalog WP
+        Route::get('/migration', [App\Http\Controllers\Admin\WpMigrationController::class, 'index'])->name('migration.index');
+        Route::get('/migration/product/{id}', [App\Http\Controllers\Admin\WpMigrationController::class, 'showProduct'])->name('migration.show');
+        Route::post('/migration/product/{id}/import', [App\Http\Controllers\Admin\WpMigrationController::class, 'importProduct'])->name('migration.import');
+
         // Pengguna
         Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
         Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');

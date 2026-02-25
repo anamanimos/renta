@@ -77,6 +77,11 @@
             ><i class="ti ti-article"></i> <span>Artikel</span></a
           >
         </li>
+        <li class="{{ request()->routeIs('admin.migration.*') ? 'active' : '' }}">
+          <a href="{{ route('admin.migration.index') }}"
+            ><i class="ti ti-database-import"></i> <span>Impor WP</span></a
+          >
+        </li>
         <li class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
           <a href="{{ route('admin.settings.general') }}"
             ><i class="ti ti-settings"></i> <span>Pengaturan</span></a

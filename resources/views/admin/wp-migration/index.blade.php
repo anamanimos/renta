@@ -171,6 +171,10 @@
             
             <div class="preview-meta">
                 <div class="meta-box" style="grid-column: span 2;">
+                    <div class="meta-label">Kutipan Deskripsi</div>
+                    <div class="meta-value" id="prevDescription" style="font-size: 0.85rem; font-weight: 500; color: #475569; line-height: 1.4;">-</div>
+                </div>
+                <div class="meta-box" style="grid-column: span 2;">
                     <div class="meta-label">Sistem Harga Sewa (RnB WP)</div>
                     <div class="meta-value" id="prevPriceType" style="color: var(--primary-color); "><i class="ti ti-tags"></i> -</div>
                 </div>
@@ -236,6 +240,7 @@
                 document.getElementById('prevPrice').textContent = data.price;
                 document.getElementById('prevStock').textContent = data.stock;
                 document.getElementById('prevCategory').textContent = data.category;
+                document.getElementById('prevDescription').textContent = data.description;
                 document.getElementById('prevPriceType').innerHTML = '<i class="ti ti-tags"></i> ' + data.price_type_label;
                 
                 const prevLink = document.getElementById('prevLink');

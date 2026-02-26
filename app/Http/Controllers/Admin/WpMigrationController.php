@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\Product;
 
@@ -252,6 +253,25 @@ class WpMigrationController extends Controller
             if ($rnbData['price_type'] == 'beli_putus') $mappedPriceType = 'sell_once';
             elseif ($rnbData['price_type'] == 'custom_pricing') $mappedPriceType = 'rental_tiered';
 
+            $finalImageUrl = null;
+            if (!empty($rnbData['image'])) {
+                $existingProduct = Product::where('wp_post_id', $wpProd->ID)->first();
+                // Hemat API: Jika produk sudah ada dan memegang URL rekaman Cloudinary, cukup setorkan yang lama kembali
+                if ($existingProduct && Str::contains($existingProduct->image, 'res.cloudinary.com')) {
+                    $finalImageUrl = $existingProduct->image;
+                } else {
+                    try {
+                        $uploaded = cloudinary()->upload($rnbData['image'], [
+                            'folder' => 'renta/products'
+                        ]);
+                        $finalImageUrl = $uploaded->getSecurePath();
+                    } catch (\Exception $e) {
+                        // Opsi darurat pabila API Limit/RTO: Pasang URL Native
+                        $finalImageUrl = $rnbData['image'];
+                    }
+                }
+            }
+
             $product = Product::updateOrCreate(
                 ['wp_post_id' => $wpProd->ID],
                 [
@@ -264,7 +284,7 @@ class WpMigrationController extends Controller
                     'tier_price' => $rnbData['tier_price'],
                     'promo_price' => null, // Abaikan promo dr WP bila tidak selaras
                     'stock_quantity' => $rnbData['stock'],
-                    'image' => $rnbData['image'],
+                    'image' => $finalImageUrl,
                     'is_active' => $wpProd->post_status === 'publish' ? 1 : 0,
                 ]
             );

@@ -260,6 +260,7 @@ class WpMigrationController extends Controller
                 // Hemat API: Jika produk sudah ada dan memegang URL rekaman Cloudinary, cukup setorkan yang lama kembali
                 if ($existingProduct && Str::contains($existingProduct->image, 'res.cloudinary.com')) {
                     $finalImageUrl = $existingProduct->image;
+                } else {
                     try {
                         // Bypass Laravel wrapper dan gunakan PHP SDK resmi Cloudinary untuk Remote Uploading.
                         // Cloudinary server akan langsung menarik file dari rentaenterprise.com, bukan membebankan host lokal.

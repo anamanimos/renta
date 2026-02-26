@@ -23,4 +23,18 @@ class ProductController extends Controller
 
         return view('pages.product', compact('products', 'categories'));
     }
+    public function show($slug)
+    {
+        $product = Product::with(['category', 'variants'])->where('slug', $slug)->where('is_active', true)->firstOrFail();
+        
+        // Ambil produk terkait dalam kategori yang sama
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->where('is_active', true)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        return view('pages.product-detail', compact('product', 'relatedProducts'));
+    }
 }

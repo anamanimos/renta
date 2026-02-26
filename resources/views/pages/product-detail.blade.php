@@ -17,11 +17,7 @@
         <div class="product-detail-card" style="background: #fff; border-radius: 12px; border: 1px solid #eaeaea; overflow: hidden; display: flex; flex-wrap: wrap; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
             <!-- Gambar Produk -->
             <div class="product-gallery" style="flex: 1; min-width: 350px; background: #f9f9f9; padding: 40px; display: flex; align-items: center; justify-content: center; position: relative; border-right: 1px solid #eaeaea;">
-                @if($product->image)
-                    <img src="{{ Str::startsWith($product->image, 'http') ? $product->image : asset($product->image) }}" alt="{{ $product->name }}" style="max-width: 100%; max-height: 400px; object-fit: contain;">
-                @else
-                    <i class="fas fa-box" style="font-size: 100px; color: #ccc;"></i>
-                @endif
+                <img src="{{ $product->image && Str::startsWith($product->image, 'http') ? $product->image : asset($product->image ?? 'assets/images/product-1.png') }}" alt="{{ $product->name }}" style="max-width: 100%; max-height: 400px; object-fit: contain;">
                 <div class="brand-badge" style="position: absolute; top: 20px; left: 20px; background: white; padding: 5px 10px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                     <img src="{{ asset('assets/images/logo-small.png') }}" alt="Renta" height="20">
                 </div>
@@ -169,7 +165,7 @@
         const btnSubmit = document.getElementById('btnSubmitCart');
         
         if (newStock > 0) {
-            stockDisplayEl.innerText = \`Tersedia (\${newStock} Unit)\`;
+            stockDisplayEl.innerText = `Tersedia (${newStock} Unit)`;
             stockDisplayEl.style.color = '#059669';
             btnSubmit.disabled = false;
             btnSubmit.innerHTML = '<i class="ti ti-shopping-cart-plus" style="font-size: 20px;"></i> Tambah Sewa Ke Keranjang';

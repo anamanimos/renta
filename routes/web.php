@@ -26,6 +26,11 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::delete('/coupon', [App\Http\Controllers\CartController::class, 'removeCoupon'])->name('coupon.remove');
 });
 
+Route::prefix('wishlist')->name('wishlist.')->group(function () {
+    Route::get('/', [App\Http\Controllers\WishlistController::class, 'index'])->name('index');
+    Route::post('/toggle/{product}', [App\Http\Controllers\WishlistController::class, 'toggle'])->name('toggle');
+});
+
 Route::prefix('wp-admin')->name('admin.')->group(function () {
     Route::get('/', [App\Http\Controllers\Admin\AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/authenticate', [App\Http\Controllers\Admin\AuthController::class, 'authenticate'])->name('authenticate');

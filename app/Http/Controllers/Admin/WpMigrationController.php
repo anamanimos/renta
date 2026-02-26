@@ -263,15 +263,29 @@ class WpMigrationController extends Controller
                     $finalImageUrl = $existingProduct->image;
                 } else {
                     try {
-                        // Bypass Laravel wrapper dan gunakan PHP SDK resmi Cloudinary untuk Remote Uploading.
-                        // Cloudinary server akan langsung menarik file dari rentaenterprise.com, bukan membebankan host lokal.
-                        $cloudinary = new \Cloudinary\Cloudinary(config('cloudinary.cloud_url'));
-                        $uploadApi = new \Cloudinary\Api\Upload\UploadApi($cloudinary->configuration);
-                        
-                        $uploaded = $uploadApi->upload($rnbData['image_url'], [
-                            'folder' => 'renta/products'
-                        ]);
-                        $finalImageUrl = $uploaded['secure_url'] ?? $rnbData['image_url'];
+                        // Bypass Cloudflare Hotlink Protection dengan mendownload gambar via perantara backend 
+                        $imgResponse = \Illuminate\Support\Facades\Http::withOptions(['verify' => false])
+                            ->withHeaders([
+                                'Referer' => 'https://rentaenterprise.com/',
+                                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                            ])->get($rnbData['image_url']);
+                            
+                        if ($imgResponse->successful()) {
+                            $tmpPath = sys_get_temp_dir() . '/' . uniqid('renta_wp_') . '.png';
+                            file_put_contents($tmpPath, $imgResponse->body());
+                            
+                            $cloudinary = new \Cloudinary\Cloudinary(config('cloudinary.cloud_url'));
+                            $uploadApi = new \Cloudinary\Api\Upload\UploadApi($cloudinary->configuration);
+                            
+                            $uploaded = $uploadApi->upload($tmpPath, [
+                                'folder' => 'renta/products'
+                            ]);
+                            
+                            $finalImageUrl = $uploaded['secure_url'] ?? $rnbData['image_url'];
+                            if (file_exists($tmpPath)) @unlink($tmpPath);
+                        } else {
+                            throw new \Exception("Gagal ditarik (HTTP " . $imgResponse->status() . ")");
+                        }
                     } catch (\Exception $e) {
                         // Opsi darurat
                         \Illuminate\Support\Facades\Log::error('Cloudinary Migrate Error: ' . $e->getMessage());

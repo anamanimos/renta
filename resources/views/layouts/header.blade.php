@@ -37,12 +37,12 @@
             
             <a href="{{ url('/wishlist') }}" class="action-icon wishlist-icon">
                 <i class="far fa-heart"></i>
-                <span class="badge">0</span>
+                <span class="badge" id="header-wishlist-count">{{ $wishlistCount ?? 0 }}</span>
             </a>
             <a href="{{ url('/cart') }}" class="action-icon cart-icon">
                 <i class="fas fa-shopping-cart"></i>
-                <span class="badge">0</span>
-                <span class="cart-total">RP0</span>
+                <span class="badge" id="header-cart-count">{{ $cartCount ?? 0 }}</span>
+                <span class="cart-total" id="header-cart-total">Rp{{ number_format($cartTotal ?? 0, 0, ',', '.') }}</span>
             </a>
         </div>
     </div>

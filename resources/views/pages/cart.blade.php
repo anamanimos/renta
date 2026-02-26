@@ -27,18 +27,13 @@
                         <!-- Set Tanggal Sewa -->
                         <div style="background: #fff; padding: 25px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #eaeaea; box-shadow: 0 4px 15px rgba(0,0,0,0.02)">
                             <h4 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; color:var(--text-dark);"><i class="far fa-calendar-alt" style="color:var(--primary-color); margin-right:8px;"></i> Tentukan Periode Sewa Anda</h4>
-                            <form action="{{ route('cart.dates') }}" method="POST" style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
+                            <form id="rentalPeriodForm" action="{{ route('cart.dates') }}" method="POST" style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap;">
                                 @csrf
-                                <div style="flex: 1; min-width: 200px;">
-                                    <label style="display:block; margin-bottom:8px; font-size:13px; color:#666; font-weight:500;">Tanggal Diambil / Mulai</label>
-                                    <input type="date" name="start_date" value="{{ $cart->start_date ? \Carbon\Carbon::parse($cart->start_date)->format('Y-m-d') : '' }}" required style="width:100%; padding:12px 15px; border:1px solid #ddd; border-radius:6px; font-family:inherit; outline:none; transition:0.3s;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='#ddd'">
-                                </div>
-                                <div style="flex: 1; min-width: 200px;">
-                                    <label style="display:block; margin-bottom:8px; font-size:13px; color:#666; font-weight:500;">Tanggal Dikembalikan / Selesai</label>
-                                    <input type="date" name="end_date" value="{{ $cart->end_date ? \Carbon\Carbon::parse($cart->end_date)->format('Y-m-d') : '' }}" required style="width:100%; padding:12px 15px; border:1px solid #ddd; border-radius:6px; font-family:inherit; outline:none; transition:0.3s;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='#ddd'">
-                                </div>
-                                <div>
-                                    <button type="submit" class="btn-primary" style="padding: 12px 25px; border:none; border-radius:6px; font-weight:600; cursor:pointer; background:var(--primary-color); color:#fff; transition:0.3s;"><i class="fas fa-save" style="margin-right:5px;"></i> Simpan Periode</button>
+                                <div style="flex: 1; min-width: 300px;">
+                                    <label style="display:block; margin-bottom:8px; font-size:13px; color:#666; font-weight:500;">Pilih Tanggal Diambil s/d Dikembalikan</label>
+                                    <input type="text" id="rentalDateRange" placeholder="Pilih rentang tanggal sewa" value="{{ $cart->start_date && $cart->end_date ? \Carbon\Carbon::parse($cart->start_date)->format('Y-m-d') . ' to ' . \Carbon\Carbon::parse($cart->end_date)->format('Y-m-d') : '' }}" style="width:100%; padding:12px 15px; border:1px solid #ddd; border-radius:6px; font-family:inherit; outline:none; transition:0.3s; background: #fdfdfd; cursor: pointer;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='#ddd'">
+                                    <input type="hidden" name="start_date" id="start_date_input" value="{{ $cart->start_date ? \Carbon\Carbon::parse($cart->start_date)->format('Y-m-d') : '' }}">
+                                    <input type="hidden" name="end_date" id="end_date_input" value="{{ $cart->end_date ? \Carbon\Carbon::parse($cart->end_date)->format('Y-m-d') : '' }}">
                                 </div>
                             </form>
                             @if($cart->start_date && $cart->end_date)
@@ -84,24 +79,27 @@
                                         <td style="padding: 20px; color:#555; font-weight:500;">
                                             @php
                                                 $priceBaseUI = $item->variant ? $item->variant->price_per_day : ($item->product->promo_price ?? $item->product->price_per_day);
+                                                $tierPriceUI = $item->variant ? $item->variant->tier_price : $item->product->tier_price;
                                             @endphp
                                             @if($uiPriceType === 'sell_once' || $uiPriceType === 'beli_putus')
                                                 Rp{{ number_format($priceBaseUI, 0, ',', '.') }} <small>(Beli)</small>
                                             @elseif($uiPriceType === 'rental_tiered' || $uiPriceType === 'custom_pricing')
-                                                Rp{{ number_format($priceBaseUI, 0, ',', '.') }} <small>(Hari ke-1)</small>
+                                                <div>Rp{{ number_format($priceBaseUI, 0, ',', '.') }} <small>(Hari ke-1)</small></div>
+                                                <div style="font-size: 13px; color: #059669; margin-top: 4px;"><i class="ti ti-discount-check"></i> Rp{{ number_format($tierPriceUI, 0, ',', '.') }} <small>(Hari ke-2 dst)</small></div>
                                             @else
                                                 Rp{{ number_format($priceBaseUI, 0, ',', '.') }}
                                             @endif
                                         </td>
                                         <td style="padding: 20px;">
-                                            <form action="{{ route('cart.update', $item->id) }}" method="POST" style="display:inline-flex; align-items:center; background:#f9f9f9; padding:5px; border-radius:6px; border:1px solid #eee;">
+                                            <form action="{{ route('cart.update', $item->id) }}" method="POST" class="auto-update-qty-form" data-item-id="{{ $item->id }}" style="display:inline-flex; align-items:center; background:#f9f9f9; padding:0; border-radius:6px; border:1px solid #eee; overflow:hidden;">
                                                 @csrf
                                                 @method('PUT')
-                                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" style="width:45px; height:35px; border:none; background:transparent; text-align:center; font-weight:600; outline:none; font-family:inherit;">
-                                                <button type="submit" title="Perbarui Kuantitas" style="background:#fff; border:1px solid #ddd; width:35px; height:35px; border-radius:4px; color:var(--primary-color); cursor:pointer; font-size:12px; box-shadow:0 1px 3px rgba(0,0,0,0.05);"><i class="fas fa-sync-alt"></i></button>
+                                                <button type="button" class="qty-btn minus" style="width:35px; height:35px; background:#fff; border:none; border-right:1px solid #eee; cursor:pointer; color:#666; transition:0.2s;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='#fff'"><i class="fas fa-minus" style="font-size:12px;"></i></button>
+                                                <input type="number" name="quantity" class="qty-input" value="{{ $item->quantity }}" min="1" style="width:45px; height:35px; border:none; background:transparent; text-align:center; font-weight:600; outline:none; font-family:inherit; -moz-appearance: textfield;">
+                                                <button type="button" class="qty-btn plus" style="width:35px; height:35px; background:#fff; border:none; border-left:1px solid #eee; cursor:pointer; color:#666; transition:0.2s;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='#fff'"><i class="fas fa-plus" style="font-size:12px;"></i></button>
                                             </form>
                                         </td>
-                                        <td style="padding: 20px; font-size:16px; color:var(--text-dark);"><strong>Rp{{ number_format($item->subtotal, 0, ',', '.') }}</strong></td>
+                                        <td style="padding: 20px; font-size:16px; color:var(--text-dark);"><strong class="item-subtotal-display" id="subtotal_{{ $item->id }}">Rp{{ number_format($item->subtotal, 0, ',', '.') }}</strong></td>
                                         <td style="padding: 20px; text-align:center;">
                                             <form action="{{ route('cart.remove', $item->id) }}" method="POST">
                                                 @csrf
@@ -222,3 +220,189 @@
     </div>
 </main>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        .qty-input::-webkit-outer-spin-button,
+        .qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to format currency
+            const formatRp = (angka) => {
+                return new Intl.NumberFormat('id-ID').format(angka);
+            };
+
+            // Inisialisasi Flatpickr
+            flatpickr("#rentalDateRange", {
+                mode: "range",
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                onChange: function(selectedDates, dateStr, instance) {
+                    if(selectedDates.length === 2) {
+                        const startInput = document.getElementById('start_date_input');
+                        const endInput = document.getElementById('end_date_input');
+                        
+                        const formatDate = (date) => {
+                            const d = new Date(date);
+                            let month = '' + (d.getMonth() + 1);
+                            let day = '' + d.getDate();
+                            const year = d.getFullYear();
+                            if (month.length < 2) month = '0' + month;
+                            if (day.length < 2) day = '0' + day;
+                            return [year, month, day].join('-');
+                        };
+
+                        startInput.value = formatDate(selectedDates[0]);
+                        endInput.value = formatDate(selectedDates[1]);
+                        
+                        // Submit Date Range via AJAX
+                        const form = document.getElementById('rentalPeriodForm');
+                        const formData = new FormData(form);
+                        
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.success) {
+                                // NO RELOAD logic for dates
+                                document.querySelector('span:has(> .fa-info-circle)')?.parentElement?.remove(); // Hilangkan warning jika ada
+                                
+                                // Update elemen DOM tanpa reload page
+                                const daysElements = document.querySelectorAll('span:contains("Hari")');
+                                Array.from(document.querySelectorAll('*')).filter(el => el.textContent === `${data.total_days} Hari`).forEach(el => {
+                                   if(el.tagName === 'SPAN' || el.tagName === 'STRONG') el.textContent = `${data.total_days} Hari`;
+                                });
+                                
+                                // Karena harga keranjang dan diskon bisa kompleks, disarankan mengambil template keranjang baru via API,
+                                // Namun untuk simple fix kita muat ulang sebagian halaman via fetch
+                                fetch('/cart')
+                                .then(response => response.text())
+                                .then(html => {
+                                    const parser = new DOMParser();
+                                    const doc = parser.parseFromString(html, 'text/html');
+                                    const newCartContainer = doc.querySelector('.cart-container');
+                                    if(newCartContainer) {
+                                        document.querySelector('.cart-container').innerHTML = newCartContainer.innerHTML;
+                                        // Re-attach event listeners ke element baru
+                                        attachEventListeners();
+                                    }
+                                });
+                            }
+                        })
+                        .catch(err => console.error(err));
+                    }
+                }
+            });
+
+            // Handle Quantity Buttons & Auto-Update via AJAX
+            function attachEventListeners() {
+                const qtyForms = document.querySelectorAll('.auto-update-qty-form');
+            
+            qtyForms.forEach(form => {
+                const input = form.querySelector('.qty-input');
+                const btnMinus = form.querySelector('.qty-btn.minus');
+                const btnPlus = form.querySelector('.qty-btn.plus');
+                let timeout = null;
+
+                const submitAjax = () => {
+                    const formData = new FormData(form);
+                    
+                    // Show loading state on input
+                    input.style.opacity = '0.5';
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        input.style.opacity = '1';
+                        if(data.success) {
+                            // Update just this item's subtotal on screen
+                            const subtotalId = 'subtotal_' + form.dataset.itemId;
+                            const subtotalEl = document.getElementById(subtotalId);
+                            if(subtotalEl) {
+                                subtotalEl.innerHTML = 'Rp' + new Intl.NumberFormat('id-ID').format(data.subtotal);
+                            }
+
+                            // Fetch cart page silently and replace the summary sidebar
+                            fetch('/cart')
+                            .then(response => response.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                
+                                // Update sidebar total
+                                const newSidebar = doc.querySelector('.cart-sidebar');
+                                const currentSidebar = document.querySelector('.cart-sidebar');
+                                if(newSidebar && currentSidebar) {
+                                    currentSidebar.innerHTML = newSidebar.innerHTML;
+                                }
+                                
+                                // Header Badge update (jika terhubung secara global)
+                                const totalQtyStr = doc.querySelector('.cart-icon .badge');
+                                if(totalQtyStr) {
+                                    document.querySelectorAll('.cart-icon .badge').forEach(b => {
+                                        b.innerText = totalQtyStr.innerText;
+                                    });
+                                }
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        input.style.opacity = '1';
+                        console.error(err);
+                    });
+                };
+
+                btnMinus.addEventListener('click', () => {
+                    let val = parseInt(input.value);
+                    if (val > 1) {
+                        input.value = val - 1;
+                        submitAjax();
+                    }
+                });
+
+                btnPlus.addEventListener('click', () => {
+                    let val = parseInt(input.value);
+                    input.value = val + 1;
+                    submitAjax();
+                });
+
+                input.addEventListener('change', () => {
+                    if(parseInt(input.value) >= 1) {
+                         submitAjax();
+                    }
+                });
+
+                input.addEventListener('keyup', () => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        if (input.value && parseInt(input.value) >= 1) {
+                            submitAjax();
+                        }
+                    }, 500);
+                });
+            });
+            }
+            
+            // Initial call
+            attachEventListeners();
+        });
+    </script>
+@endpush

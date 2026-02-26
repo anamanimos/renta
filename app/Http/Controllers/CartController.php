@@ -50,6 +50,14 @@ class CartController extends Controller
             ]);
         }
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Produk berhasil ditambahkan ke keranjang!',
+                'cart_count' => $cart->items()->sum('quantity')
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
@@ -57,11 +65,24 @@ class CartController extends Controller
     {
         $cart = $this->getCart();
         if ($item->cart_id !== $cart->id) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
             abort(403);
         }
 
         $request->validate(['quantity' => 'required|integer|min:1']);
         $item->update(['quantity' => $request->quantity]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kuantitas berhasil diperbarui!',
+                'subtotal' => $item->subtotal,
+                'cart_total' => $cart->subtotal,
+                'total_days' => $cart->total_days,
+            ]);
+        }
 
         return redirect()->route('cart.index')->with('success', 'Kuantitas berhasil diperbarui!');
     }
@@ -96,6 +117,15 @@ class CartController extends Controller
             'end_date' => $end,
             'total_days' => $totalDays
         ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Periode sewa berhasil diatur!',
+                'total_days' => $totalDays,
+                'cart_total' => $cart->subtotal
+            ]);
+        }
 
         return redirect()->route('cart.index')->with('success', 'Periode sewa berhasil diatur!');
     }

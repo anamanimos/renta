@@ -63,7 +63,7 @@ class WpMigrationController extends Controller
     }
 
     /**
-     * Mengekstrak Logika Harga dan Stok Khusus Plugin RnB
+     * Mengekstrak Logika Harga dan Stok Khusus Plugin RnB (Dengan Dukungan Multi-Varian)
      */
     private function extractRnbData($productId)
     {
@@ -72,80 +72,93 @@ class WpMigrationController extends Controller
             ->whereIn('meta_key', ['_price', '_regular_price', '_thumbnail_id', '_stock', '_redq_product_inventory', 'pricing_type', 'rnb_settings_for_display'])
             ->pluck('meta_value', 'meta_key')->toArray();
 
-        // 2. Cek apakah ada relasi ke Inventory RnB
-        $targetId = $productId;
+        // 2. Cek apakah ada relasi ke Inventory RnB (Bisa lebih dari 1)
+        $targetIds = [$productId];
         $isRnb = false;
 
         if (isset($prodMeta['_redq_product_inventory']) && !empty($prodMeta['_redq_product_inventory'])) {
             $invArray = @unserialize($prodMeta['_redq_product_inventory']);
-            if (is_array($invArray) && isset($invArray[0])) {
-                $targetId = $invArray[0]; // Ambil Inventory ID
+            if (is_array($invArray) && count($invArray) > 0) {
+                $targetIds = array_values($invArray); // Ambil Semua Inventory ID
                 $isRnb = true;
             }
         } elseif (isset($prodMeta['pricing_type']) || isset($prodMeta['rnb_settings_for_display'])) {
             $isRnb = true;
         }
 
-        // 3. Ambil MetaData dari Target ID (Inventory atau Product itu sendiri)
-        $metaData = DB::connection('wp_legacy')->table('wpej_postmeta')->where('post_id', $targetId)
-            ->whereIn('meta_key', [
-                'pricing_type', 'general_price', 'quantity', 
-                'redq_day_ranges_cost', 'redq_custom_pricing', 'redq_daily_pricing'
-            ])
-            ->pluck('meta_value', 'meta_key')->toArray();
+        $variants = [];
+        $baseFallbackPrice = isset($prodMeta['_price']) ? intval($prodMeta['_price']) : (isset($prodMeta['_regular_price']) ? intval($prodMeta['_regular_price']) : 0);
+        $baseFallbackStock = isset($prodMeta['_stock']) && is_numeric($prodMeta['_stock']) ? intval($prodMeta['_stock']) : 10;
 
-        // Setup Nilai Default dari WooCommerce Dasar
-        $basePrice = isset($prodMeta['_price']) ? intval($prodMeta['_price']) : (isset($prodMeta['_regular_price']) ? intval($prodMeta['_regular_price']) : 0);
-        $tierPrice = null; 
-        
-        $pricingType = $metaData['pricing_type'] ?? null;
-        $quantity = 10;
-        
-        // Logika 3 Tipe Harga
-        $rentaPriceType = 'beli_putus';
-        $priceTypeLabel = 'Beli Putus (WooCommerce)';
-        $priceDesc = "Harga Beli: Rp " . number_format($basePrice, 0, ',', '.');
-        
-        if ($isRnb) {
-            $quantity = isset($metaData['quantity']) && is_numeric($metaData['quantity']) ? $metaData['quantity'] : (isset($prodMeta['_stock']) ? $prodMeta['_stock'] : 10);
+        foreach ($targetIds as $targetId) {
+            $targetPost = DB::connection('wp_legacy')->table('wpej_posts')->where('ID', $targetId)->first();
+            $metaData = DB::connection('wp_legacy')->table('wpej_postmeta')->where('post_id', $targetId)
+                ->whereIn('meta_key', [
+                    'pricing_type', 'general_price', 'quantity', 
+                    'redq_day_ranges_cost', 'redq_custom_pricing', 'redq_daily_pricing'
+                ])
+                ->pluck('meta_value', 'meta_key')->toArray();
+
+            $basePrice = $baseFallbackPrice;
+            $tierPrice = null; 
+            $pricingType = $metaData['pricing_type'] ?? null;
+            $quantity = $baseFallbackStock;
             
-            if ($pricingType === 'custom_pricing' || $pricingType === 'days_range' || $pricingType === 'daily_pricing') {
-                $rentaPriceType = 'custom_pricing';
-                $priceTypeLabel = 'Harga Sewa Berbeda per Hari (RnB Custom/Days)';
+            $rentaPriceType = 'beli_putus';
+            $priceTypeLabel = 'Beli Putus (WooCommerce)';
+            $priceDesc = "Harga Beli: Rp " . number_format($basePrice, 0, ',', '.');
+            
+            if ($isRnb) {
+                $quantity = isset($metaData['quantity']) && is_numeric($metaData['quantity']) ? $metaData['quantity'] : $baseFallbackStock;
                 
-                // Cek array daily/custom prioritas
-                $dailyArrayText = $metaData['redq_custom_pricing'] ?? ($metaData['redq_daily_pricing'] ?? null);
-                if ($pricingType === 'days_range' && isset($metaData['redq_day_ranges_cost'])) {
-                    $daysArray = @unserialize($metaData['redq_day_ranges_cost']);
-                    if (is_array($daysArray) && count($daysArray) > 0) {
-                        $day1 = collect($daysArray)->firstWhere('min_days', '1');
-                        $day2 = collect($daysArray)->firstWhere('min_days', '2');
-                        if ($day1) $basePrice = intval($day1['range_cost']);
-                        if ($day2) $tierPrice = intval($day2['range_cost']) - $basePrice;
+                if ($pricingType === 'custom_pricing' || $pricingType === 'days_range' || $pricingType === 'daily_pricing') {
+                    $rentaPriceType = 'custom_pricing';
+                    $priceTypeLabel = 'Harga Sewa Berbeda per Hari (RnB Custom/Days)';
+                    
+                    $dailyArrayText = $metaData['redq_custom_pricing'] ?? ($metaData['redq_daily_pricing'] ?? null);
+                    if ($pricingType === 'days_range' && isset($metaData['redq_day_ranges_cost'])) {
+                        $daysArray = @unserialize($metaData['redq_day_ranges_cost']);
+                        if (is_array($daysArray) && count($daysArray) > 0) {
+                            $day1 = collect($daysArray)->firstWhere('min_days', '1');
+                            $day2 = collect($daysArray)->firstWhere('min_days', '2');
+                            if ($day1) $basePrice = intval($day1['range_cost']);
+                            if ($day2) $tierPrice = intval($day2['range_cost']) - $basePrice;
+                        }
+                    } elseif ($dailyArrayText) {
+                        $dailyArray = @unserialize($dailyArrayText);
+                        if (is_array($dailyArray)) {
+                            $d1 = isset($dailyArray['friday']) ? intval($dailyArray['friday']) : 0;
+                            $d2 = isset($dailyArray['saturday']) ? intval($dailyArray['saturday']) : 0;
+                            if ($d1 > 0) $basePrice = $d1;
+                            if ($d2 > 0) $tierPrice = $d2;
+                        }
                     }
-                } elseif ($dailyArrayText) {
-                    $dailyArray = @unserialize($dailyArrayText);
-                    if (is_array($dailyArray)) {
-                        $d1 = isset($dailyArray['friday']) ? intval($dailyArray['friday']) : 0;
-                        $d2 = isset($dailyArray['saturday']) ? intval($dailyArray['saturday']) : 0;
-                        if ($d1 > 0) $basePrice = $d1;
-                        if ($d2 > 0) $tierPrice = $d2;
+                    
+                    $priceDesc = "Hari pertama: Rp " . number_format($basePrice, 0, ',', '.');
+                    if ($tierPrice) {
+                        $priceDesc .= " | Hari berikutnya: Rp " . number_format($tierPrice, 0, ',', '.');
                     }
+                } else {
+                    $rentaPriceType = 'general_pricing';
+                    $priceTypeLabel = 'Harga Sewa Tetap (RnB General)';
+                    
+                    if (isset($metaData['general_price']) && is_numeric($metaData['general_price']) && $metaData['general_price'] > 0) {
+                        $basePrice = intval($metaData['general_price']);
+                    }
+                    $priceDesc = "Tarif Harga Tetap: Rp " . number_format($basePrice, 0, ',', '.') . " per hari";
                 }
-                
-                $priceDesc = "Hari pertama: Rp " . number_format($basePrice, 0, ',', '.');
-                if ($tierPrice) {
-                    $priceDesc .= " | Hari berikutnya: Rp " . number_format($tierPrice, 0, ',', '.');
-                }
-            } else {
-                $rentaPriceType = 'general_pricing';
-                $priceTypeLabel = 'Harga Sewa Tetap (RnB General)';
-                
-                if (isset($metaData['general_price']) && is_numeric($metaData['general_price']) && $metaData['general_price'] > 0) {
-                    $basePrice = intval($metaData['general_price']);
-                }
-                $priceDesc = "Tarif Harga Tetap: Rp " . number_format($basePrice, 0, ',', '.') . " per hari";
             }
+
+            $variants[] = [
+                'wp_inventory_id' => $targetId,
+                'name' => $targetPost ? $targetPost->post_title : 'Varian',
+                'price_type' => $rentaPriceType,
+                'price_type_label' => $priceTypeLabel,
+                'base_price' => $basePrice,
+                'tier_price' => $tierPrice,
+                'stock' => $quantity,
+                'description' => $priceDesc
+            ];
         }
 
         // 4. Thumbnail Image (Selalu dari ID Produk aslinya)
@@ -158,14 +171,17 @@ class WpMigrationController extends Controller
             }
         }
 
+        $mainVariant = $variants[0] ?? [];
+
         return [
-            'price_type' => $rentaPriceType,
-            'price_type_label' => $priceTypeLabel,
-            'base_price' => $basePrice,
-            'tier_price' => $tierPrice,
-            'stock' => $quantity,
+            'price_type' => $mainVariant['price_type'] ?? 'beli_putus',
+            'price_type_label' => $mainVariant['price_type_label'] ?? 'Beli Putus',
+            'base_price' => $mainVariant['base_price'] ?? 0,
+            'tier_price' => $mainVariant['tier_price'] ?? null,
+            'stock' => $mainVariant['stock'] ?? 10,
+            'description' => $mainVariant['description'] ?? '',
             'image' => $imageUrl,
-            'description' => $priceDesc
+            'variants' => $variants
         ];
     }
 
@@ -201,6 +217,7 @@ class WpMigrationController extends Controller
                 'stock' => $rnbData['stock'],
                 'category' => $termRel ? $termRel->name : 'Tanpa Kategori',
                 'image' => $rnbData['image'],
+                'variants' => $rnbData['variants'],
                 'url' => 'https://rentaenterprise.com/product/' . $wpProd->post_name
             ]);
         } catch (\Exception $e) {
@@ -231,14 +248,18 @@ class WpMigrationController extends Controller
                 $categoryId = $this->importCategoryRecursive($termRel->term_id);
             }
 
-            Product::updateOrCreate(
+            $mappedPriceType = 'rental_flat';
+            if ($rnbData['price_type'] == 'beli_putus') $mappedPriceType = 'sell_once';
+            elseif ($rnbData['price_type'] == 'custom_pricing') $mappedPriceType = 'rental_tiered';
+
+            $product = Product::updateOrCreate(
                 ['wp_post_id' => $wpProd->ID],
                 [
                     'category_id' => $categoryId,
                     'name' => $wpProd->post_title,
                     'slug' => urldecode($wpProd->post_name),
                     'description' => $wpProd->post_content,
-                    'price_type' => $rnbData['price_type'],
+                    'price_type' => $mappedPriceType,
                     'price_per_day' => $rnbData['base_price'],
                     'tier_price' => $rnbData['tier_price'],
                     'promo_price' => null, // Abaikan promo dr WP bila tidak selaras
@@ -247,6 +268,25 @@ class WpMigrationController extends Controller
                     'is_active' => $wpProd->post_status === 'publish' ? 1 : 0,
                 ]
             );
+
+            // Import Variants
+            if (isset($rnbData['variants']) && is_array($rnbData['variants'])) {
+                foreach ($rnbData['variants'] as $v) {
+                    \App\Models\ProductVariant::updateOrCreate(
+                        [
+                            'product_id' => $product->id, 
+                            'wp_inventory_id' => $v['wp_inventory_id']
+                        ],
+                        [
+                            'name' => $v['name'],
+                            'price_type' => $v['price_type'],
+                            'price_per_day' => $v['base_price'],
+                            'tier_price' => $v['tier_price'],
+                            'stock_quantity' => $v['stock'],
+                        ]
+                    );
+                }
+            }
 
             return back()->with('success', "Produk '{$wpProd->post_title}' berhasil diimpor.");
 
@@ -280,11 +320,12 @@ class WpMigrationController extends Controller
                 ['id' => $wpCat->term_id],
                 [
                     'name' => $wpCat->name,
-                    'slug' => urldecode($wpCat->slug),
+                    'slug' => \Illuminate\Support\Str::slug(urldecode($wpCat->slug)) . '-' . $wpCat->term_id,
                     'icon' => 'fas fa-box', // Ikon Default
                     'parent_id' => $parentId
                 ]
             );
+
             return $cat->id;
         }
         return null;

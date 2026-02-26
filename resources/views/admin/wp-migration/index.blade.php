@@ -198,6 +198,11 @@
                 </div>
             </div>
             
+            <div id="prevVariantsContainer" style="display: none; margin-bottom: 20px; padding: 12px; border: 1px dashed #cbd5e1; border-radius: 8px; background: #f8fafc;">
+                <div style="font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 10px;"><i class="ti ti-layers-intersect"></i> Deteksi Varian Bersarang (Multi-Inventory RnB)</div>
+                <div id="prevVariantsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+
             <div style="background: #fffbeb; border: 1px solid #fde047; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; color: #854d0e;">
                 <i class="ti ti-info-circle"></i> Info: Kategori beserta induknya akan diimpor (dibuat) agar hierarki pemetaan sejalan.
             </div>
@@ -248,6 +253,31 @@
                 document.getElementById('prevCategory').textContent = data.category;
                 document.getElementById('prevDescription').textContent = data.description;
                 document.getElementById('prevPriceType').innerHTML = '<i class="ti ti-tags"></i> ' + data.price_type_label;
+                
+                const variantsContainer = document.getElementById('prevVariantsContainer');
+                const variantsList = document.getElementById('prevVariantsList');
+                variantsList.innerHTML = '';
+                
+                if (data.variants && data.variants.length > 1) {
+                    variantsContainer.style.display = 'block';
+                    data.variants.forEach(v => {
+                        const vBox = document.createElement('div');
+                        vBox.style.cssText = 'padding: 8px 12px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: flex-start;';
+                        vBox.innerHTML = `
+                            <div>
+                                <div style="font-weight: 600; color: #0f172a; margin-bottom: 3px;">${v.name}</div>
+                                <div style="color: #64748b; font-size: 0.8rem;">${v.description}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #475569; display: inline-block; margin-bottom: 4px;">${v.price_type_label}</span><br>
+                                <span style="font-weight: 600; color: var(--primary-color);">Stok: ${v.stock}</span>
+                            </div>
+                        `;
+                        variantsList.appendChild(vBox);
+                    });
+                } else {
+                    variantsContainer.style.display = 'none';
+                }
                 
                 const prevLink = document.getElementById('prevLink');
                 if (data.url && data.url !== '#') {

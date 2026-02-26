@@ -26,9 +26,8 @@
     
     /* Modal Styles */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: 0.2s; }
-    .modal-overlay.active { opacity: 1; visibility: visible; }
-    .modal-box { background: white; padding: 24px; border-radius: 12px; width: 90%; max-width: 500px; transform: translateY(20px); transition: 0.3s; }
     .modal-overlay.active .modal-box { transform: translateY(0); }
+    .modal-box { background: white; padding: 24px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; transform: translateY(20px); transition: 0.3s; }
     .preview-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #e2e8f0; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
     .preview-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
     .meta-box { background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -43,17 +42,7 @@
     <p>Pratinjau detail produk dari WordPress (<code>rentaenterprise</code>) dan impor secara satuan beserta kategorinya secara otomatis.</p>
 </div>
 
-@if(session('success'))
-<div style="background-color: #dcfce7; color: #166534; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #22c55e;">
-    <i class="ti ti-check"></i> {{ session('success') }}
-</div>
-@endif
-
-@if(session('error'))
-<div style="background-color: #fee2e2; color: #b91c1c; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ef4444;">
-    <i class="ti ti-alert-triangle"></i> {{ session('error') }}
-</div>
-@endif
+<!-- Session alerts digantikan oleh Javascript SweetAlert2 di bagian bawah -->
 
 <div class="migration-card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -126,9 +115,9 @@
                     <td><span style="font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; background: {{ $prod->post_status == 'publish' ? '#dcfce7' : '#f1f5f9' }}; color: {{ $prod->post_status == 'publish' ? '#166534' : '#475569' }}; {{ $isImported ? 'opacity: 0.6;' : '' }}">{{ $prod->post_status }}</span></td>
                     <td style="text-align: center;">
                         @if($isImported)
-                            <button class="btn-sm" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.8rem;" onclick="openPreview({{ $prod->ID }}, true)"><i class="ti ti-eye"></i> Detail (Selesai)</button>
+                            <button class="btn-sm" style="background: #e2e8f0; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.8rem;" onclick="openPreview({{ $prod->ID }}, true)"><i class="ti ti-refresh"></i> Ubah / Impor Ulang</button>
                         @else
-                            <button class="btn-sm btn-preview" onclick="openPreview({{ $prod->ID }}, false)"><i class="ti ti-eye"></i> Detail & Impor</button>
+                            <button class="btn-sm btn-preview" onclick="openPreview({{ $prod->ID }}, false)"><i class="ti ti-download"></i> Detail & Impor</button>
                         @endif
                     </td>
                 </tr>
@@ -224,6 +213,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     @keyframes spin { 100% { transform: rotate(360deg); } }
 </style>
@@ -242,12 +232,15 @@
         const statusText = document.getElementById('importStatusText');
         
         if(isImported) {
-            btnSubmit.style.display = 'none';
+            btnSubmit.innerHTML = '<i class="ti ti-refresh"></i> Update Data / Impor Ulang';
+            btnSubmit.style.backgroundColor = '#f59e0b'; // Amber override
             statusText.style.display = 'inline-flex';
         } else {
-            btnSubmit.style.display = 'inline-flex';
+            btnSubmit.innerHTML = '<i class="ti ti-check"></i> Konfirmasi Impor';
+            btnSubmit.style.backgroundColor = 'var(--primary-color)';
             statusText.style.display = 'none';
         }
+        btnSubmit.style.display = 'inline-flex';
         
         // Fetch Details
         fetch(`/wp-admin/migration/product/${id}`)
@@ -260,7 +253,7 @@
                 }
                 
                 document.getElementById('prevTitle').textContent = data.name;
-                document.getElementById('prevPrice').textContent = data.price;
+                document.getElementById('prevPrice').textContent = new Intl.NumberFormat('id-ID').format(data.price);
                 document.getElementById('prevStock').textContent = data.stock;
                 document.getElementById('prevCategory').textContent = data.category;
                 document.getElementById('prevDescription').textContent = data.description;
@@ -282,7 +275,7 @@
                             </div>
                             <div style="text-align: right;">
                                 <span style="font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #475569; display: inline-block; margin-bottom: 4px;">${v.price_type_label}</span><br>
-                                <span style="font-weight: 600; color: var(--primary-color);">Stok: ${v.stock}</span>
+                                <span style="font-weight: 600; color: var(--primary-color);">Rp ${new Intl.NumberFormat('id-ID').format(v.base_price)} | Stok: ${v.stock}</span>
                             </div>
                         `;
                         variantsList.appendChild(vBox);
@@ -322,5 +315,26 @@
     function closePreview() {
         modal.classList.remove('active');
     }
+
+    // Intercept form import untuk modal loading SweetAlert
+    importForm.addEventListener('submit', function() {
+        Swal.fire({
+            title: 'Memproses Impor...',
+            html: 'Mengekstrak metadata dan mengirim gambar ke Cloudinary. Harap tunggu...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    });
+
+    // Sesudah Page Reload menangkap sesi Sukses / Gagal
+    @if(session('success'))
+        Swal.fire('Selesai!', "{!! session('success') !!}", 'success');
+    @endif
+
+    @if(session('error'))
+        Swal.fire('Oops...', "{!! session('error') !!}", 'error');
+    @endif
 </script>
 @endpush

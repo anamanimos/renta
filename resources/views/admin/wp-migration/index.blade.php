@@ -26,6 +26,7 @@
     
     /* Modal Styles */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: 0.2s; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
     .modal-overlay.active .modal-box { transform: translateY(0); }
     .modal-box { background: white; padding: 24px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; transform: translateY(20px); transition: 0.3s; }
     .preview-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #e2e8f0; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; color: #94a3b8; }

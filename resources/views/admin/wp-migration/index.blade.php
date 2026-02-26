@@ -330,11 +330,11 @@
 
     // Sesudah Page Reload menangkap sesi Sukses / Gagal
     @if(session('success'))
-        Swal.fire('Selesai!', "{!! session('success') !!}", 'success');
+        Swal.fire('Selesai!', @json(session('success')), 'success');
     @endif
 
     @if(session('error'))
-        Swal.fire('Oops...', "{!! session('error') !!}", 'error');
+        Swal.fire('Oops...', @json(session('error')), 'error');
     @endif
 </script>
 @endpush

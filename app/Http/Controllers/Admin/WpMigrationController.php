@@ -215,6 +215,7 @@ class WpMigrationController extends Controller
                 'status' => $wpProd->post_status,
                 'description' => $descriptionText,
                 'price' => $rnbData['base_price'],
+                'tier_price' => $rnbData['tier_price'] ?? null,
                 'price_type_label' => $rnbData['price_type_label'],
                 'stock' => $rnbData['stock'],
                 'category' => $termRel ? $termRel->name : 'Tanpa Kategori',

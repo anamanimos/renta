@@ -254,7 +254,12 @@
                 }
                 
                 document.getElementById('prevTitle').textContent = data.name;
-                document.getElementById('prevPrice').textContent = new Intl.NumberFormat('id-ID').format(data.price);
+                
+                let priceText = new Intl.NumberFormat('id-ID').format(data.price);
+                if (data.tier_price && data.tier_price > 0 && data.tier_price != data.price) {
+                    priceText += ` (Hari Berikutnya: Rp ${new Intl.NumberFormat('id-ID').format(data.tier_price)})`;
+                }
+                document.getElementById('prevPrice').textContent = priceText;
                 document.getElementById('prevStock').textContent = data.stock;
                 document.getElementById('prevCategory').textContent = data.category;
                 document.getElementById('prevDescription').textContent = data.description;
@@ -269,6 +274,11 @@
                     data.variants.forEach(v => {
                         const vBox = document.createElement('div');
                         vBox.style.cssText = 'padding: 8px 12px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: flex-start;';
+                        let vPriceText = `Rp ${new Intl.NumberFormat('id-ID').format(v.base_price)}`;
+                        if (v.tier_price && v.tier_price > 0 && v.tier_price != v.base_price) {
+                            vPriceText += ` (H-2: Rp ${new Intl.NumberFormat('id-ID').format(v.tier_price)})`;
+                        }
+                        
                         vBox.innerHTML = `
                             <div>
                                 <div style="font-weight: 600; color: #0f172a; margin-bottom: 3px;">${v.name}</div>
@@ -276,7 +286,7 @@
                             </div>
                             <div style="text-align: right;">
                                 <span style="font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #475569; display: inline-block; margin-bottom: 4px;">${v.price_type_label}</span><br>
-                                <span style="font-weight: 600; color: var(--primary-color);">Rp ${new Intl.NumberFormat('id-ID').format(v.base_price)} | Stok: ${v.stock}</span>
+                                <span style="font-weight: 600; color: var(--primary-color);">${vPriceText} | Stok: ${v.stock}</span>
                             </div>
                         `;
                         variantsList.appendChild(vBox);

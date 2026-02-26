@@ -29,7 +29,7 @@
                 <div class="product-card" style="display: flex; flex-direction: column;">
                     <div class="product-image" style="position: relative; padding-top: 100%; overflow: hidden; background:#f5f5f5;">
                         <a href="{{ route('product.show', $product->slug) }}">
-                            <img src="{{ $product->image && Str::startsWith($product->image, 'http') ? $product->image : asset($product->image ?? 'assets/images/product-1.png') }}" alt="{{ $product->name }}" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: contain; padding: 15px;">
+                            <img src="{{ !empty($product->image) ? (Str::startsWith($product->image, ['http://', 'https://']) ? $product->image : asset($product->image)) : asset('assets/images/product-1.png') }}" alt="{{ $product->name }}" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: contain; padding: 15px;">
                         </a>
                         <div class="brand-logo">
                             <img src="{{ asset('assets/images/logo-small.png') }}" alt="Renta">

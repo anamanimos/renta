@@ -79,13 +79,15 @@
                 @foreach($hotProducts as $k => $product)
                 <div class="product-card">
                     <div class="product-image">
-                        <img src="{{ asset('assets/images/product-'.($k%4+1).'.png') }}" alt="{{ $product->name }}">
+                        <a href="{{ route('product.show', $product->slug) }}">
+                            <img src="{{ $product->image && Str::startsWith($product->image, 'http') ? $product->image : asset($product->image ?? 'assets/images/product-'.($k%4+1).'.png') }}" alt="{{ $product->name }}">
+                        </a>
                         <div class="brand-logo">
                             <img src="{{ asset('assets/images/logo-small.png') }}" alt="Renta">
                         </div>
                     </div>
                     <div class="product-info">
-                        <h3>{{ $product->name }}</h3>
+                        <h3><a href="{{ route('product.show', $product->slug) }}" style="color:var(--text-dark); text-decoration:none;">{{ $product->name }}</a></h3>
                         <div class="price">
                             <span class="current-price">Rp{{ number_format($product->price_per_day, 0, ',', '.') }} Unit Price</span>
                         </div>

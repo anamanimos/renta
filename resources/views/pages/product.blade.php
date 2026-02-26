@@ -28,7 +28,9 @@
                 @forelse($products as $product)
                 <div class="product-card" style="display: flex; flex-direction: column;">
                     <div class="product-image" style="position: relative; padding-top: 100%; overflow: hidden; background:#f5f5f5;">
-                        <img src="{{ $product->image && Str::startsWith($product->image, 'http') ? $product->image : asset($product->image ?? 'assets/images/product-1.png') }}" alt="{{ $product->name }}" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: contain; padding: 15px;">
+                        <a href="{{ route('product.show', $product->slug) }}">
+                            <img src="{{ $product->image && Str::startsWith($product->image, 'http') ? $product->image : asset($product->image ?? 'assets/images/product-1.png') }}" alt="{{ $product->name }}" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit: contain; padding: 15px;">
+                        </a>
                         <div class="brand-logo">
                             <img src="{{ asset('assets/images/logo-small.png') }}" alt="Renta">
                         </div>
@@ -36,7 +38,7 @@
                     <div class="product-info" style="padding: 20px; text-align: left; flex: 1; display: flex; flex-direction: column;">
                         <span style="font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">{{ $product->category->name ?? 'Uncategorized' }}</span>
                         <h3 style="font-size: 15px; margin: 8px 0; line-height: 1.4; flex: 1;">
-                            <a href="#" style="color: var(--text-dark); text-decoration: none;">{{ $product->name }}</a>
+                            <a href="{{ route('product.show', $product->slug) }}" style="color: var(--text-dark); text-decoration: none;">{{ $product->name }}</a>
                         </h3>
                         <div class="price" style="margin-top: 5px; margin-bottom: 15px;">
                             <span class="current-price" style="color: var(--primary-color); font-weight: 700; font-size: 16px;">Rp{{ number_format($product->price_per_day, 0, ',', '.') }} <small style="color: #999; font-weight:400; font-size:12px;">/ Hari</small></span>

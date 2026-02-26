@@ -164,23 +164,12 @@ class WpMigrationController extends Controller
 
         // 4. Thumbnail Image (Selalu dari ID Produk aslinya)
         $imageUrl = null;
-        $imageLocal = null;
         
         if (isset($prodMeta['_thumbnail_id'])) {
             $attachPost = DB::connection('wp_legacy')->table('wpej_posts')->where('ID', $prodMeta['_thumbnail_id'])->first();
             if ($attachPost) {
-                // Untuk Pratinjau UI
+                // Untuk Pratinjau UI & URL Sumber Unduhan
                 $imageUrl = str_replace('.test', '.com', $attachPost->guid);
-                
-                // Cari Path Absolut untuk Upload Server-to-Cloudinary
-                $pathOnly = parse_url($attachPost->guid, PHP_URL_PATH);
-                if (strpos($pathOnly, '/wp-content') !== false) {
-                    $wpContentPath = substr($pathOnly, strpos($pathOnly, '/wp-content'));
-                    $localPath = 'd:/laragon/www/rentaenterprise' . $wpContentPath;
-                    if (file_exists($localPath)) {
-                        $imageLocal = $localPath;
-                    }
-                }
             }
         }
 
@@ -194,7 +183,6 @@ class WpMigrationController extends Controller
             'stock' => $mainVariant['stock'] ?? 10,
             'description' => $mainVariant['description'] ?? '',
             'image_url' => $imageUrl,
-            'image_local' => $imageLocal ?: $imageUrl,
             'variants' => $variants
         ];
     }
@@ -267,19 +255,35 @@ class WpMigrationController extends Controller
             elseif ($rnbData['price_type'] == 'custom_pricing') $mappedPriceType = 'rental_tiered';
 
             $finalImageUrl = null;
-            if (!empty($rnbData['image_local'])) {
+            if (!empty($rnbData['image_url'])) {
                 $existingProduct = Product::where('wp_post_id', $wpProd->ID)->first();
                 // Hemat API: Jika produk sudah ada dan memegang URL rekaman Cloudinary, cukup setorkan yang lama kembali
                 if ($existingProduct && Str::contains($existingProduct->image, 'res.cloudinary.com')) {
                     $finalImageUrl = $existingProduct->image;
                 } else {
                     try {
-                        $uploaded = cloudinary()->upload($rnbData['image_local'], [
-                            'folder' => 'renta/products'
-                        ]);
-                        $finalImageUrl = $uploaded->getSecurePath();
+                        // Unduh gambar ke memori lokal sementara
+                        $imageContent = @file_get_contents($rnbData['image_url']);
+                        if ($imageContent) {
+                            $tempName = 'temp_wp_img_' . uniqid() . '.jpg';
+                            $tempPath = storage_path('app/public/' . $tempName);
+                            file_put_contents($tempPath, $imageContent);
+
+                            // Upload file lokal fisik ke Cloudinary
+                            $uploaded = cloudinary()->upload($tempPath, [
+                                'folder' => 'renta/products'
+                            ]);
+                            $finalImageUrl = $uploaded->getSecurePath();
+
+                            // Hapus file fisik pembuangan lokal
+                            if (file_exists($tempPath)) {
+                                unlink($tempPath);
+                            }
+                        } else {
+                            $finalImageUrl = $rnbData['image_url'];
+                        }
                     } catch (\Exception $e) {
-                        // Opsi darurat pabila API Limit/RTO: Pasang URL Native
+                        // Opsi darurat
                         $finalImageUrl = $rnbData['image_url'];
                     }
                 }

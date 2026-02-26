@@ -126,9 +126,9 @@
                     <td><span style="font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; background: {{ $prod->post_status == 'publish' ? '#dcfce7' : '#f1f5f9' }}; color: {{ $prod->post_status == 'publish' ? '#166534' : '#475569' }}; {{ $isImported ? 'opacity: 0.6;' : '' }}">{{ $prod->post_status }}</span></td>
                     <td style="text-align: center;">
                         @if($isImported)
-                            <span class="btn-sm btn-imported" style="opacity: 0.7;"><i class="ti ti-check"></i> Selesai</span>
+                            <button class="btn-sm" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.8rem;" onclick="openPreview({{ $prod->ID }}, true)"><i class="ti ti-eye"></i> Detail (Selesai)</button>
                         @else
-                            <button class="btn-sm btn-preview" onclick="openPreview({{ $prod->ID }})"><i class="ti ti-eye"></i> Detail & Impor</button>
+                            <button class="btn-sm btn-preview" onclick="openPreview({{ $prod->ID }}, false)"><i class="ti ti-eye"></i> Detail & Impor</button>
                         @endif
                     </td>
                 </tr>
@@ -209,9 +209,10 @@
             
             <form id="importForm" method="POST">
                 @csrf
-                <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                    <button type="button" onclick="closePreview()" style="padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-weight: 500;">Batal</button>
-                    <button type="submit" style="padding: 10px 20px; border-radius: 6px; background: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
+                <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+                    <span id="importStatusText" style="display: none; color: #166534; font-size: 0.9rem; font-weight: 600; margin-right: auto;"><i class="ti ti-circle-check"></i> Produk telah diimpor</span>
+                    <button type="button" onclick="closePreview()" style="padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-weight: 500;">Tutup</button>
+                    <button type="submit" id="importSubmitBtn" style="padding: 10px 20px; border-radius: 6px; background: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
                         <i class="ti ti-check"></i> Konfirmasi Impor
                     </button>
                 </div>
@@ -232,10 +233,21 @@
     const modalContent = document.getElementById('modalContent');
     const importForm = document.getElementById('importForm');
     
-    function openPreview(id) {
+    function openPreview(id, isImported = false) {
         modal.classList.add('active');
         modalLoading.style.display = 'block';
         modalContent.style.display = 'none';
+        
+        const btnSubmit = document.getElementById('importSubmitBtn');
+        const statusText = document.getElementById('importStatusText');
+        
+        if(isImported) {
+            btnSubmit.style.display = 'none';
+            statusText.style.display = 'inline-flex';
+        } else {
+            btnSubmit.style.display = 'inline-flex';
+            statusText.style.display = 'none';
+        }
         
         // Fetch Details
         fetch(`/wp-admin/migration/product/${id}`)

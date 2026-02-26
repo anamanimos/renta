@@ -15,7 +15,7 @@ Route::get('/faq', function () {
 })->name('faq');
 
 Route::get('/products', [App\Http\Controllers\ProductController::class, 'index'])->name('products.index');
-
+Route::get('/product/{slug}', [App\Http\Controllers\ProductController::class, 'show'])->name('product.show');
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [App\Http\Controllers\CartController::class, 'index'])->name('index');
     Route::post('/add/{product}', [App\Http\Controllers\CartController::class, 'add'])->name('add');

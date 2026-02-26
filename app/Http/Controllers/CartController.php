@@ -33,12 +33,19 @@ class CartController extends Controller
     {
         $cart = $this->getCart();
 
-        $cartItem = $cart->items()->where('product_id', $product->id)->first();
+        $variantId = $request->input('variant_id');
+
+        $cartItem = $cart->items()
+            ->where('product_id', $product->id)
+            ->where('variant_id', $variantId)
+            ->first();
+
         if ($cartItem) {
             $cartItem->increment('quantity');
         } else {
             $cart->items()->create([
                 'product_id' => $product->id,
+                'variant_id' => $variantId,
                 'quantity' => 1
             ]);
         }

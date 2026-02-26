@@ -57,7 +57,20 @@ class ProductController extends Controller
             $validated['image'] = $uploadedFileUrl;
         }
 
-        Product::create($validated);
+        $product = Product::create($validated);
+
+        if ($request->has('variants') && is_array($request->variants)) {
+            foreach ($request->variants as $variantData) {
+                $vPriceType = ($product->price_type === 'rental_tiered') ? 'custom_pricing' : 'general_pricing';
+                $product->variants()->create([
+                    'name' => $variantData['name'],
+                    'price_type' => $vPriceType,
+                    'price_per_day' => $variantData['price_per_day'],
+                    'tier_price' => $variantData['tier_price'] ?? null,
+                    'stock_quantity' => $variantData['stock_quantity'],
+                ]);
+            }
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan ke katalog.');
     }
@@ -112,6 +125,40 @@ class ProductController extends Controller
         }
 
         $product->update($validated);
+
+        if ($request->has('variants') && is_array($request->variants)) {
+            $activeVariantIds = [];
+            foreach ($request->variants as $variantData) {
+                $vPriceType = ($product->price_type === 'rental_tiered') ? 'custom_pricing' : 'general_pricing';
+                
+                if (isset($variantData['id']) && is_numeric($variantData['id'])) {
+                    $variant = $product->variants()->updateOrCreate(
+                        ['id' => $variantData['id']],
+                        [
+                            'name' => $variantData['name'],
+                            'price_type' => $vPriceType,
+                            'price_per_day' => $variantData['price_per_day'],
+                            'tier_price' => $variantData['tier_price'] ?? null,
+                            'stock_quantity' => $variantData['stock_quantity'],
+                        ]
+                    );
+                } else {
+                    $variant = $product->variants()->create([
+                        'name' => $variantData['name'],
+                        'price_type' => $vPriceType,
+                        'price_per_day' => $variantData['price_per_day'],
+                        'tier_price' => $variantData['tier_price'] ?? null,
+                        'stock_quantity' => $variantData['stock_quantity'],
+                    ]);
+                }
+                $activeVariantIds[] = $variant->id;
+            }
+            // Hapus varian yang dihapus oleh admin dari view
+            $product->variants()->whereNotIn('id', $activeVariantIds)->delete();
+        } else {
+            // Hapus semua jika tidak ada varian yang dikirim
+            $product->variants()->delete();
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Informasi produk berhasil diperbarui.');
     }

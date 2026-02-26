@@ -71,17 +71,26 @@
                                                 <img src="{{ Str::startsWith($item->product->image, 'http') ? $item->product->image : asset($item->product->image ?? 'assets/images/product-1.png') }}" style="width:100%; height:100%; object-fit:contain; padding:5px;">
                                             </div>
                                             <div>
-                                                <a href="#" style="color:var(--text-dark); text-decoration:none; font-weight:600; font-size:15px;">{{ $item->product->name }}</a>
-                                                <div style="font-size:12px; color:#888; margin-top:5px;"><i class="fas fa-tag"></i> {{ $item->product->category->name ?? 'Peralatan' }} <span style="font-weight:600; color:var(--primary-color);">({!! $item->product->price_type === 'sell_once' ? 'Jual Putus' : ($item->product->price_type === 'rental_tiered' ? 'Sewa Tiered' : 'Sewa Flat') !!})</span></div>
+                                                <a href="{{ route('product.show', $item->product->slug) }}" style="color:var(--text-dark); text-decoration:none; font-weight:600; font-size:15px;">
+                                                    {{ $item->product->name }}
+                                                    @if($item->variant)
+                                                        <span style="color:#666; font-weight:normal; font-size:13px;"> - {{ $item->variant->name }}</span>
+                                                    @endif
+                                                </a>
+                                                @php $uiPriceType = $item->variant ? $item->variant->price_type : $item->product->price_type; @endphp
+                                                <div style="font-size:12px; color:#888; margin-top:5px;"><i class="fas fa-tag"></i> {{ $item->product->category->name ?? 'Peralatan' }} <span style="font-weight:600; color:var(--primary-color);">({!! ($uiPriceType === 'sell_once' || $uiPriceType === 'beli_putus') ? 'Jual Putus' : (($uiPriceType === 'rental_tiered' || $uiPriceType === 'custom_pricing') ? 'Sewa Tiered' : 'Sewa Flat') !!})</span></div>
                                             </div>
                                         </td>
                                         <td style="padding: 20px; color:#555; font-weight:500;">
-                                            @if($item->product->price_type === 'sell_once')
-                                                Rp{{ number_format($item->product->promo_price ?? $item->product->price_per_day, 0, ',', '.') }} <small>(Beli)</small>
-                                            @elseif($item->product->price_type === 'rental_tiered')
-                                                Rp{{ number_format($item->product->promo_price ?? $item->product->price_per_day, 0, ',', '.') }} <small>(Hari ke-1)</small>
+                                            @php
+                                                $priceBaseUI = $item->variant ? $item->variant->price_per_day : ($item->product->promo_price ?? $item->product->price_per_day);
+                                            @endphp
+                                            @if($uiPriceType === 'sell_once' || $uiPriceType === 'beli_putus')
+                                                Rp{{ number_format($priceBaseUI, 0, ',', '.') }} <small>(Beli)</small>
+                                            @elseif($uiPriceType === 'rental_tiered' || $uiPriceType === 'custom_pricing')
+                                                Rp{{ number_format($priceBaseUI, 0, ',', '.') }} <small>(Hari ke-1)</small>
                                             @else
-                                                Rp{{ number_format($item->product->promo_price ?? $item->product->price_per_day, 0, ',', '.') }}
+                                                Rp{{ number_format($priceBaseUI, 0, ',', '.') }}
                                             @endif
                                         </td>
                                         <td style="padding: 20px;">

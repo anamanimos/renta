@@ -154,6 +154,52 @@
             </div>
         </div>
 
+        <!-- Varian Produk -->
+        <h3 class="form-section-title" style="margin-top:20px;">
+            <i class="ti ti-layers-intersect"></i> Manajemen Varian (Opsional / Multi-Inventory)
+        </h3>
+        <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:15px;">Bila produk ini memiliki beragam ukuran atau rentang harga (Varian), tambahkan daftarnya di bawah ini.</p>
+
+        <div id="variantsContainer">
+            @if(isset($product) && $product->variants->count() > 0)
+                @foreach($product->variants as $index => $variant)
+                <div class="variant-row" id="variant_row_{{ $variant->id }}" style="border: 1px dashed var(--border-color); padding: 15px; border-radius:8px; margin-bottom: 15px; background: #fafafa; position:relative;">
+                    <button type="button" onclick="removeVariantRow('variant_row_{{ $variant->id }}')" style="position:absolute; top:10px; right:10px; background:none; border:none; color:var(--danger); cursor:pointer;" title="Hapus"><i class="ti ti-trash"></i></button>
+                    <input type="hidden" name="variants[{{ $variant->id }}][id]" value="{{ $variant->id }}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nama Varian</label>
+                            <input type="text" name="variants[{{ $variant->id }}][name]" class="form-control" value="{{ $variant->name }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Total Stok Varian</label>
+                            <input type="number" name="variants[{{ $variant->id }}][stock_quantity]" class="form-control" value="{{ $variant->stock_quantity }}" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Harga Sewa Varian (Base)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" name="variants[{{ $variant->id }}][price_per_day]" class="form-control" value="{{ $variant->price_per_day }}" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Harga Varian Hari Berikutnya (Tier)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" name="variants[{{ $variant->id }}][tier_price]" class="form-control" value="{{ $variant->tier_price }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            @endif
+        </div>
+        <button type="button" class="btn btn-outline" onclick="addVariantRow()" style="margin-bottom:20px; font-size: 0.85rem; padding: 8px 15px;">
+            <i class="ti ti-plus"></i> Tambah Varian Baru
+        </button>
+
         <!-- Media & Deskripsi -->
         <h3 class="form-section-title" style="margin-top:20px;">
             <i class="ti ti-photo"></i> Media & Deskripsi Lengkap
@@ -215,9 +261,52 @@
         }
     }
 
-    // Initialize state on load
     document.addEventListener('DOMContentLoaded', function() {
         togglePriceFields();
     });
+
+    let variantCounter = Date.now();
+    
+    function addVariantRow() {
+        const container = document.getElementById('variantsContainer');
+        const rowId = 'variant_new_' + variantCounter;
+        const html = `
+            <div class="variant-row" id="${rowId}" style="border: 1px dashed var(--border-color); padding: 15px; border-radius:8px; margin-bottom: 15px; background: #fafafa; position:relative;">
+                <button type="button" onclick="removeVariantRow('${rowId}')" style="position:absolute; top:10px; right:10px; background:none; border:none; color:var(--danger); cursor:pointer;" title="Hapus"><i class="ti ti-trash"></i></button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nama Varian</label>
+                        <input type="text" name="variants[${rowId}][name]" class="form-control" placeholder="Cth: Ukuran 5x5m" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total Stok Varian</label>
+                        <input type="number" name="variants[${rowId}][stock_quantity]" class="form-control" value="10" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Harga Sewa Varian (Base)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rp</span>
+                            <input type="number" name="variants[${rowId}][price_per_day]" class="form-control" value="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Harga Varian Hari Berikutnya (Tier)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rp</span>
+                            <input type="number" name="variants[${rowId}][tier_price]" class="form-control" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+        variantCounter++;
+    }
+
+    function removeVariantRow(id) {
+        document.getElementById(id).remove();
+    }
 </script>
 @endpush
